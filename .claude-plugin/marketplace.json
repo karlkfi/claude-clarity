@@ -1,0 +1,17 @@
+{
+  "name": "claude-clarity",
+  "owner": {
+    "name": "karlkfi",
+    "url": "https://github.com/karlkfi"
+  },
+  "description": "Hooks that make this repo's prose and code passes run at the moment they apply.",
+  "plugins": [
+    {
+      "name": "clarity-reminder",
+      "version": "0.1.0",
+      "description": "Holds a commit until the pass that applies to it has run. Reads the session's own transcript to see which files were edited and which skills were invoked, then denies once with the fix written into the reason.",
+      "author": { "name": "Karl Isenberg" },
+      "source": "./plugins/clarity-reminder"
+    }
+  ]
+}

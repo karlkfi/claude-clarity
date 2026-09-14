@@ -1,0 +1,5 @@
+{
+  "name": "clarity-reminder",
+  "version": "0.1.0",
+  "description": "Holds a commit until the pass that applies to it has run."
+}

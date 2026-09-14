@@ -211,6 +211,47 @@ reads style files at startup, so restart afterwards.
 { "outputStyle": "Clarity" }
 ```
 
+## The hook
+
+Naming a skill raises how often it runs, then stops well short of the
+occasion. Measured 2026-09-14 over 2,117 session transcripts on one
+workstation: `code-restraint` ran in 13 of the 531 sessions that edited a
+source file and committed, and in 2 of the 138 that edited five or more.
+
+Naming it moved that from 1.3% to 5.4%. A `CLAUDE.md` reaches a session at
+startup rather than at the moment its subject comes up, which is the ceiling.
+
+`clarity-reminder` fires on the occasion instead. At `git commit` it reads the
+index for what the commit carries and the transcript for which skills have run,
+then denies once when a rule's paths are staged and its pass never ran.
+
+The reason carries the fix, so the model applies it and nobody stops work. An
+approved prompt would reach you instead, and teach the session nothing.
+
+It ships as a plugin because a hook cannot reach a machine any other way
+without hand-editing a settings file:
+
+```bash
+claude plugin marketplace add /path/to/claude-clarity
+claude plugin install clarity-reminder@claude-clarity
+```
+
+A directory works as a marketplace, so this needs no remote and no publish.
+Hooks load at startup, so restart Claude Code afterwards.
+
+**The skills do not need it.** `install.sh` is unchanged and installs no hooks;
+anyone who wants the passes and not the interruptions should skip this section.
+
+Per repo, `.claude/clarity-reminder.json` replaces the built-in rule:
+
+```json
+{"rules": [{"skill": "readability", "paths": ["*.md"], "min_files": 2}]}
+```
+
+`"rules": []` turns it off without uninstalling. `CLARITY_REMINDER_OVERRIDE=<reason>`
+on the command skips one commit, and `CLARITY_REMINDER_POSTURE=supervise` turns
+the deny into a prompt for anyone who wants to watch it work.
+
 ## Where the content came from, and what it is true of
 
 Every skill here was distilled from work that already happened: a production
