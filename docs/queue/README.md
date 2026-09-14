@@ -32,10 +32,23 @@ citation goes stale loudly rather than silently.
 
 ## Where these items came from
 
-The ten items this store opened with were filed against skills that lived in a
-larger private collection and moved here with them. Several name a neighbouring
-item — Q237, Q244, Q260, Q280, Q297 — that stayed behind, so those references
-are deliberately not links: the row exists, and not in this store.
+Two sources, and the ID tells you which.
+
+**Q116–Q301 were filed elsewhere.** They target skills that lived in a larger
+private collection and moved here with them, keeping the IDs they were filed
+under. Several name a neighbouring item — Q237, Q244, Q260, Q280, Q297 — that
+stayed behind, so those references are deliberately not links: the row exists,
+and not in this store. Their claims were re-pointed but not re-derived, which
+[Q1004](Q1004.md) is about.
+
+**Q1001 and up are this repo's own**, starting at a round number well clear of
+the origin's sequence so a row moving in either direction can never collide with
+one already there. The first six are the open remainder of the extraction: what
+that plan left unfinished for this repo, rather than the plan itself, which
+stays with the collection whose other bundles it schedules.
+
+The ID allocator this store vendors claims IDs by pushing a ref to a shared
+remote. This repo has no remote, so IDs here are picked by hand until it does.
 
 ## Vendored tooling
 
