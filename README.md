@@ -114,8 +114,14 @@ make check
 ```
 
 That is `lint-sh` (shellcheck), `lint-py` (ruff, rules pinned to match CI),
-`validate` (skill frontmatter, description length, script modes) and `test`
-(every `test-*.sh`). Each runs on its own too. `make help` lists them.
+`validate` (skill frontmatter, description length, script modes, and the
+backlog store) and `test` (every `test-*.sh`). Each runs on its own too.
+`make help` lists them.
+
+Open work is in [`docs/queue/`](docs/queue/README.md), one file per item with
+priority in each item's `rank` key rather than in a table. `scripts/queue.py`
+and `scripts/alloc-queue-id.sh` are vendored copies maintained upstream — change
+them there, or the next copy reverts your edit.
 
 Needs `bash`, `python3`, `shellcheck`, and `pipx`. No network.
 

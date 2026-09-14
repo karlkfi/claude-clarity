@@ -49,9 +49,20 @@ lint-py: ## Run ruff over every committable Python script
 # against the tier ceilings alone. It is not made --strict here: a clone with no
 # remote is the ordinary case for this repo, and a gate that cannot run on a
 # fresh clone is a gate nobody runs.
+QUEUE := python3 scripts/queue.py --store docs/queue
+
 .PHONY: validate
-validate: ## Validate skill frontmatter, description length, and script modes
+validate: ## Validate skill frontmatter, script modes, and the backlog store
 	scripts/validate-skills.py
+	$(QUEUE) lint
+	@# A committed table of items restores line-position priority: two sessions
+	@# completing adjacent rows edit adjacent lines, which is the conflict the
+	@# per-item store exists to remove.
+	@if grep -qE '^\| \[Q[0-9]+\]' docs/queue/README.md; then \
+	    echo "docs/queue/README.md carries an item table." >&2; \
+	    echo "Render it on demand instead — see the file's own note." >&2; \
+	    exit 1; \
+	fi
 
 .PHONY: test
 test: ## Run every committable test script

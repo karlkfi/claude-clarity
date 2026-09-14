@@ -108,6 +108,11 @@ make check
 gate is one edit to the Makefile. A command inlined into `.github/workflows/`
 instead is a second copy `make check` will not run.
 
+`validate` also lints the backlog store under `docs/queue/`. `scripts/queue.py`
+and `scripts/alloc-queue-id.sh` are vendored copies: they are maintained in
+another repository and updated here by copying the file again, so a fix written
+here is silently reverted by the next copy.
+
 The body-ceiling check inside `validate` grandfathers each skill at the size it
 measured on the merge base, so a clone with no `origin/main` skips it loudly
 rather than measuring against zero.
