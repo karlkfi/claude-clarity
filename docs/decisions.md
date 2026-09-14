@@ -55,8 +55,8 @@ problem restated. Putting it in the bundle that ships first satisfies both.
 
 The cost is real and lands on someone else: a reader who wants one verification
 skill installs a repo of prose passes to get it. `install-skills.sh` takes skill
-names, so the single-skill install works — [Q1002](queue/Q1002.md) is the README
-not saying so.
+names, so the single-skill install works, and the README says so under
+[Installing](../README.md#installing).
 
 **What would reverse it:** a second consumer needing `verify-claims` for reasons
 unrelated to prose. At that point it is infrastructure shared by three parties

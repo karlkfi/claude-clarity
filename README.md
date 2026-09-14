@@ -1,35 +1,115 @@
 # claude-clarity
 
-Ten Claude Code skills and one output style, covering the path from having
-evidence to putting it in front of a reader.
+Ten Claude Code skills and one output style for the last mile of agent work:
+checking that what you are about to say is true, and writing it so somebody
+else can act on it.
 
-Two audiences, and neither is the primary one: a public artifact carrying a
-byline, and a working artifact carrying none, down to the replies a session
-gives its own user.
+Not a linter for your codebase and not a prompt library. These are review and
+drafting passes Claude runs on prose: the docs, READMEs, release notes, issues,
+PR bodies and commit messages an agent writes, plus the replies it gives you in
+the terminal.
 
-## What is here
+## Why you need it
 
-| Skill | Owns |
-|---|---|
-| [`substantiate`](skills/substantiate/SKILL.md) | The front door. Classifies the document, selects which passes apply, runs them in order, reports what it skipped. Makes no edits of its own. |
-| [`verify-claims`](skills/verify-claims/SKILL.md) | Whether the evidence behind a statement could have shown you the opposite. Exit status lost through pipes, empty output from a command that never matched, provenance read off resemblance. |
-| [`claim-provenance`](skills/claim-provenance/SKILL.md) | Whether the author earned the claim. Scores each assertion's delivery against how it was actually obtained, then repairs the gap. |
-| [`semantic-remediation`](skills/semantic-remediation/SKILL.md) | Whether a sentence means anything. Twelve categories of prose that reads fluently and falls apart on a literal read. |
-| [`readability`](skills/readability/SKILL.md) | Whether a reader who did not do the work can follow it. Main point first, descriptive headings, terms explained at first use. |
-| [`brevity`](skills/brevity/SKILL.md) | How much should exist. Cuts whole units rather than compressing sentences, and stops at the floor where the reader has to reconstruct what you deleted. |
-| [`deslop`](skills/deslop/SKILL.md) | Register and vocabulary. A writing system to draft inside, and a tell catalog to lint against afterwards. |
-| [`tech-docs-layers`](skills/tech-docs-layers/SKILL.md) | What a doc contains and where it lives. |
-| [`code-restraint`](skills/code-restraint/SKILL.md) | Comment density and code shape, matched to the host file. |
-| [`rendered-page-review`](skills/rendered-page-review/SKILL.md) | How a page reads rendered, at real viewport widths. |
+Agents write constantly and nobody reviews most of it. Three things go wrong,
+and only the last one looks like a writing problem.
+
+**It tells you things it never checked.** A gate "passed" because its exit
+status went through a pipe and the pipe reported `tail`. A grep returned nothing
+because the flag was rejected, and empty read as a clean result. A count quoted
+from recall. A file read in one checkout and reported as another. The sentence
+is fluent and the delivery is confident, and the evidence behind it could never
+have shown you the opposite.
+
+**It writes sentences that fall apart on a literal read.** Prose shaped like an
+argument that holds no claim. Significance nobody measured. A range that sounds
+like a spectrum and specifies nothing. You can tell something is off and not
+what, because the register is doing the work the content is not.
+
+**It pads.** Restating the question, narrating the route, three bullets holding
+one idea each. Then a closing paragraph summarizing the paragraph above it.
+
+The first of those is why `verify-claims` alone is 64% of this repo by lines,
+measured 2026-09-13. A reader who cannot tell a measurement from a guess cannot
+see what they are reading, however well-built the sentence.
+
+Worth installing if you ship prose an agent helped write, or if you run more
+than one session at once and reading the output is what limits you.
+
+## The skills
+
+`substantiate` is the front door. It classifies the document and its reader,
+runs only the passes that type needs, in the order the passes themselves
+declare, and reports what it skipped. It makes no edits of its own. It is also
+the only one that routes to the others: the remaining nine name their
+neighbours without requiring them, so any of them installs and runs on its own.
+
+### Is it true?
+
+| Skill | Owns | Fires on |
+|---|---|---|
+| [`verify-claims`](skills/verify-claims/SKILL.md) | Whether the evidence behind a statement could have shown you the opposite. Exit status lost through pipes and background chains, empty output from a command that never matched, a probe standing in for a gate, provenance read off resemblance. | A gate result about to be reported or trusted, a flake being chased, a grep or count about to justify a decision |
+| [`claim-provenance`](skills/claim-provenance/SKILL.md) | Whether the author earned the claim. Scores each assertion's delivery against how it was actually obtained, then repairs the gap by cutting, downgrading, or going and getting it. | "are you sure", "how do you know", "where did that number come from", "that reads like you made it up" |
+| [`semantic-remediation`](skills/semantic-remediation/SKILL.md) | Whether a sentence means anything. Twelve categories of prose that reads fluently and falls apart on a literal read. | "does this actually make sense", "this sounds smart but I can't tell if it's saying anything", "that sounds like an oversell" |
+
+### Can anyone read it?
+
+| Skill | Owns | Fires on |
+|---|---|---|
+| [`readability`](skills/readability/SKILL.md) | Whether a reader who did not do the work can follow it. Main point first, descriptive headings, one idea per paragraph, terms explained at first use, every number kept at full precision. | "this is confusing", "hard to follow", "my eyes glide right over it", "explain it simply" |
+| [`brevity`](skills/brevity/SKILL.md) | How much should exist. Cuts whole units rather than compressing sentences, and stops at the floor where the reader has to reconstruct what you deleted. | "too long, shorten it", "feels verbose and defensive", "eating up the context window" |
+| [`deslop`](skills/deslop/SKILL.md) | Register and vocabulary. A writing system to draft inside, and a tell catalog to lint against afterwards. | "deslop", "sounds like AI", "sounds like ChatGPT" |
+
+### Where does it go?
+
+| Skill | Owns | Fires on |
+|---|---|---|
+| [`tech-docs-layers`](skills/tech-docs-layers/SKILL.md) | What a doc contains and where it lives, across six layers of a repo's documentation. | A docs page that "is a giant wall of text", "keeps getting stale", or "doesn't link to docs pages enough" |
+| [`code-restraint`](skills/code-restraint/SKILL.md) | Comment density, altitude and code shape, matched to the host file rather than to a house style. | "this reads as AI generated", "too many comments", "why all the try/catch", "match the existing style" |
+| [`rendered-page-review`](skills/rendered-page-review/SKILL.md) | How a page reads rendered, at real viewport widths, skimmed rather than read. | "review the landing page", "how does this render", "it breaks on mobile", "the page feels dense" |
+
+The quoted phrases are lifted verbatim from each skill's `description`, which
+is the field Claude Code matches against to decide whether to offer a skill. That
+matching is the whole mechanism by which any of this runs, and it has a
+failure mode worth reading before you install:
+[a skill only fires when something already in the context names it](#a-skill-only-fires-when-something-already-in-the-context-names-it).
 
 `deslop` and `readability` each ship a linter for the machine-checkable part of
 their rules. The other eight are judgement, and a linter for them would emit
 warnings a human has to adjudicate, which is a tier that measurably goes unread.
 
-[`output-styles/clarity.md`](output-styles/clarity.md) is the output style the
-repo is named for. It reaches the one surface a skill cannot: an ordinary reply
-names nothing, so nothing invokes a pass on it. See
-[output-styles/README.md](output-styles/README.md).
+## The output style
+
+[`output-styles/clarity.md`](output-styles/clarity.md) is what the repo is named
+for, and it reaches the one surface a skill cannot. A skill fires when something
+in the context names it. An ordinary reply names nothing, so nothing invokes a
+pass on it, and you do not hand your own chat message to a linter before sending
+it.
+
+An output style changes the instructions Claude Code sends with every request,
+so it applies to every reply whether or not anyone asked. Two halves:
+
+- **How much to write.** Open with the answer. Report outcomes, not the route.
+  A short question takes a short answer. Error output, security findings and
+  destructive-action confirmations are exempt and go out whole. So are the four
+  things a short reply drops quietly: a step you skipped, a check you did not
+  run, a number you did not verify, a result that came back partial.
+- **Writing to the reader.** Give the observable rather than the mechanism, put
+  consequence before identifiers, explain a term the first time it appears, keep
+  every number and stated condition at full strength, and say how you know a
+  thing when the reader might act on it.
+
+The second half is `readability` Mode 5 and one rule from `claim-provenance`,
+reworded to stand alone. The first half covers the same ground as Claude Code's
+built-in **Concise** style without copying it, so it will not inherit
+Anthropic's revisions to theirs. It sets `keep-coding-instructions: true`, which
+is load-bearing: without it a custom style drops Claude Code's built-in
+software-engineering instructions.
+
+Only one style is active at a time and a style replaces the defaults rather than
+layering on them, so this is a trade against whichever style you run now.
+[output-styles/README.md](output-styles/README.md) has the rest, including why
+subagents never see it.
 
 ## A skill only fires when something already in the context names it
 
@@ -70,8 +150,20 @@ scripts/install-skills.sh
 It reads `skills/`, which is where they live and the layout a Claude Code
 plugin needs. Symlinks rather than copies, so `git pull` updates every
 installed skill at once. `--dry-run` reports what would change. `--target`
-installs somewhere other than `~/.claude/skills`. Naming skills as arguments
-installs only those.
+installs somewhere other than `~/.claude/skills`.
+
+**You do not have to take the set.** Naming skills as arguments installs only
+those:
+
+```bash
+scripts/install-skills.sh verify-claims
+```
+
+That case is worth stating because `verify-claims` is not a prose skill. It
+ships here because the bundle that ships first should hold it rather than every
+consumer vendoring a copy and guaranteeing drift, and somebody who wants one
+verification skill should not have to discover the shape of the bundle at
+install time.
 
 To skip a skill on this machine, list its name in
 `~/.claude/skills/.install-skills-ignore`, one per line, with an optional
