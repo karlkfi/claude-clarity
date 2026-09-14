@@ -120,6 +120,10 @@ That is `lint-sh` (shellcheck), `lint-py` (ruff, rules pinned to match CI),
 backlog store) and `test` (every `test-*.sh`). Each runs on its own too.
 `make help` lists them.
 
+[`docs/decisions.md`](docs/decisions.md) is why the repo is shaped the way it
+is — one entry per decision, each naming what would reverse it. Read it before
+undoing something that looks arbitrary.
+
 Open work is in [`docs/queue/`](docs/queue/README.md), one file per item with
 priority in each item's `rank` key rather than in a table. `scripts/queue.py`
 and `scripts/alloc-queue-id.sh` are vendored copies maintained upstream — change

@@ -45,6 +45,10 @@ breaks, is what stops the next session tidying the rule away.
 what the project used to believe, and what would reverse the decision. A skill
 with no such doc puts provenance in the commit message and the PR body.
 
+[`docs/decisions.md`](docs/decisions.md) is the repo-level one: read it before
+changing something that looks arbitrary, and add an entry there when a change
+settles something new. Every entry names what would reverse it.
+
 The failure is quiet in both directions. Provenance in a skill costs tokens on
 every invocation and goes stale invisibly. Mechanism stripped out of one leaves
 a rule that reads as arbitrary and gets improved away by the next session to
