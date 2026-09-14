@@ -73,7 +73,7 @@ but do not need them installed, so any one of them runs alone.
 | [`brevity`](skills/brevity/SKILL.md) | How much should exist. Cuts whole units rather than compressing sentences, and stops at the floor where the reader has to reconstruct what you deleted. | "too long, shorten it", "feels verbose and defensive", "eating up the context window" |
 | [`deslop`](skills/deslop/SKILL.md) | Register and vocabulary. A writing system to draft inside, and a tell catalog to lint against afterwards. | "deslop", "sounds like AI", "sounds like ChatGPT" |
 
-### Where does it land?
+### Is it in the right place?
 
 | Skill | Owns | Fires on |
 |---|---|---|
