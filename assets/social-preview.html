@@ -1,0 +1,95 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>claude-clarity social preview</title>
+<style>
+  :root {
+    --ground: #0b0e13;
+    --ink: #e9eef3;
+    --muted: #79838f;
+    --dead: #444d5a;
+    --pen: #f4555b;
+    --accent: #4cc2e0;
+    --mono: "Menlo", ui-monospace, monospace;
+    --sans: system-ui, "Helvetica Neue", sans-serif;
+    --hand: "Marker Felt", "Noteworthy", "Chalkboard SE", cursive;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1280px; height: 640px;
+    background: var(--ground); color: var(--ink);
+    font-family: var(--sans); padding: 56px 72px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ""; position: absolute; top: -320px; right: -300px;
+    width: 980px; height: 980px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%, rgba(76,194,224,.16), rgba(76,194,224,0) 62%);
+  }
+  header { display: flex; align-items: baseline; gap: 26px; }
+  header h1 { font-family: var(--mono); font-size: 52px; font-weight: 600; letter-spacing: -.01em; }
+  header p { font-size: 29px; color: var(--muted); }
+
+  .draft {
+    position: relative;
+    font-family: var(--mono); font-size: 26px; line-height: 1.90;
+    color: var(--ink);
+  }
+  .draft s {
+    color: var(--dead); text-decoration: line-through;
+    text-decoration-color: var(--pen); text-decoration-thickness: 2.5px;
+  }
+  .ins { position: relative; }
+  .ins em {
+    position: absolute; left: 50%; transform: translateX(-50%); top: -33px;
+    font-family: var(--hand); font-style: normal; font-size: 25px;
+    color: var(--pen); white-space: nowrap;
+  }
+  .note {
+    position: absolute; font-family: var(--hand); font-size: 30px;
+    color: var(--pen); white-space: nowrap;
+  }
+  .note::before { content: "\2190  "; }
+
+  .result { display: flex; align-items: baseline; gap: 20px; }
+  .result { position: relative; margin-top: 28px; }
+  .result .tick { color: var(--accent); font-family: var(--mono); font-size: 29px; }
+  .result .text { font-family: var(--mono); font-size: 29px; color: var(--ink); }
+  .result .note {
+    position: absolute; font-family: var(--hand); font-size: 28px;
+    color: var(--accent); white-space: nowrap; top: 48px; left: 868px;
+  }
+  .result .note::before { content: "\2190  "; }
+
+  footer {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--mono); font-size: 27px; color: var(--dead);
+  }
+  footer .skills { color: var(--muted); }
+</style>
+<header>
+  <h1>claude-clarity</h1>
+  <p>a copy editor for your agents</p>
+</header>
+
+<div class="draft">
+  <div><s>Great question! I've gone ahead and</s> updated the retry</div>
+  <div>handler in client.go to <span class="ins"><s>utilize</s><em>use</em></span> exponential backoff.</div>
+  <div><s>The suite passes &mdash;</s> 47 tests, 0 failures. <s>This should</s></div>
+  <div><s>significantly improve reliability going forward. Let</s></div>
+  <div><s>me know if you'd like me to explain anything further!</s></div>
+  <span class="note" style="top: 0px; left: 868px;">readability</span>
+  <span class="note" style="top: 49px; left: 868px;">deslop</span>
+  <span class="note" style="top: 198px; left: 868px;">brevity</span>
+  <span class="note" style="top: 99px; left: 868px;">claim-provenance</span></div>
+
+<div class="result">
+  <span class="tick">&#10003;</span>
+  <span class="text">Updated the retry handler in client.go to use<br>exponential backoff. 47 tests, 0 failures.</span>
+  <span class="note">verify-claims</span>
+</div>
+
+<footer>
+  <span class="skills">ten skills &middot; one output style</span>
+  <span>github.com/karlkfi/claude-clarity</span>
+</footer>
