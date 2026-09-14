@@ -160,16 +160,32 @@ under `docs/` is a change to a live web page, so review it with
 once, as the subject of the original measurement, which is a citation and fires
 nothing.
 
-So the README's claim survives its cleanest available test. A description
-decides whether a skill fires once its subject is in the context; a line naming
-it at a moment is what puts the subject there. Broadening a description is
+So the README's claim survives its cleanest available test, though not by the
+mechanism that line states. A description decides whether a skill fires once
+its subject is in the context; naming it in a loaded `CLAUDE.md` is what puts
+the subject there. What the naming did was put the skill's name within reach
+of a session whose purpose was already a review — see the occasion counts
+below, where the stated condition fires nothing. Broadening a description is
 still not the fix.
 
-Two limits. The count is of invocations, not of occasions where a skill
-applied, so it cannot say how often either was skipped when it should have
-fired. And the same count exposes the next laggard: `tech-docs-layers` has 6
-lifetime calls and 1 since mid-August, and no `CLAUDE.md` on that machine names
-it.
+The count above is of invocations. Counting the *occasions* instead, the same
+day and corpus, says the shape of the naming line is what carries it. In
+`github-actions-gateway`, 162 sessions edited a page that repo publishes and
+none fired `rendered-page-review`, though its `CLAUDE.md` names the skill for
+exactly that condition; all 11 of the skill's calls come from sessions that
+edited no Markdown at all. `tech-docs-layers`, named in no `CLAUDE.md` on that
+machine, fired in 2 of the 65 sessions that rewrote eight or more
+documentation pages. So a line naming a skill at a moment somebody notices
+fires, and a line naming it as a standing property of a file path does not —
+nothing re-reads a `CLAUDE.md` when its condition becomes true.
+[Q1007](queue/Q1007.md) carries that to the README, whose own sample line has
+the second shape.
+
+The join there is session-level, so an occasion is "edited a published page"
+rather than "needed a viewport review", and a typo fix counts. Only
+`Edit`/`Write`/`MultiEdit` were counted, so a page changed through `sed` is
+invisible and the denominators understate, which puts the true rates below the
+ones quoted.
 
 **What would reverse it:** a re-count in which a skill named at a moment in a
 loaded `CLAUDE.md` stays at zero, or one in which a skill named nowhere climbs
