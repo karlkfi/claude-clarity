@@ -34,7 +34,7 @@ citation goes stale loudly rather than silently.
 
 Two sources, and the ID tells you which.
 
-**Q116–Q301 were filed elsewhere.** They target skills that lived in a larger
+**Q146–Q301 were filed elsewhere.** They target skills that lived in a larger
 private collection and moved here with them, keeping the IDs they were filed
 under. Several name a neighbouring item — Q237, Q244, Q260, Q280, Q297 — that
 stayed behind, so those references are deliberately not links: the row exists,
