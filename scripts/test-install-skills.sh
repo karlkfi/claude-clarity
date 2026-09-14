@@ -135,6 +135,18 @@ ln -s "$tmp/other/alpha" "$tmp/elsewhere/alpha"
 check 'foreign link conflicts' 1 bash "$script" --src "$tmp/src" --target "$tmp/elsewhere"
 expect 'names the foreign target' 'CONFLICT alpha ->'
 
+# --- A link whose target is gone is repaired, not refused -------------------
+# Observed on a real machine: the repo a skill was linked into got renamed, so
+# the link survived and what it pointed at did not. --force guards somebody's
+# only copy, and a dangling link is not one — refusing here spends a decision
+# on a skill that cannot be read either way.
+mkdir -p "$tmp/dangling"
+ln -s "$tmp/vanished/alpha" "$tmp/dangling/alpha"
+check 'a broken link is repaired' 0 bash "$script" --src "$tmp/src" --target "$tmp/dangling"
+expect 'says the link was broken' 'relink +alpha \(was a broken link to'
+expect 'names the old target' 'broken link to .*/vanished/alpha'
+assert 'the link now resolves' [ -f "$tmp/dangling/alpha/SKILL.md" ]
+
 # --- The machine-local ignore file -----------------------------------------
 # gamma stands in for a skill this machine does not want linked.
 # The default every-skill run must not link it, because that run is how the

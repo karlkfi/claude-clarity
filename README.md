@@ -156,7 +156,9 @@ everything installed at once. `--dry-run` reports what would change.
 `--skills-target` and `--styles-target` install somewhere else.
 
 It refuses to overwrite anything that is not one of its own links, because that
-file is probably yours and probably the only copy; `--force` replaces it.
+file is probably yours and probably the only copy; `--force` replaces it. A link
+whose target is gone is the exception and is repaired on sight — there is no
+copy there to protect.
 
 It writes no settings file. Selecting an output style replaces whichever style
 the machine runs today, so that stays your decision — the run prints the line

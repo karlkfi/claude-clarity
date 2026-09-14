@@ -193,6 +193,14 @@ It also refuses skill names, so `install.sh verify-claims` is an error naming
 one skill also installed a style, which is a second spelling of a partial
 install.
 
+One case is exempt from `--force`: a link whose target no longer exists. That
+guard is there to stop the install destroying somebody's only copy of a skill or
+a style, and a dangling link is not one. Found by running the installer for real
+— `~/.claude/output-styles/clarity.md` pointed into a repo that had been renamed,
+and `settings.json` had selected `Clarity` all along, so the style was both
+active and unreadable. Refusing there would have spent a decision on a file that
+could not be read either way.
+
 **What would reverse it:** a second output style arriving with a real reason to
 install one and not the other, or Claude Code growing a way to activate a style
 that is not a mutually exclusive settings key.

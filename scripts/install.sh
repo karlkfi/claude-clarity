@@ -94,6 +94,20 @@ for src in "$SRC_DIR"/*.md; do
       already=$((already + 1))
       continue
     fi
+    # A link whose target is gone — the repo it pointed into was moved,
+    # renamed, or had the style taken out of it. -e follows the link, so
+    # this is the dangling case and nothing else. --force exists to stop us
+    # destroying somebody's only copy, and here there is no copy: the style
+    # is already broken, and a prompt to re-run with --force spends a decision
+    # on a file that cannot be read either way.
+    if [ ! -e "$dest" ]; then
+      # Read before the relink, or this reports the target we just wrote.
+      was="$(readlink "$dest" 2>/dev/null || echo "$current")"
+      [ "$DRY_RUN" -eq 1 ] || { rm -f "$dest"; ln -s "$src" "$dest"; }
+      echo "  relink   $name (was a broken link to $was)"
+      replaced=$((replaced + 1))
+      continue
+    fi
     if [ "$FORCE" -eq 0 ]; then
       echo "  CONFLICT $name -> $current (already linked elsewhere; --force to replace)" >&2
       conflicts=$((conflicts + 1))

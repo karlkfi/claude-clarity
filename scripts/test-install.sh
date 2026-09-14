@@ -109,11 +109,24 @@ assert 'the real file survives' grep -q mine "$tmp/styles/clarity.md"
 check '--force replaces it' 0 "$script" "${targets[@]}" --force
 assert 'the link is back' [ -L "$tmp/styles/clarity.md" ]
 
-# --- a link pointing somewhere else is also a conflict ----------------------
+# --- a link to someone else's real file is a conflict -----------------------
+# The target has to exist: a link into nothing is the dangling case below, and
+# writing this one without the file tested that instead under the wrong name.
 rm "$tmp/styles/clarity.md"
+echo 'theirs' > "$tmp/elsewhere.md"
 ln -s "$tmp/elsewhere.md" "$tmp/styles/clarity.md"
 check 'a foreign link conflicts' 1 "$script" "${targets[@]}"
 expect 'names the foreign link' 'CONFLICT clarity\.md ->'
+
+# --- a dangling link is repaired without --force ----------------------------
+# The case this hit for real: the style had been linked into a repo that was
+# later renamed, so the link survived and its target did not.
+rm -f "$tmp/styles/clarity.md"
+ln -s "$tmp/gone/clarity.md" "$tmp/styles/clarity.md"
+check 'a broken link is repaired' 0 "$script" "${targets[@]}"
+expect 'says the link was broken' 'relink +clarity\.md \(was a broken link to'
+expect 'names the old target, not the new one' 'broken link to .*/gone/clarity\.md'
+assert 'the link now resolves' [ -f "$tmp/styles/clarity.md" ]
 
 # --- argument handling ------------------------------------------------------
 check 'an unknown option fails' 1 "$script" "${targets[@]}" --nope
