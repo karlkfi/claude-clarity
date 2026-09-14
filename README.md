@@ -65,7 +65,7 @@ but do not need them installed, so any one of them runs alone.
 | [`claim-provenance`](skills/claim-provenance/SKILL.md) | Whether the author earned the claim. Scores each assertion's delivery against how it was actually obtained, then repairs the gap by cutting, downgrading, or going and getting it. | "are you sure", "how do you know", "where did that number come from", "that reads like you made it up" |
 | [`semantic-remediation`](skills/semantic-remediation/SKILL.md) | Whether a sentence means anything. Twelve categories of prose that reads fluently and falls apart on a literal read. | "does this actually make sense", "this sounds smart but I can't tell if it's saying anything", "that sounds like an oversell" |
 
-### Can anyone read it?
+### Is it readable?
 
 | Skill | Owns | Fires on |
 |---|---|---|
