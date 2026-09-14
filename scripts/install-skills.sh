@@ -35,9 +35,9 @@
 #   --force    Replace an existing entry that is not our symlink. Refuses
 #              without this, because that entry may be someone's own skill.
 #   --target   Install somewhere other than ~/.claude/skills.
-#   --src      Read skills from somewhere other than the repo root — for a
-#              clone that keeps them under skills/ rather than beside the
-#              README.
+#   --src      Read skills from somewhere other than the default. The default
+#              is skills/ under the repo root when that directory exists, and
+#              the repo root itself otherwise.
 #
 # Requires: bash, coreutils. No network.
 
@@ -78,7 +78,14 @@ wanted() {
 # the default source. Resolving through the script's own location rather than
 # the working directory keeps `bash /path/to/scripts/install-skills.sh` working
 # from anywhere.
-[ -n "$SRC_DIR" ] || SRC_DIR="$(dirname "$0")/.."
+#
+# Skills live under skills/ here, which is the layout a Claude Code plugin
+# needs. The root is still tried, so a clone that keeps them beside the README
+# works unchanged and --src keeps overriding both.
+if [ -z "$SRC_DIR" ]; then
+  SRC_DIR="$(dirname "$0")/.."
+  [ -d "$SRC_DIR/skills" ] && SRC_DIR="$SRC_DIR/skills"
+fi
 [ -d "$SRC_DIR" ] || die "no such source directory: $SRC_DIR"
 
 # The link target is written into the symlink verbatim, so a relative --src

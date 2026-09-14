@@ -36,7 +36,7 @@ something the script can decide. Run it on the draft; a clean result says the
 coinages are introduced, not that the draft is readable.
 
 ```
-readability/scripts/readability-lint.py --known-file <your-known-terms.txt> draft.md
+skills/readability/scripts/readability-lint.py --known-file <your-known-terms.txt> draft.md
 ```
 
 ## Pick the mode first

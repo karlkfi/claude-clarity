@@ -52,7 +52,7 @@ with a review attached, and the review always passed.
 `verify-claims` is the case that makes this visible. Its body is 109,816 bytes
 against a 24 KiB hot ceiling, measured 2026-09-13 — it carries far more worked
 cases than any other skill here, and the three files under
-`verify-claims/references/` are the split already in progress. It is
+`skills/verify-claims/references/` are the split already in progress. It is
 grandfathered shrink-only, so an addition to it has to name what it displaces.
 
 **What would reverse it:** a body whose growth is genuinely a new tier rather

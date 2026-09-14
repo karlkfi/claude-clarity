@@ -11,16 +11,16 @@ gives its own user.
 
 | Skill | Owns |
 |---|---|
-| [`substantiate`](substantiate/SKILL.md) | The front door. Classifies the document, selects which passes apply, runs them in order, reports what it skipped. Makes no edits of its own. |
-| [`verify-claims`](verify-claims/SKILL.md) | Whether the evidence behind a statement could have shown you the opposite. Exit status lost through pipes, empty output from a command that never matched, provenance read off resemblance. |
-| [`claim-provenance`](claim-provenance/SKILL.md) | Whether the author earned the claim. Scores each assertion's delivery against how it was actually obtained, then repairs the gap. |
-| [`semantic-remediation`](semantic-remediation/SKILL.md) | Whether a sentence means anything. Twelve categories of prose that reads fluently and falls apart on a literal read. |
-| [`readability`](readability/SKILL.md) | Whether a reader who did not do the work can follow it. Main point first, descriptive headings, terms explained at first use. |
-| [`brevity`](brevity/SKILL.md) | How much should exist. Cuts whole units rather than compressing sentences, and stops at the floor where the reader has to reconstruct what you deleted. |
-| [`deslop`](deslop/SKILL.md) | Register and vocabulary. A writing system to draft inside, and a tell catalog to lint against afterwards. |
-| [`tech-docs-layers`](tech-docs-layers/SKILL.md) | What a doc contains and where it lives. |
-| [`code-restraint`](code-restraint/SKILL.md) | Comment density and code shape, matched to the host file. |
-| [`rendered-page-review`](rendered-page-review/SKILL.md) | How a page reads rendered, at real viewport widths. |
+| [`substantiate`](skills/substantiate/SKILL.md) | The front door. Classifies the document, selects which passes apply, runs them in order, reports what it skipped. Makes no edits of its own. |
+| [`verify-claims`](skills/verify-claims/SKILL.md) | Whether the evidence behind a statement could have shown you the opposite. Exit status lost through pipes, empty output from a command that never matched, provenance read off resemblance. |
+| [`claim-provenance`](skills/claim-provenance/SKILL.md) | Whether the author earned the claim. Scores each assertion's delivery against how it was actually obtained, then repairs the gap. |
+| [`semantic-remediation`](skills/semantic-remediation/SKILL.md) | Whether a sentence means anything. Twelve categories of prose that reads fluently and falls apart on a literal read. |
+| [`readability`](skills/readability/SKILL.md) | Whether a reader who did not do the work can follow it. Main point first, descriptive headings, terms explained at first use. |
+| [`brevity`](skills/brevity/SKILL.md) | How much should exist. Cuts whole units rather than compressing sentences, and stops at the floor where the reader has to reconstruct what you deleted. |
+| [`deslop`](skills/deslop/SKILL.md) | Register and vocabulary. A writing system to draft inside, and a tell catalog to lint against afterwards. |
+| [`tech-docs-layers`](skills/tech-docs-layers/SKILL.md) | What a doc contains and where it lives. |
+| [`code-restraint`](skills/code-restraint/SKILL.md) | Comment density and code shape, matched to the host file. |
+| [`rendered-page-review`](skills/rendered-page-review/SKILL.md) | How a page reads rendered, at real viewport widths. |
 
 `deslop` and `readability` each ship a linter for the machine-checkable part of
 their rules. The other eight are judgement, and a linter for them would emit
@@ -67,9 +67,11 @@ Clone anywhere and link each skill into `~/.claude/skills/`:
 scripts/install-skills.sh
 ```
 
-Symlinks rather than copies, so `git pull` updates every installed skill at
-once. `--dry-run` reports what would change. `--target` installs somewhere
-other than `~/.claude/skills`. Naming skills as arguments installs only those.
+It reads `skills/`, which is where they live and the layout a Claude Code
+plugin needs. Symlinks rather than copies, so `git pull` updates every
+installed skill at once. `--dry-run` reports what would change. `--target`
+installs somewhere other than `~/.claude/skills`. Naming skills as arguments
+installs only those.
 
 To skip a skill on this machine, list its name in
 `~/.claude/skills/.install-skills-ignore`, one per line, with an optional

@@ -191,6 +191,27 @@ run_from() { cd "$1" && bash "$2" --src src --target "$3"; }
 check 'relative src exits 0' 0 run_from "$tmp" "$script" "$tmp/rel"
 assert 'the relative-src link resolves' [ -f "$tmp/rel/alpha/SKILL.md" ]
 
+# --- The default source prefers skills/ over the repo root -----------------
+# This repo keeps its skills under skills/, which is the layout a Claude Code
+# plugin needs, and the script has to find them with no --src. Both arms are
+# asserted: a root holding skills/ reads that, and a root without one still
+# reads itself, so a clone laid out the old way keeps working. Without the
+# second arm the preference could be an unconditional rewrite and pass.
+mkdir -p "$tmp/plugin/scripts" "$tmp/plugin/skills/nested" "$tmp/plugin/decoy"
+touch "$tmp/plugin/skills/nested/SKILL.md" "$tmp/plugin/decoy/SKILL.md"
+cp "$script" "$tmp/plugin/scripts/install-skills.sh"
+check 'a skills/ dir is the default source' 0 \
+    bash "$tmp/plugin/scripts/install-skills.sh" --target "$tmp/plug"
+assert 'the nested skill is linked' [ -f "$tmp/plug/nested/SKILL.md" ]
+assert 'a skill beside skills/ is not' [ ! -e "$tmp/plug/decoy" ]
+
+mkdir -p "$tmp/flat/scripts" "$tmp/flat/solo"
+touch "$tmp/flat/solo/SKILL.md"
+cp "$script" "$tmp/flat/scripts/install-skills.sh"
+check 'a root with no skills/ is still the default source' 0 \
+    bash "$tmp/flat/scripts/install-skills.sh" --target "$tmp/flatdest"
+assert 'the root-level skill is linked' [ -f "$tmp/flatdest/solo/SKILL.md" ]
+
 if (( fail )); then
     printf 'test-install-skills: FAILED\n' >&2
     exit 1

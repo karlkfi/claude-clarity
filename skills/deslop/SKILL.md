@@ -80,7 +80,7 @@ Punctuation and formatting:
 `scripts/deslop-lint.py` checks the machine-checkable part of this catalog. Run it on the draft, per mode:
 
 ```bash
-deslop/scripts/deslop-lint.py --mode voice draft.md
+skills/deslop/scripts/deslop-lint.py --mode voice draft.md
 ```
 
 It reports violations per 100 words. Read the delta between two drafts, not the absolute number — the score is a smell meter, not a gate, and it cannot tell a slop word used from one quoted as an example. Everything in Step 3 that needs a reader is invisible to it: a paragraph of unsourced claims can score zero.

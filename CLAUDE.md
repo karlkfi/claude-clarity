@@ -9,11 +9,16 @@ collection. Each skill lives in its own top-level directory and contains a
 `SKILL.md` that Claude Code loads whole on every invocation.
 
 ```
-<skill-name>/
+skills/<skill-name>/
   SKILL.md        # required: frontmatter plus the instructions Claude follows
   references/     # optional: read on demand, named by the body
   scripts/        # optional: bundled executables and their tests
 ```
+
+Skills sit under `skills/` because that is the layout a Claude Code plugin
+needs, and every plugin installed on this machine uses it. `install-skills.sh`
+defaults to that directory and falls back to the repo root, so a clone laid out
+the older way still installs.
 
 `SKILL.md` frontmatter carries `name` (matching the directory) and
 `description`. The description is the trigger signal surfaced in the
@@ -71,7 +76,7 @@ same knowledge lives in two places and will drift. Test that the two agree, and
 prefer a behavioral check over comparing the two lists as strings: a script
 legitimately carries inflections and variants the prose does not spell out, and
 a string diff flags all of that as drift and gets deleted for crying wolf.
-[`deslop/scripts/test-catalog-sync.sh`](deslop/scripts/test-catalog-sync.sh)
+[`skills/deslop/scripts/test-catalog-sync.sh`](skills/deslop/scripts/test-catalog-sync.sh)
 turns each documented tell into a one-line input the linter must flag.
 
 **Warn where a human has to settle it; fail only where the script is certain
