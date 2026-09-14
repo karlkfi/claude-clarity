@@ -39,8 +39,14 @@ text by lines, measured 2026-09-14 over the ten bodies, their `references/`
 files and the output style. A reader who cannot tell a measurement from a guess
 cannot see what they are reading, however well-built the sentence.
 
-Worth installing if you ship prose an agent helped write, or if you run more
-than one session at once and reading the output is what limits you.
+None of this is fixed by reading harder. Run more than one session and the
+output goes past faster than anyone reads it — a stream per session, every one
+of them narrating its own work — so watching quietly stops being the same thing
+as seeing. Nobody decides to stop reading. It costs more than sending the next
+prompt does, every time, and the gap compounds.
+
+Worth installing if you ship prose an agent helped write, or if reading the
+output is what limits how many sessions you can run.
 
 ## The skills
 
@@ -315,14 +321,10 @@ scanners only know him by the ones he was born with. Sight is a thing you can
 trade away and a thing you can buy back, and what the buyer asks for is
 clarity.
 
-Anyone running several agents is somewhere on that market. The output goes past
-faster than anyone reads it — a stream per session, every one of them narrating
-its own work — so watching quietly stops being the same thing as seeing. Nobody
-decides to stop reading. It costs more than sending the next prompt does, every
-time, and the gap compounds.
-
-One eye is the whole advantage. A session whose replies can be read at the
-speed they arrive is one you are still supervising.
+Anyone running several agents is somewhere on that market, trading away how
+much they see for how much they can start. One eye is the whole advantage: a
+session whose replies can be read at the speed they arrive is one you are still
+supervising.
 
 ## License
 
