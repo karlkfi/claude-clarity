@@ -39,14 +39,14 @@ text by lines, measured 2026-09-14 over the ten bodies, their `references/`
 files and the output style. A reader who cannot tell a measurement from a guess
 cannot see what they are reading, however well-built the sentence.
 
-None of this is fixed by reading harder. Run more than one session and the
-output goes past faster than anyone reads it — a stream per session, every one
-of them narrating its own work — so watching quietly stops being the same thing
-as seeing. Nobody decides to stop reading. It costs more than sending the next
-prompt does, every time, and the gap compounds.
+All three are catchable by a careful read, so the problem is cost rather than
+difficulty. Run several sessions at once and each narrates its own work in its
+own stream, where checking a claim costs more than sending the next prompt. So
+checking is what gets dropped, and dropping it is never a decision anyone
+makes.
 
 Worth installing if you ship prose an agent helped write, or if reading the
-output is what limits how many sessions you can run.
+output is what limits you.
 
 ## The skills
 
