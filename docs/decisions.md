@@ -165,3 +165,34 @@ re-taken against something generic.
 **What would reverse it:** nothing about the rule. What changes case by case is
 which kind a given passage is, which is why each one is argued rather than
 pattern-matched.
+
+## The install is one entry point, and it does not write settings
+
+`scripts/install.sh` links the skills and the output styles;
+`scripts/install-skills.sh` is still the skills half on its own, and is what the
+umbrella calls.
+
+The alternative was leaving the style to a documented `ln -s`. That is one file
+and no conflict cases, so a script for it looked like ceremony — and the
+one-liner in the README assumed `~/.claude/output-styles/` already existed,
+which on a machine that has never set a style it does not. The argument that
+settled it is the other direction: with two published commands, anybody who
+already knows `install-skills.sh` installs half the repo and gets a success
+message for it. The umbrella suppresses that script's pointer back to itself
+when it is the caller, because the note is addressed to someone who ran it
+directly.
+
+It writes no settings file. Linking a style makes it available, not active, and
+the line that activates it — `{"outputStyle": "Clarity"}` — replaces whichever
+style the machine runs today, since only one is ever active and a style replaces
+the defaults rather than layering on them. That is the machine's call, not a
+clone's, so the run prints the line and stops.
+
+It also refuses skill names, so `install.sh verify-claims` is an error naming
+`install-skills.sh`. The passthrough worked, and it meant a command asking for
+one skill also installed a style, which is a second spelling of a partial
+install.
+
+**What would reverse it:** a second output style arriving with a real reason to
+install one and not the other, or Claude Code growing a way to activate a style
+that is not a mutually exclusive settings key.

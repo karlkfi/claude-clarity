@@ -3,6 +3,9 @@
 # install-skills.sh — make this repo's skills available to Claude Code by
 # symlinking each one into ~/.claude/skills/.
 #
+# This is the skills half of the install. scripts/install.sh runs it and links
+# the output styles too; run that instead unless you want the skills alone.
+#
 # Symlinks rather than copies, so `git pull` updates every installed skill at
 # once and an edit to an installed skill is an edit to the repo.
 #
@@ -204,6 +207,11 @@ else
 fi
 echo "  linked $linked, replaced $replaced, already installed $already," \
      "skipped $skipped, conflicts $conflicts"
+# Nothing else says the output styles were not part of this run, and a run that
+# reports success having installed half the repo reads as a complete install.
+# Suppressed when install.sh drove this, where it is about to do the other half.
+[ -n "${INSTALL_SKILLS_UMBRELLA:-}" ] ||
+  echo "  (skills only — scripts/install.sh links the output styles as well)"
 
 # Naming the file is what makes the skip actionable; a bare count reads as a
 # glitch and gets re-run with --force.

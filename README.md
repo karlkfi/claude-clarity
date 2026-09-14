@@ -144,16 +144,26 @@ subagents never see it.
 
 ## Installing
 
-Clone anywhere and link each skill into `~/.claude/skills/`:
+Clone anywhere and run:
 
 ```bash
-scripts/install-skills.sh
+scripts/install.sh
 ```
 
-It reads `skills/`, which is where they live and the layout a Claude Code
-plugin needs. Symlinks rather than copies, so `git pull` updates every
-installed skill at once. `--dry-run` reports what would change. `--target`
-installs somewhere other than `~/.claude/skills`.
+It links every skill into `~/.claude/skills/` and every output style into
+`~/.claude/output-styles/`. Symlinks rather than copies, so `git pull` updates
+everything installed at once. `--dry-run` reports what would change.
+`--skills-target` and `--styles-target` install somewhere else.
+
+It refuses to overwrite anything that is not one of its own links, because that
+file is probably yours and probably the only copy; `--force` replaces it.
+
+It writes no settings file. Selecting an output style replaces whichever style
+the machine runs today, so that stays your decision — the run prints the line
+to add.
+
+`scripts/install-skills.sh` is the skills half on its own, for a machine that
+wants the skills and not the style. It spells the target `--target`.
 
 **You do not have to take the set.** Naming skills as arguments installs only
 those:
@@ -174,14 +184,8 @@ reason after the name. That file lives beside the install target rather than in
 the tree, because which skills a machine wants is that machine's business and a
 clone should not inherit somebody else's answer.
 
-The output style installs separately:
-
-```bash
-ln -s "$(git rev-parse --show-toplevel)/output-styles/clarity.md" ~/.claude/output-styles/clarity.md
-```
-
-Then set it in a settings file. Claude Code reads style files at startup, so
-restart afterwards.
+The style is linked but not active until a settings file names it. Claude Code
+reads style files at startup, so restart afterwards.
 
 ```json
 { "outputStyle": "Clarity" }

@@ -17,15 +17,13 @@ The second half is `readability` Mode 5 and one rule from `claim-provenance`, re
 
 ### Installing it
 
-Save the file at one of three levels, then name it in a settings file. The filename is the style name unless the frontmatter sets `name`, and this one does.
-
-```bash
-ln -s "$(git rev-parse --show-toplevel)/output-styles/clarity.md" ~/.claude/output-styles/clarity.md
-```
+`scripts/install.sh` links every style here into `~/.claude/output-styles/` alongside the skills. It stops there: naming a style in a settings file replaces whichever style the machine runs today, so the run prints the line rather than writing it.
 
 ```json
 { "outputStyle": "Clarity" }
 ```
+
+The filename is the style name unless the frontmatter sets `name`, and this one does — hence `Clarity` rather than `clarity`.
 
 `~/.claude/output-styles/` is the user level and `.claude/output-styles/` the project level. In the terminal, `/config` offers a picker under **Output style**; the desktop app has no picker, so set `outputStyle` directly. The standalone `/output-style` command was removed in v2.1.91.
 
