@@ -168,7 +168,16 @@ def read_session(path):
 
 
 def matches(rule, edited):
-    """Paths this rule covers, ignoring anything under a scratch directory."""
+    """Paths this rule covers, each glob tested against the basename alone.
+
+    So `*.go` reaches into any directory, `vendor/` included, and a glob
+    carrying a directory of its own matches nothing.
+
+    Nothing is filtered out. These paths come from the index, which names only
+    repo-relative tracked files, so a session scratchpad cannot appear here and
+    a repo-local scratch file that someone staged is in the commit like any
+    other.
+    """
     globs = rule.get('paths') or []
     return sorted({
         p for p in edited
