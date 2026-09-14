@@ -21,11 +21,15 @@
 # scan misses it — and at `git commit` the index is the direct evidence anyway.
 # The transcript answers the other half: which skills this session invoked.
 #
-# It speaks at most once per session. Before deciding it looks for its own
-# prefix in the transcript, so a session it has already stopped is never
-# stopped again — which also means a pass the hook cannot see having run (a
-# transcript still being flushed, a skill invoked some other way) costs one
-# deny rather than a loop.
+# It speaks at most once per session, and names every unmet rule when it does,
+# because that one utterance is the whole budget: a rule left out of the reason
+# is discarded rather than deferred to the next commit.
+#
+# Before deciding it looks for its own earlier deny — a failed tool result
+# opening with the prefix, not the prefix anywhere in the line — so a session it
+# has already stopped is never stopped again. A pass the hook cannot see having
+# run (a transcript still being flushed, a skill invoked some other way) costs
+# one deny rather than a loop.
 #
 # Configure per repo in .claude/clarity-reminder.json under the project root:
 #
@@ -116,8 +120,25 @@ def staged(cwd, cmd):
     return out
 
 
+def is_own_deny(block):
+    """True for the failed tool result a call this hook denied comes back as."""
+    if block.get('type') != 'tool_result' or not block.get('is_error'):
+        return False
+    content = block.get('content')
+    if isinstance(content, list):
+        content = ' '.join(b.get('text') or '' for b in content
+                           if isinstance(b, dict))
+    return isinstance(content, str) and content.lstrip().startswith(PREFIX)
+
+
 def read_session(path):
-    """Return (skills invoked, whether this hook already spoke this session)."""
+    """Return (skills invoked, whether this hook already denied this session).
+
+    A deny is a failed tool result opening with the prefix. Matching the prefix
+    anywhere in the line instead counts a session that merely read this script
+    or ran it against a fixture, which silences the hook for every session that
+    works on it.
+    """
     skills, spoke = set(), False
     try:
         fh = open(path, encoding='utf-8', errors='replace')
@@ -125,9 +146,7 @@ def read_session(path):
         return skills, spoke
     with fh:
         for line in fh:
-            if PREFIX in line:
-                spoke = True
-            if '"tool_use"' not in line:
+            if '"tool_use"' not in line and PREFIX not in line:
                 continue
             try:
                 rec = json.loads(line)
@@ -137,10 +156,14 @@ def read_session(path):
             if not isinstance(content, list):
                 continue
             for block in content:
-                if (isinstance(block, dict) and block.get('type') == 'tool_use'
+                if not isinstance(block, dict):
+                    continue
+                if (block.get('type') == 'tool_use'
                         and block.get('name') == 'Skill'):
                     skill = (block.get('input') or {}).get('skill') or ''
                     skills.add(skill.split(':')[-1])
+                elif is_own_deny(block):
+                    spoke = True
     return skills, spoke
 
 
@@ -152,8 +175,24 @@ def matches(rule, edited):
         if p and any(fnmatch.fnmatch(os.path.basename(p), g) for g in globs)})
 
 
+def clause(rule, hits):
+    """One rule's share of the reason: what matched, and why the pass exists."""
+    shown = ', '.join(os.path.basename(p) for p in hits[:4])
+    if len(hits) > 4:
+        shown += f', and {len(hits) - 4} more'
+    why = rule.get('reason') or ''
+    return (f'`{rule["skill"]}`: {len(hits)} staged file(s) — {shown}. '
+            f'{why}').strip()
+
+
 def decide(rules, edited, skills):
-    """The first unmet rule, as a reason string, or '' when every rule is met."""
+    """Every unmet rule, as one reason string, or '' when all of them are met.
+
+    All of them rather than the first, because the budget is one utterance per
+    session, not one per rule: after a deny the hook is silent, so a rule left
+    out of the reason is discarded rather than deferred to the next commit.
+    """
+    unmet, names = [], []
     for rule in rules:
         skill = rule.get('skill')
         if not skill or skill in skills:
@@ -161,17 +200,17 @@ def decide(rules, edited, skills):
         hits = matches(rule, edited)
         if len(hits) < int(rule.get('min_files', 1)):
             continue
-        shown = ', '.join(os.path.basename(p) for p in hits[:4])
-        if len(hits) > 4:
-            shown += f', and {len(hits) - 4} more'
-        why = rule.get('reason') or ''
-        return (f'{len(hits)} staged file(s) match the `{skill}` '
-                f'rule and that pass has not run: {shown}. {why} '
-                f'Fix: invoke the `{skill}` skill over this diff, then re-run '
-                f'the commit. This hook speaks once per session, so the next '
-                f'commit is not stopped either way. '
-                f'Override: CLARITY_REMINDER_OVERRIDE=<reason>.')
-    return ''
+        unmet.append(clause(rule, hits))
+        names.append(f'`{skill}`')
+    if not unmet:
+        return ''
+    lead = '' if len(unmet) == 1 else f'{len(unmet)} passes have not run. '
+    named = names[0] if len(names) == 1 else ', '.join(names[:-1]) + f' and {names[-1]}'
+    return (f'{lead}{" ".join(unmet)} '
+            f'Fix: invoke {named} over this diff, then re-run the commit. '
+            f'This hook speaks once per session, so the next commit is not '
+            f'stopped either way. '
+            f'Override: CLARITY_REMINDER_OVERRIDE=<reason>.')
 
 
 def main():

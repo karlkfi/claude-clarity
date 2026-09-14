@@ -99,10 +99,24 @@ printf 'changed\n' >> "$dasha/a.go"; printf 'changed\n' >> "$dasha/b.go"; printf
 expect "plain commit sees an empty index"              silent "$commit" "$dasha" "$none"
 expect "commit -a sees the tracked modifications"      deny   'git commit -am x' "$dasha" "$none"
 
-# The hook speaks once: a transcript already carrying its prefix is left alone.
+# The hook speaks once: a session carrying its earlier deny is left alone. The
+# deny is a failed tool result, which is the shape Claude Code returns a denied
+# call as — matched on that rather than on the prefix appearing anywhere, per
+# the pair below.
 spoke="$(transcript spoke)"
-printf '{"message":{"role":"user","content":[{"type":"text","text":"clarity-reminder: 3 staged file(s) ..."}]}}\n' >> "$spoke"
+printf '{"message":{"role":"user","content":[{"type":"tool_result","is_error":true,"content":"clarity-reminder: 3 staged file(s) ..."}]}}\n' >> "$spoke"
 expect "a session it already stopped is not stopped again" silent "$commit" "$three" "$spoke"
+
+# The matched pair the raw-string scan failed. Reading this script, or running
+# it against a fixture, puts the prefix in the session's own transcript as
+# ordinary output — six such lines in the session that made this change, none a
+# deny. Matching the string silenced the hook for every session that ever
+# worked on it, so both halves below are asserted: the quote must not count,
+# and the deny above must still count.
+quoted="$(transcript quoted)"
+printf '{"message":{"role":"user","content":[{"type":"tool_result","is_error":false,"content":"clarity-reminder: 3 staged file(s) match the ..."}]}}\n' >> "$quoted"
+printf '{"message":{"role":"assistant","content":[{"type":"text","text":"the reason opens clarity-reminder: and then says why"}]}}\n' >> "$quoted"
+expect "a session that only quoted the prefix is still stopped" deny "$commit" "$three" "$quoted"
 
 # A repo can disable the hook, or point a rule at its own paths.
 mkdir -p "$three/.claude"
@@ -116,6 +130,38 @@ expect "a repo rule replaces the default"              deny   "$commit" "$prose"
 
 CLARITY_REMINDER_POSTURE=supervise \
     expect "supervise posture asks instead of denying" ask    "$commit" "$three" "$none"
+
+# Two rules unmet at once. The hook has one utterance per session, so a rule
+# left out of the reason is discarded rather than deferred — both names have to
+# appear in the one deny. Asserted on the reason text, since the verdict is the
+# same either way and would pass against the first-rule-only version.
+both="$(repo both a.go b.go c.go x.md y.md z.md)"
+mkdir -p "$both/.claude"
+printf '{"rules":[{"skill":"code-restraint","paths":["*.go"],"min_files":2},{"skill":"readability","paths":["*.md"],"min_files":2}]}\n' \
+    > "$both/.claude/clarity-reminder.json"
+both_reason="$(printf '{"tool_name":"Bash","tool_input":{"command":%s},"cwd":%s,"transcript_path":%s}' \
+    "$(json "$commit")" "$(json "$both")" "$(json "$none")" | python3 "$hook" \
+    | python3 -c 'import json,sys;print(json.loads(sys.stdin.read())["hookSpecificOutput"]["permissionDecisionReason"])')"
+if [ "${both_reason#*code-restraint}" != "$both_reason" ] \
+    && [ "${both_reason#*readability}" != "$both_reason" ]; then
+    printf 'ok   one deny names both unmet rules\n'
+else
+    printf 'FAIL one deny named only: %s\n' "$both_reason" >&2
+    fail=1
+fi
+
+# And the met one drops out rather than being listed as outstanding.
+met_go="$(transcript met_go code-restraint)"
+one_reason="$(printf '{"tool_name":"Bash","tool_input":{"command":%s},"cwd":%s,"transcript_path":%s}' \
+    "$(json "$commit")" "$(json "$both")" "$(json "$met_go")" | python3 "$hook" \
+    | python3 -c 'import json,sys;print(json.loads(sys.stdin.read())["hookSpecificOutput"]["permissionDecisionReason"])')"
+if [ "${one_reason#*readability}" != "$one_reason" ] \
+    && [ "${one_reason#*code-restraint}" = "$one_reason" ]; then
+    printf 'ok   a rule whose pass has run is left out of the reason\n'
+else
+    printf 'FAIL the met rule was not dropped: %s\n' "$one_reason" >&2
+    fail=1
+fi
 
 if [ "$fail" -eq 0 ]; then
     echo "test-clarity-reminder: all checks passed"
