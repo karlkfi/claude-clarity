@@ -191,6 +191,42 @@ ones quoted.
 loaded `CLAUDE.md` stays at zero, or one in which a skill named nowhere climbs
 on a description rewrite alone.
 
+## The hook ships from here, not from the guard repo
+
+`clarity-reminder` is a `PreToolUse` hook and so is every guard in
+`claude-bouncer`, which makes the mechanism a bad way to route it. The goals
+differ: a guard denies an action that is wrong on its own terms, and this one
+raises how often a pass runs when it applies. It ships with the skills it
+serves.
+
+The naming entry above says the lever saturates; the occasion counts say where.
+`code-restraint` ran in 13 of the 531 sessions that edited a source file and
+committed, and in 2 of the 138 that edited five or more — the rate falls as the
+diff grows, which inverts what you would want. A `CLAUDE.md` reaches a session
+at startup and nothing re-reads it when its subject arrives, so the hook is the
+rung that fires on the occasion rather than on recall.
+
+**It denies rather than asks**, per `hook-verdict`'s routing test: the fix can
+be written into the reason, and the model is the actor who has to run the pass.
+A deny's reason arrives as the tool error, so it reaches the model; an approved
+ask returns as an ordinary tool result and teaches the session nothing. The
+`supervise` posture turns denies into prompts for anyone who wants to watch, and
+it is opt-in because the default spends model tokens where the alternative
+spends a person's attention.
+
+**The plugin manifest sits beside `install.sh` rather than replacing it.** A
+hook cannot reach a machine any other way without hand-editing a settings file,
+and the entry below on the installer writing no settings survives intact because
+nothing about that path changes. A directory serves as a marketplace — measured
+2026-09-14 by adding one with no remote, installing a plugin whose source was a
+relative path, and removing both — so neither the hook nor the skills wait on a
+publishing decision (Q1001, Q1008).
+
+**What would reverse it:** a repo where the hook fires on occasions that did not
+want the pass, often enough that the deny reads as a tax rather than a
+reminder. The per-repo rule file is the first response to that and a retirement
+is the second.
+
 ## An exhibit may dangle; an instruction may not
 
 The rule that decided several edits during the extraction, and it binds every
