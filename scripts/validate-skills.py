@@ -75,6 +75,7 @@ Usage:
     scripts/validate-skills.py --report-tiers   # each listed skill's tier
 """
 import argparse
+import functools
 import re
 import subprocess
 import sys
@@ -414,6 +415,17 @@ def measure(file):
     return length
 
 
+@functools.cache
+def skills_by_name():
+    """Discoverable SKILL.md paths, keyed by the directory each skill lives in.
+
+    Cached because find_skills() shells out to git and warns about untracked
+    skills; resolving three names would otherwise print that warning three
+    times.
+    """
+    return {Path(f).parent.name: Path(f) for f in find_skills()}
+
+
 def resolve(name):
     """A SKILL.md path from a skill name, a directory, or a path to the file."""
     candidate = Path(name)
@@ -422,7 +434,11 @@ def resolve(name):
     nested = candidate / "SKILL.md"
     if nested.is_file():
         return nested
-    return None
+    # Both lookups above are relative to the working directory, so a bare name
+    # resolved only from inside skills/ — while the bare name is the form the
+    # docs reach for. Fall back to the gate's own discovery, which finds a
+    # skill wherever in the tree it sits.
+    return skills_by_name().get(name)
 
 
 def report(names):

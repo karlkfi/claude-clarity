@@ -571,6 +571,29 @@ for spelling in alpha alpha/SKILL.md; do
     fi
 done
 
+# The same lookup one directory down, which is where this repo's skills sit. The
+# case above puts them at the tree root, so `--report alpha` resolves there as a
+# plain relative path and passes whether or not a name lookup exists at all —
+# it could not fail on a resolver that only tries the working directory. Run
+# from the root of a tree whose skills are under skills/, a bare name has no
+# path to be, so this is the case that discriminates.
+nested_dir="$tmp/nested"
+rm -rf "$nested_dir"
+mkdir -p "$nested_dir/skills/alpha" "$nested_dir/skills/beta"
+printf -- '---\nname: alpha\ndescription: The alpha description.\n---\n' \
+    >"$nested_dir/skills/alpha/SKILL.md"
+printf -- '---\nname: beta\ndescription: A longer beta description than alpha carries.\n---\n' \
+    >"$nested_dir/skills/beta/SKILL.md"
+
+rc=0
+out="$(cd "$nested_dir" && "$validator" --report alpha 2>&1)" || rc=$?
+if (( rc == 0 )) && [[ "$out" == *skills/alpha/SKILL.md* && "$out" != *beta* ]]; then
+    printf 'ok: --report resolves a bare name from outside the skills directory\n'
+else
+    printf 'FAIL: --report alpha from a tree root exited %d: %s\n' "$rc" "$out" >&2
+    fail=1
+fi
+
 # An untracked skill: the gate warns and skips it, so --report is the only way
 # to measure the file a session is actually writing.
 untracked_report="$tmp/untracked-report"
