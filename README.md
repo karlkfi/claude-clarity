@@ -136,6 +136,34 @@ so a script you have just written is gated before you `git add` it. A tracked
 file deleted with a bare `rm` stays in the lists and the linter then fails on a
 path it cannot open. Stage the deletion.
 
+## Why it is called that
+
+> In the country of the blind, the one-eyed man is king.
+
+The proverb is Erasmus. *Minority Report* borrows it for a dealer in an alley,
+and hands over both the name and the pitch on the way there:
+
+> **Lycon:** What's the matter, can't sleep?<br>
+> **Anderton:** I just need a little clarity.<br>
+> **Lycon:** True that. You want the customary, or the new and improved?<br>
+> **Anderton:** I'll try the new stuff.
+
+Lycon hands over the inhalers, then leans in with "in the land of the blind,
+the one-eyed man is king" and lifts his shades to show the sockets. He sold his
+eyes. Anderton buys a replacement pair off the same market later, because the
+scanners only know him by the ones he was born with. Sight is a thing you can
+trade away and a thing you can buy back, and what the buyer asks for is
+clarity.
+
+Anyone running several agents is somewhere on that market. The output goes past
+faster than anyone reads it — a stream per session, every one of them narrating
+its own work — so watching quietly stops being the same thing as seeing. Nobody
+decides to stop reading. It costs more than sending the next prompt does, every
+time, and the gap compounds.
+
+One eye is the whole advantage. A session whose replies can be read at the
+speed they arrive is one you are still supervising.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

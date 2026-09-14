@@ -6,8 +6,6 @@ Everything after a style file's frontmatter reaches the model as instructions, s
 
 ## Clarity
 
-> In the country of the blind, the one-eyed man is king.
-
 `readability` Mode 5 is written for "escalations, questions to the user, impact summaries, and any explanation for someone who will not open the code" — the replies a session gives its own user. Nothing invokes a pass on those. You do not hand your own chat message to a linter before sending it, so the rules never reach the surface they were written for.
 
 `clarity.md` is that surface. Two halves:
@@ -45,17 +43,6 @@ A style's instructions are sent on every request, which prompt caching makes che
 
 ## Why it is called that
 
-The proverb is Erasmus. *Minority Report* borrows it for a dealer in an alley, and hands over both the name and the pitch on the way there:
+The name is the dealer's line in *Minority Report*, and it asks the buyer which one he wants: the customary, or the new and improved. Concise is the customary. This is the new and improved — the same brevity, plus the half that makes what survives readable.
 
-> **Lycon:** What's the matter, can't sleep?
-> **Anderton:** I just need a little clarity.
-> **Lycon:** True that. You want the customary, or the new and improved?
-> **Anderton:** I'll try the new stuff.
-
-Concise is the customary. This is the new and improved — the same brevity, plus the half that makes what survives readable.
-
-Lycon hands over the inhalers, then leans in with "in the land of the blind, the one-eyed man is king" and lifts his shades to show the sockets. He sold his eyes. Anderton buys a replacement pair off the same market later, because the scanners only know him by the ones he was born with. Sight is a thing you can trade away and a thing you can buy back, and what the buyer asks for is clarity.
-
-Anyone running several agents is somewhere on that market. The output goes past faster than anyone reads it — a stream per session, every one of them narrating its own work — so watching quietly stops being the same thing as seeing. Nobody decides to stop reading. It costs more than sending the next prompt does, every time, and the gap compounds.
-
-One eye is the whole advantage. A session whose replies can be read at the speed they arrive is one you are still supervising.
+The rest of the passage, and what it has to do with running several sessions at once, is in the top-level [README](../README.md#why-it-is-called-that).
