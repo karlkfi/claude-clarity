@@ -62,11 +62,17 @@ It is a query, not the gate: an over-cap description is reported with the overag
 and does not change the exit status, which is non-zero only for a name that could
 not be read.
 
+`--report-tiers` is the same idea one constant over: it prints what `SKILL_TIER`
+says each listed skill is, so a caller that needs the tier of a skill — or a name
+in a given tier, which is how the ceiling tests build their fixtures — reads it
+from here rather than parsing this file.
+
 Usage:
 
     scripts/validate-skills.py                  # gate every skill
     scripts/validate-skills.py --report         # every description's length
     scripts/validate-skills.py --report deslop  # one, by name or by path
+    scripts/validate-skills.py --report-tiers   # each listed skill's tier
 """
 import argparse
 import re
@@ -464,6 +470,34 @@ def report(names):
     return 1 if missing else 0
 
 
+def report_tiers():
+    """Print each listed skill's residency tier. Returns a process exit status.
+
+    SKILL_TIER is the single definition of which skill is hot or warm, so a
+    caller needing that reading — scripts/test-validate-skills.sh builds its
+    warm and hot ceiling fixtures from a name in each tier — asks for it here
+    instead of parsing this file. Same reason --report exists: a second reading
+    is a second definition, and this one would be a parse of Python source.
+
+    Only the listed skills are printed. Absence is the cold default rather than
+    a row, and printing every cold skill would make the default look like an
+    enumeration somebody has to maintain.
+    """
+    ceilings = ", ".join(
+        f"{tier} {TIER_CEILING[tier] // 1024} KiB" for tier in ("hot", "warm", "cold")
+    )
+    print(
+        f"validate-skills: residency tiers ({ceilings}); "
+        "a skill absent here is cold"
+    )
+    rank = {"hot": 0, "warm": 1}
+    for skill, tier in sorted(
+        SKILL_TIER.items(), key=lambda item: (rank.get(item[1], 2), item[0])
+    ):
+        print(f"  {tier:<5} {skill}")
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="Validate every skill's SKILL.md frontmatter."
@@ -474,6 +508,11 @@ def main():
         metavar="SKILL",
         help="print measured description lengths instead of gating "
         "(default: every skill; or name skills or SKILL.md paths)",
+    )
+    ap.add_argument(
+        "--report-tiers",
+        action="store_true",
+        help="print each listed skill's residency tier instead of gating",
     )
     ap.add_argument(
         "--base",
@@ -487,6 +526,8 @@ def main():
         "history is guaranteed to be there",
     )
     args = ap.parse_args()
+    if args.report_tiers:
+        return report_tiers()
     if args.report is not None:
         return report(args.report)
 

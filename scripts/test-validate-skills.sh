@@ -791,18 +791,49 @@ expect_ceiling_reject() {
 
 # A skill absent from SKILL_TIER is cold, so 12 KiB is its ceiling. The pair
 # straddles it by one byte in each direction, which is what says the boundary
-# is where the constant puts it rather than near it.
+# is where the constant puts it rather than near it. These two name a skill
+# that does not exist on purpose: absence *is* the case under test, so no edit
+# to the map can reach them. The warm and hot pair below cannot do that — a
+# tier only exists for a name the map lists — which is why they ask for one.
 expect_ceiling_ok 'a cold body at its 12 KiB ceiling' \
     cold-at unlisted-skill 4096 12288
 expect_ceiling_reject 'a cold body one byte over' '12,288-byte cold ceiling' \
     cold-over unlisted-skill 4096 12289
 
+# The name of a skill in one tier, from the enforcer's own reading of the map.
+# Hardcoding one here reddens this test whenever SKILL_TIER is edited for an
+# unrelated reason: the extraction that produced this repo hit it twice in one
+# session, once by making the named skill cold and once by naming a skill that
+# had not come across. The fixture follows the map instead.
+if ! tiers="$("$validator" --report-tiers 2>&1)"; then
+    printf 'FAIL: --report-tiers failed: %s\n' "$tiers" >&2
+    fail=1
+    tiers=''
+fi
+tier_member() {
+    awk -v tier="$1" '$1 == tier { print $2; exit }' <<<"$tiers"
+}
+
 # Warm and hot are the same check reading a different row of TIER_CEILING; a
-# case each is what catches a tier whose ceiling was mistyped.
-expect_ceiling_reject 'a warm body one byte over' '16,384-byte warm ceiling' \
-    warm-over brevity 4096 16385
-expect_ceiling_ok 'a hot body under its 24 KiB ceiling' \
-    hot-under verify-claims 4096 24576
+# case each is what catches a tier whose ceiling was mistyped. A tier nobody is
+# in skips rather than fails — an empty tier is a legitimate map, and failing
+# on it would be the hardcoding defect back in another form.
+warm_skill="$(tier_member warm)"
+if [[ -n "$warm_skill" ]]; then
+    expect_ceiling_reject "a warm body one byte over ($warm_skill)" \
+        '16,384-byte warm ceiling' \
+        warm-over "$warm_skill" 4096 16385
+else
+    printf 'skip: the warm ceiling — no skill is tiered warm\n'
+fi
+
+hot_skill="$(tier_member hot)"
+if [[ -n "$hot_skill" ]]; then
+    expect_ceiling_ok "a hot body under its 24 KiB ceiling ($hot_skill)" \
+        hot-under "$hot_skill" 4096 24576
+else
+    printf 'skip: the hot ceiling — no skill is tiered hot\n'
+fi
 
 # The grandfather, which is the whole transition: a body already past its
 # ceiling on the base keeps that size and may only lose bytes. Growth of one
