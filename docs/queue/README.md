@@ -38,12 +38,12 @@ Two sources, and the ID tells you which.
 private collection and moved here with them, keeping the IDs they were filed
 under. Several name a neighbouring item — Q237, Q244, Q260, Q280, Q297 — that
 stayed behind, so those references are deliberately not links: the row exists,
-and not in this store. Their claims were re-pointed but not re-derived, which
-[Q1004](Q1004.md) is about.
+and not in this store. Their claims arrived re-pointed but not re-derived, and
+were re-derived against this tree on 2026-09-14 (Q1004).
 
 **Q1001 and up are this repo's own**, starting at a round number well clear of
 the origin's sequence so a row moving in either direction can never collide with
-one already there. The first six are the open remainder of the extraction: what
+one already there. Q1001–Q1006 were the open remainder of the extraction: what
 that plan left unfinished for this repo, rather than the plan itself, which
 stays with the collection whose other bundles it schedules.
 
