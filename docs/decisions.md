@@ -178,8 +178,8 @@ machine, fired in 2 of the 65 sessions that rewrote eight or more
 documentation pages. So a line naming a skill at a moment somebody notices
 fires, and a line naming it as a standing property of a file path does not —
 nothing re-reads a `CLAUDE.md` when its condition becomes true.
-[Q1007](queue/Q1007.md) carries that to the README, whose own sample line has
-the second shape.
+The README's install guidance says so, and its sample line was rewritten into
+the first shape (Q1007).
 
 The join there is session-level, so an occasion is "edited a published page"
 rather than "needed a viewport review", and a typo fix counts. Only

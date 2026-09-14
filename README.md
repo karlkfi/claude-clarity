@@ -98,13 +98,31 @@ A bundle that ships without saying this ships a pile of files that will never
 run, and its users conclude the skills do not work rather than that they were
 never triggered.
 
+**Name a moment, not a condition.** A line stating a standing property of the
+repo fires on nothing, however true it is: every page under `docs/` is live,
+this project's prose is public. Nothing re-reads a `CLAUDE.md` at the instant
+its condition becomes true, so what fires a line is a reader reaching the
+occasion it names and recognising it.
+
+Measured 2026-09-14 over 2,117 session transcripts on one workstation: in a
+repo whose `CLAUDE.md` names `rendered-page-review` for any change under
+`docs/`, 162 sessions edited a published page and none invoked it, while all 11
+of that skill's calls came from sessions somebody opened in order to review a
+page. [`docs/decisions.md`](docs/decisions.md) has the counts and what weakens
+them.
+
 The cheapest way to name these is to name one of them. `substantiate` routes to
 the other nine, so a single line reaches the set:
 
 ```markdown
-When a draft needs checking over as a whole — a doc, README, release note, PR
-body, or post that is written and needs a review pass — use `substantiate`.
+When you have finished a draft someone outside the work will read — a doc,
+README, release note, PR body, or post — and are about to hand it over, use
+`substantiate`.
 ```
+
+That is one such line and not the line. It names the moment those documents
+change hands. A repo whose prose arrives some other way, at a release being cut
+or a page about to be published, should name that occasion instead.
 
 That covers review. It does not cover writing, and the difference matters:
 `deslop` says to write *through* its system rather than run it afterwards as a
