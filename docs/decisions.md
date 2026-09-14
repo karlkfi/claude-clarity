@@ -139,6 +139,42 @@ reach past the naming problem.
 has a mechanical repair. [Q1006](queue/Q1006.md) is the pass that goes looking,
 and records a null result as a result.
 
+## Naming a skill is what moves its trigger count
+
+Two of the ten were measured dead in the collection this came from. On
+2026-08-17, over 678 local transcripts, `readability` had one lifetime
+invocation and none since its description was rewritten from transcript
+vocabulary the day before; `rendered-page-review` had none ever. Both are live
+now. Re-counted 2026-09-14 over 2,117 transcripts — one workstation's
+`~/.claude/projects/`, not this tree — `readability` has 12 lifetime and 11
+since 2026-08-16, and `rendered-page-review` has 11, all since 2026-08-18.
+Sessions in this repo and in the collection account for one call each, so
+neither count is a skill being exercised by the people building it.
+
+The second skill is the readable case, because its two levers were never
+confounded. Broadening its description on 2026-08-16 produced nothing for two
+days. Ten of its eleven calls then came from `github-actions-gateway`
+worktrees, and that repo's `CLAUDE.md` names the skill at a moment: a change
+under `docs/` is a change to a live web page, so review it with
+`rendered-page-review`. The global `CLAUDE.md` still mentions the skill exactly
+once, as the subject of the original measurement, which is a citation and fires
+nothing.
+
+So the README's claim survives its cleanest available test. A description
+decides whether a skill fires once its subject is in the context; a line naming
+it at a moment is what puts the subject there. Broadening a description is
+still not the fix.
+
+Two limits. The count is of invocations, not of occasions where a skill
+applied, so it cannot say how often either was skipped when it should have
+fired. And the same count exposes the next laggard: `tech-docs-layers` has 6
+lifetime calls and 1 since mid-August, and no `CLAUDE.md` on that machine names
+it.
+
+**What would reverse it:** a re-count in which a skill named at a moment in a
+loaded `CLAUDE.md` stays at zero, or one in which a skill named nowhere climbs
+on a description rewrite alone.
+
 ## An exhibit may dangle; an instruction may not
 
 The rule that decided several edits during the extraction, and it binds every
