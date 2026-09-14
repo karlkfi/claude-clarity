@@ -1,0 +1,14 @@
+# Claude local state — ephemeral, machine-local
+.claude/worktrees/
+.claude/settings.local.json
+CLAUDE.local.md
+
+# macOS Finder metadata
+.DS_Store
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Scratch
+tmp/

@@ -1,0 +1,46 @@
+name: CI
+
+# Every gate below is a `make` target, and the Makefile is where the command
+# lives. Add a gate there, not here — a command inlined into this file is a
+# second copy that `make check` will not run, so it stops being reproducible
+# locally the moment it drifts.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  shellcheck:
+    name: Lint shell scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make lint-sh
+
+  ruff:
+    name: Lint Python scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make lint-py
+
+  script-tests:
+    name: Run script tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Covers each skill's own scripts/ and the root scripts/ both.
+      - run: make test
+
+  validate-skills:
+    name: Validate SKILL.md frontmatter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The body-ceiling check grandfathers each body against its size at
+          # the merge base. The default shallow checkout fetches neither the
+          # base nor enough history to find one.
+          fetch-depth: 0
+      - run: make validate
