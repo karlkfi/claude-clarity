@@ -234,6 +234,21 @@ for t in darwin/arm64 darwin/amd64 linux/amd64 linux/arm64 windows/amd64; do
 done
 ```
 
+**A path built from `../..` is a value only the venue fixes.** A table
+presented `cat <<<"$(cat ../../../../etc/hosts)"` as naming `/private/etc/hosts`
+under a setup given only as "a fresh directory outside host temp", which fixes
+nothing: from five directories at five depths that command names five different
+files, none of them `/etc/hosts`, and `/private/etc/hosts` needs a root exactly
+four levels below `/private`. It is also the realpath of `/etc/hosts` on macOS,
+so the wrong value reads as the right answer and reproducing it teaches the
+reader nothing. The review rounds either side carried a file's existence out of
+the venue that created it into a table about `/etc`, and set `/etc/T` against
+`/private/etc/T` in adjacent columns. The replacement pair — `cd /etc && cat
+<<<"$(cat hosts)"` against `cd /etc && echo "$(cat hosts)"`, same read, same
+`cd`, differing only in the here-string — resolves identically from every
+reader's root, and the gap between its two verdicts is the defect itself.
+Measured 2026-09-08.
+
 ## Search and count
 
 **`grep` matches within one line, so a wrapped string is invisible to it.**
@@ -452,6 +467,38 @@ match invites being called close enough, where a wild miss would have been
 investigated. Two sessions hit this independently on 2026-09-04. The general form
 is worth carrying past git: simulate a state change through the same mechanism
 the code under test reads it through.
+
+## Git refs are shared mutable state
+
+**`refs/remotes` lives in the common dir, so a sibling worktree moves it under
+you.** `git rev-parse --git-common-dir` and `--git-dir` differ inside a
+worktree, and remote-tracking refs are kept in the former. One clone measured on
+2026-09-16 carried 264 worktrees under roughly 28 concurrent agent sessions:
+`origin/main` there is not a ref that goes stale between your fetches, it is a
+value other processes rewrite while you run nothing. Compare against a SHA you
+captured, or against `git merge-base`, never against the live ref.
+
+**Which fetch forms move it**, measured both ways on 2026-09-16 because the
+obvious guess is wrong. `git fetch origin <branch>`, with an explicit refspec,
+does **not** update other remote-tracking refs: rewinding
+`refs/remotes/origin/main` and then fetching one unrelated branch left it
+untouched, and in a throwaway clone an upstream advance plus `git fetch origin
+other` left `origin/main` at the old SHA. A bare `git fetch origin` **does**,
+through the default `+refs/heads/*:refs/remotes/origin/*`.
+
+**A non-result that reads as a result.** `git fetch origin <deleted-branch>`
+exits 128 and leaves the ref untouched, so a test of *did fetching move this
+ref?* reads "did not move" — identical to the real negative, for reasons that
+have nothing to do with the question. Only the exit code separates them.
+
+**Install the undo before the mutation, not after it.** One of those two
+measurements was taken by rewinding `refs/remotes/origin/main` in the shared
+clone, which briefly induced, for every concurrent session, the exact failure
+being characterised; and the restore was a plain `git update-ref` appended to
+the end of the same chain rather than a `trap`, so any earlier failure would
+have left the shared ref rewound with nothing to put it back. Measure in a
+throwaway shallow clone in the session scratchpad, and where a mutation of
+shared state is unavoidable, arm its undo first.
 
 ## Scope of a checker
 
