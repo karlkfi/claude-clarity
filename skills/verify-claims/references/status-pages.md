@@ -72,11 +72,19 @@ A posted incident is the provider stating a fact about itself. All-green is the 
 statement, and it goes weak in two unrelated ways.
 
 **Posting lags detection.** That is precisely the excuse that produced the over-attribution the
-skill records, where a page showing Git Operations operational was explained away as reporting lag
-while the real cause sat locally. What settles it is not re-reading the page. It is spending the
-cheap local check that the two explanations disagree about: `ssh-add -l` costs a second and
-separates "my key is not loaded" from "the page is behind". Reach for lag only once that check comes
-back clean, and treat a page that contradicts your theory as a finding until it does.
+skill records: the page had API Requests and Actions at roughly a 20% error rate and Git
+Operations `operational`, and that contradiction was explained away as reporting lag while the
+real cause sat locally. What settles it is not re-reading the page. It is spending the cheap local
+check that the two explanations disagree about: `ssh-add -l` costs a second and separates "my key
+is not loaded" from "the page is behind". Reach for lag only once that check comes back clean, and
+treat a page that contradicts your theory as a finding until it does.
+
+That git message — `Please make sure you have the correct access rights and the repository
+exists` — has one very common local cause, and it is not one to work around: the key is not
+loaded in the agent, which is the usual way an SSH credential "expires" after a reboot. Loading it
+needs a passphrase only the user can type, so say what failed and ask them to run `ssh-add`,
+rather than reaching for HTTPS, a deploy key, or a token. Every one of those either fails the same
+way or puts you in contact with a credential you should not be handling.
 
 **A component returns to `operational` while the failures are still arriving.** The table above is
 that same incident at its peak. Later on 2026-08-17, with the incident winding down,

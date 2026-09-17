@@ -82,10 +82,9 @@ said.
 **A process probe whose pattern sits in its own command line matches itself.** Asking whether a
 job is still running with a pattern the asking command also carries as text answers "running" for
 as long as you keep asking. That is worse than having no probe: the reading is stable, plausible,
-and entirely decoupled from whether the job is alive, so it survives every re-check. A background
-job's verdict comes from its completion status and its output, never from a process probe. Where
-one is genuinely needed, break the self-match and confirm it against a case whose answer you
-already know.
+and decoupled from whether the job is alive, so it survives every re-check. A background job's
+verdict comes from its completion status and its output, never from a process probe. Where one is
+genuinely needed, break the self-match and confirm it against a case whose answer you know.
 
 **A completion predicate must key on what ends the run, not on a string that appears in it.** A
 watcher armed on a marker fires early when the marker is also vocabulary the run emits while it
@@ -111,14 +110,12 @@ it means after reading it.
 has the three causes above; an empty *input* has one effect and it is the inverse of silence — the
 command answers about a wider population than you asked about, in the shape of a successful
 filtered read. The general form is any `--flag "$VAR"` fed from a read that can fail, where empty
-means *no filter* rather than *no match*. Under HTTP
-503 `gh pr view --json headRefOid --jq .headRefOid` returned empty, and `gh run list --commit ""`
-then listed every run in the repository — exit 0, well formed, and carrying a plausible green row
-for the branch in question. Commit-scoped was the entire point of the flag, and branch-scoped is
-how a stale run reads as a pass. Re-measured against a healthy API later the same day, with a
-control in both directions: `--commit ""` returns what `gh run list` returns with no filter at all,
-while the 40-character SHA returns only that commit's runs. `gh pr list --state open` came back
-empty the same evening, which reads identically to "nothing is open". So check the value's *form*
+means *no filter* rather than *no match*. Under HTTP 503 `gh pr view --json headRefOid --jq
+.headRefOid` returned empty, and `gh run list --commit ""` then listed every run in the
+repository — exit 0, well formed, and carrying a plausible green row for the branch in question.
+Commit-scoped was the entire point of the flag, and branch-scoped is how a stale run reads as a
+pass. Re-measured against a healthy API with a control in both directions: `--commit ""` returns
+what no filter returns, the 40-character SHA only that commit's runs. So check the value's *form*
 before it filters anything, and check it against what it should be rather than against emptiness —
 a 40-character test refuses the truncated reads and error strings that `-n` accepts — then confirm
 it from a second source, here `git ls-remote`. **Do it unconditionally.** The session that hit this
@@ -128,10 +125,9 @@ them by reflex; a guard reached for on suspicion is absent wherever the failure 
 **A negative needs a positive control.** This is the sharpest rule here. A wrong positive gets
 argued with by the thing it names; a wrong negative simply agrees with whatever you already
 suspected, so nothing pushes back. Before an absence decides anything, run the same probe
-against a value you know is present. A misspelled config key, a build target that matches no
-rule, an alternation mangled by quoting — each returns the empty result that means "not
-there", and each agreed with the defect being investigated and went on agreeing after it was
-fixed.
+against a value you know is present. A misspelled config key, a build target matching no rule,
+an alternation mangled by quoting — each returns the empty result that means "not there", and
+each agreed with the defect being investigated and went on agreeing after it was fixed.
 
 **Some instruments could not have gone positive at all, and care does not recover the
 difference.** The rule above treats the control as a check on a probe that might be broken.
@@ -143,28 +139,26 @@ direction it was looking. Measured 2026-08-28 across two sessions on
 `actions-gateway/github-actions-gateway`.
 
 - **An assertion whose two endpoints cannot move relative to each other.** A bash suite asserted
-  `check_before "permits the system-critical PriorityClass before waiting"` on the needles
-  `upgrade --install gag` and `wait_for_gmc` — an order the function's own body emits whether or
-  not the mechanism named in the assertion runs between them. Deleting the entire ResourceQuota
-  block the assertion is named for left the suite at 88 ok, 0 FAIL. §3's *Delete the mechanism*
-  is what surfaced it, and the green does not mean the assertion cannot see that defect class:
-  it means the two needles were never able to separate. Re-anchored on a marker only the
-  mechanism itself emits, the same deletion moved the index off 0.
+  an ordering on two needles the function's own body emits whether or not the mechanism named in
+  the assertion runs between them. Deleting the entire block the assertion is named for left the
+  suite at 88 ok, 0 FAIL. §3's *Delete the mechanism* is what surfaced it, and the green does not
+  mean the assertion cannot see that defect class: it means the two needles were never able to
+  separate. Re-anchored on a marker only the mechanism itself emits, the same deletion moved the
+  index off 0.
 - **A green the instrument reports *in order to* report the absence.** `gh run list --commit
   <sha>` gives workflow-**run** conclusions. A workflow whose heavy job skips while its `-gate`
   job passes concludes `success`, so at run level "ran and passed" and "correctly skipped" are
   the same row by construction — the gate job exists precisely to be green when the heavy job is
-  correctly absent. A session read five such greens and wrote "unit-test, integration-test,
-  security-scan and both e2e lanes ran and passed, confirmed by `gh run list --commit` rather
-  than by branch" into a PR body, and told its user twice. The check-runs API showed all five
-  heavy jobs **skipped**, only the gate jobs reporting, and no `security-scan` job run at all.
-  Note where the care went: `--commit` fixes *which commit*, which is why it reads as the
-  guarded form, and it says nothing about *which job*, which is what the sentence needed.
+  correctly absent. A session read five such greens, wrote into a PR body that five named lanes
+  had "ran and passed, confirmed by `gh run list --commit` rather than by branch", and told its
+  user twice. The check-runs API showed all five heavy jobs **skipped**, only the gate jobs
+  reporting, and no `security-scan` job run at all. Note where the care went: `--commit` fixes
+  *which commit*, which is why it reads as the guarded form, and it says nothing about *which
+  job*, which is what the sentence needed.
 - **A probe fired where the code path had already emptied its subject.** A reviewer searched a
   captured-manifests file for a string and got 0 hits, seconds from reporting it. The probe sat
-  after a loop exercising an abort path, where the script exits at a `:?` guard before writing
-  any manifest — so the file was empty by construction and would have been empty for any string.
-  Caught, and re-run after the happy path.
+  after a loop exercising an abort path, where the script exits before writing any manifest — so
+  the file was empty by construction and would have been empty for any string.
 
 So before a zero or a green decides anything, name the state of the world that would have made
 this instrument say something else, and go and put it in front of it: the string where it is
@@ -254,14 +248,14 @@ is.** The rule above is one instance of a wider shape, and reading it as being a
 leaves the shape unnamed: a probe returning the *same* verdict for every input you deliberately
 varied has told you about itself rather than about the inputs. A zero and a near-total are the
 two variants that get looked at, because both read as results; a uniform plausible-looking
-answer is the one that gets used. Three mechanisms produce it. A `case`-based shell harness whose `case` was the script's last command, so
-all four shapes inherited its status and every one returned `rc=1` — the variant to lead with,
-because it produced a wrong answer rather than a false clean. A three-dot diff against an
-ancestor, twice: `git diff origin/main...origin/main~1` is empty by construction, the merge base
-*being* `main~1`, and a ref sweep whose only candidate was the trunk itself is that same
-identity reached by another route — the form that answers is `origin/main~1...origin/main`. And
-two fixtures whose mutation landed and was then neutralised downstream by a rule that is itself
-correct, so they passed against every implementation variant. So when the answers stop varying,
+answer is the one that gets used. Three mechanisms produce it. A `case`-based shell harness whose
+`case` was the script's last command, so all four shapes inherited its status and returned
+`rc=1` — the variant to lead with, because it produced a wrong answer rather than a false clean.
+A three-dot diff against an ancestor: `git diff origin/main...origin/main~1` is empty by
+construction, the merge base *being* `main~1`, and the form that answers is
+`origin/main~1...origin/main`. And two fixtures whose mutation landed and was then neutralised
+downstream by a rule that is itself correct, so they passed against every implementation
+variant. So when the answers stop varying,
 stop reading them: fire the probe at a case whose answer you already know, and where no such
 case exists, build one — the ref sweep above was cleared by constructing a diverged branch for
 it to find. A real population is scattered by construction. The instrument is what can be
@@ -286,22 +280,58 @@ sampled. The tell is a zero that would require a whole documented mechanism to b
 Where a zero survives that reading it has earned the positive control; where it does not, the
 probe is already known to be wrong.
 
-**A scan reports what it reached, or its zero is unreadable.** *A zero for a category is
-refuted by the mechanism that would produce it* is answered from a fact already in hand, and *A
-negative needs a positive control* by a second run. This one needs neither: print, beside the hit
-count, how many records the scan reached **in each channel it claims to cover**, so a zero from a
-channel the filter never entered is distinguishable from a zero from a channel that is genuinely
-empty. Measured 2026-09-04, on a transcript scan that took four attempts — three of them broken in
-ways this section already names, the fourth in a way it does not. It reported `inbound peer
-messages scanned: 0` beside its `hits: NONE`, and three such messages were known to exist: user
-records store `message.content` as a plain string rather than a list of blocks, so an
-`isinstance(content, list)` filter had skipped every one. Nothing in the output said so; only the
-reach count made the clean-looking negative readable. The two zeros want opposite fixes — an
-unreached channel indicts the filter, a reached one settles the absence — and a scan without the
-denominator cannot tell you which you are holding.
+**A step that narrows a population reports both sizes, or its result is unreadable.** *A zero
+for a category is refuted by the mechanism that would produce it* is answered from a fact already
+in hand, and *A negative needs a positive control* by a second run. This one needs neither: print
+how many records the step reached and how many survived it, so a zero over a population the
+narrowing never entered is distinguishable from a zero over one that is genuinely empty. Do it
+**wherever the narrowed result is about to decide something** — not everywhere, because a repo
+narrows a population in most of its pipelines, and a rule firing on all is dead in a day.
+`wc -l` either side of the step, or the count beside the verdict, catches it in the same command
+that introduces it.
 
-**One response, two causes — and a positive control cannot separate them.** The rule above
-catches a probe that is broken. This catches a probe that works perfectly and answers a narrower
+A *broken* narrowing is the easy half. Measured 2026-09-04, a transcript scan reported `inbound
+peer messages scanned: 0` beside its `hits: NONE` with three such messages known to exist: user
+records store `message.content` as a plain string rather than a list of blocks, so an
+`isinstance(content, list)` filter had skipped every one. The two zeros want opposite fixes — an
+unreached population indicts the filter, a reached one settles the absence.
+
+The hard half is a narrowing that is *correct*: the dedup is right, the flag is right, and it
+removes what the reading needed anyway, so re-reading finds nothing. Three instances from one
+parallel-dispatch run on `actions-gateway/github-actions-gateway`, 2026-09-16.
+
+Lead with the report that carried no denominator at all, because the person who wrote its fix
+filed it as a different kind of defect until the rule was stated — which is the argument for
+naming it. `scripts/ci/check-withheld-runs.sh` printed a fixed line on zero findings and never
+said how many pull requests it had examined, so a scan over twenty and a scan over none
+were byte-identical: stubbed both ways, exit 0 each time and `cmp` reporting no difference. A
+watch workflow then closed its tracking issue on the strength of that line, commenting that every
+open PR's checks had been released. Fixed by printing the reach count, and by having the workflow
+quote the checker's own line rather than restate its verdict.
+
+Then `sort -u` over a lossy key. Reconciling the row sets of `scripts/README.md` across a
+merge-driver resolution, the comparison keyed on the markdown link *label* alone and put the
+keys through `sort -u`. The file has 263 rows and 262 distinct labels — `dev/setup.sh` and
+`dogfood/setup.sh` collide — so the dedup dropped a row, and a dropped `setup.sh` row was exactly
+the substitution the check existed to catch. Re-keyed on label plus path with no dedup, compared
+both directions with `comm`, it holds — and a disagreement about the row total does not reach the
+verdict, so long as one definition is applied to both sides. The wrapped-prose grep and the
+`--state open` filter above are this rule with the narrowing living in a pattern and in a flag.
+
+**Where it stops: a reference that moved is not a population that shrank.** Printing both sizes
+would not have caught the third instance. A session reconciled a branch's rows against
+`origin/main` as a live ref rather than against the branch's own merge base, got two spurious
+extra rows, and was one message from reporting a fabricated defect in a peer's rebase. Both
+readings were correct when taken and nothing narrowed, so the fix differs: pin to a SHA or to
+`git merge-base` before anything compares against it. And `origin/main` does not go *stale*:
+`refs/remotes` lives in git's **common** dir (`git rev-parse --git-common-dir`), not the
+per-worktree one, and that clone carried 264 worktrees under roughly 28 concurrent sessions — so
+it is shared mutable state owned by other processes, and it can change between two of your own
+commands while you run nothing. Which fetch forms move it, and the two measurements behind that:
+[`references/shell-traps.md`](references/shell-traps.md).
+
+**One response, two causes — and a positive control cannot separate them.** The denominator
+rule above catches a probe that is broken. This catches a probe that works perfectly and answers a narrower
 question than the one being asked. `gh api repos/<o>/<n>/pages` returns the same 404 for "no
 Pages site is configured here" and for "this account cannot have one on a private repo", and the
 first reading is the one that agrees with wanting to build on it. Running the probe against a
@@ -316,10 +346,9 @@ merge policy is being reasoned about. `gh api repos/<o>/<n>/branches/main/protec
 the legacy branch-protection API hold a record*, not *is this branch protected*: on a repository
 that has moved to rulesets it returns a confident `404 Branch not protected` while the branch is
 protected. Measured 2026-09-01 on `karlkfi/claude-bouncer`, where that 404 was reported to the
-maintainer as an unprotected `main` —
-`gh api repos/<o>/<n>/branches/main --jq .protected` returned `true` and
-`gh api repos/<o>/<n>/rules/branches/main` listed `deletion`, `non_fast_forward` and
-`required_linear_history` on the same repository, in the same minute.
+maintainer as an unprotected `main` — while `gh api repos/<o>/<n>/branches/main --jq .protected`
+returned `true` and `gh api repos/<o>/<n>/rules/branches/main` listed three rules on the same
+repository, in the same minute.
 
 **A probe's setup step can silently define what its teardown restores to.** The two rules above
 are about a probe that is broken and a probe that is sound but narrow. This is a third: the probe
@@ -334,25 +363,26 @@ reading of run one, and the direction of the error is unconstrained — here it 
 failure, but the same setup can as easily manufacture a pass.
 
 What makes it expensive is standing: a probe is trusted more than the thing it measures, so its
-artefact arrives as a finding *about the code*, and a plausible one lands hardest. The probe
-above appeared to have found a defect of exactly the class the session was already working on,
-which is the coincidence that gets believed. So re-derive from a fresh baseline rather than a
-restored one — extract the tree again, use a new directory, append rather than plant-and-revert
-— and treat agreement between two runs sharing a setup as one reading, not two.
+artefact arrives as a finding *about the code*, and the probe above appeared to have found a
+defect of exactly the class the session was already working on. So re-derive from a fresh
+baseline rather than a restored one — extract the tree again, use a new directory, append rather
+than plant-and-revert — and treat agreement between two runs sharing a setup as one reading, not
+two. A mutation of state you share needs its undo armed *before* the mutation, not appended
+after it; measure in a throwaway clone in the session scratchpad where you can.
 
 **An approved permission prompt leaves no trace in the result.** A hook that decided `allow`, a
 hook that decided nothing, and an `ask` the user approved all hand back the same thing — the
 command's own output, with nothing marking that a prompt happened. Only a refusal is visible: a
 rejected `ask` returns `The user doesn't want to proceed with this tool use`, and a `deny` arrives
-as the hook's own reason text. So "the command ran" never separates those three, and it is never
-evidence about what a hook decided or about which version of a hook is live. This is not the
-broken-probe shape above — the signal is correct and the command genuinely did run; three upstream
-decisions collapse onto one observation. Settling whether an in-session plugin update has taken effect, a session ran four probes and tabulated all four as evidence. Three of them
-ran under either version — two where the decision moved between a defer, an `ask` and an `allow`,
-and one where both versions decide `ask`, so nothing could have differed. The session read one of
-the three as proof the old version was still live, with that identical-decision probe sitting
-unread in its own table. The single probe the new version *denies* was the only one that could
-separate them. Two instruments recover what a re-probe cannot — run the hook script directly on the
+as the hook's own reason text. So "the command ran" is never evidence about what a hook decided
+or about which version of a hook is live. The signal is correct and the command genuinely did
+run; three upstream decisions collapse onto one observation. Settling whether an in-session
+plugin update had taken effect, a session ran four probes and tabulated all four as evidence. Three ran under either
+version, one of them a case both versions decide `ask`, so nothing could have differed; the
+session read one of those three as proof the old version was still live, with the
+identical-decision probe sitting unread in its own table. The single probe the new version
+*denies* was the only one that could separate them. Two instruments recover what a re-probe
+cannot — run the hook script directly on the
 same stdin and read its `permissionDecision`, which works offline against any installed version;
 and to learn whether a prompt appeared at all, ask the user, who is the only one who saw it. That
 is the rare case where a question beats another probe.
@@ -377,11 +407,16 @@ one, and the old span never moved.
 So **derive the quantity instead of reading it**. Where the claim is a span, compute both
 endpoints; where it is a count over a population, compute the population too. Prefer a one-line
 `python3` printing the thing you are about to assert over an eyeball on a tool's native format,
-which was laid out for a different reader. Sending the command beside the claim does not close
-this, and it is the habit most likely to be mistaken for closing it: it buys provenance, not
-agreement, so both ends can re-run the command, agree on every character of its output, and
-still disagree about what it says. Here the peer recomputed and caught it, and no gate could
-have — the figure was in a message and a PR body. Two near neighbours, and it is neither. *One
+which was laid out for a different reader. A cleaner specimen than the hunk header, which needs
+the reader to know the field's structure: a verdict line printed the opposite of the SHAs sitting
+directly above it, because `before` had been captured from two commands, so the string compare
+ran against a two-line value. So **print the raw value beside the verdict and read both** — a
+derived sentence with its inputs missing is unfalsifiable on the page. The `sort -u` case above
+is this rule from the other side, where `comm` was the right instrument and the key fed to it was
+not. Sending the command beside the claim does not close this, and it is the habit most likely to
+be mistaken for closing it: it buys provenance, not agreement, so both ends can re-run the
+command, agree on every character of its output, and still disagree about what it says. Here the
+peer recomputed and caught it, and no gate could have. Two near neighbours, and it is neither. *One
 field is a projection of a mutable object* is the right field read, ambiguous about which state
 produced it; *A figure you derived is not a figure you read* is this same step failing the other
 way, a derivation that inherits its terms' credibility and carries no instrument — so a span you
@@ -401,8 +436,7 @@ and read a field they disagree on in the same call.
 to run it again and look harder, but if two states produce the same output then the second reading
 produces it too, and the only thing that grows is confidence. What breaks the tie is a second
 instrument that would have disagreed: a log file against a task notification reporting `exit code
-0`, a lint run against a probe that came back empty, another field against the one you read. Reach
-for a different measurement, not a closer look.
+0`, another field against the one you read. Reach for a different measurement, not a closer look.
 
 **The far end of an instrument can be sick, and it answers in the shape of a finding.** Three readings can settle the same way and all be wrong. `gh run list --commit
 <sha>` returned `HTTP 404: Not Found` for three PRs, which reads as *no runs on this commit* —
@@ -415,30 +449,18 @@ instrument, and the sickness clears on the platform's schedule rather than yours
 
 **A status page starts an investigation or stops one; it cannot clear the instrument.** Read it
 before spending one — in the first of those incidents it named Actions and API Requests degraded
-and stopped a wasted search. But its evidence is asymmetric: red on the component you were using is
-a finding, and all-green is not a clearance. Read it per *component*, because a blanket "the
-platform is down" over-attributes exactly as badly and the page's one-line blended indicator is the
-wrong reading for that — then treat even a component read as insufficient. On both of those 503
-readings, taken an hour apart by sessions that did not know of each other,
-`githubstatus.com/api/v2/components.json` reported every component but Copilot `operational` while
-the GraphQL API was returning HTTP 503 and write paths were still failing. The tail of an incident
-is exactly where the page reads clean, so what settles the question in either direction is the
-second endpoint rather than the page.
+and stopped a wasted search. But its evidence is asymmetric: red on the component you were using
+is a finding, and all-green is not a clearance, because the tail of an incident is exactly where
+the page reads clean. Read it per *component* — a blanket "the platform is down" over-attributes
+exactly as badly, and the one-line blended indicator is the wrong reading for that — then treat
+even a component read as insufficient and settle it on a second endpoint. Over-attribution runs
+the other way too: in that same session a `git fetch` failed with git's stock `Please make sure
+you have the correct access rights and the repository exists`, the incident took the blame, and
+the cause was local. Treat a reading from a degraded component as unverified and a failure on a
+healthy one as your own — a status page that disagrees with your theory is a finding, not noise.
+Both incidents in full, the pages and their per-component JSON, and how to find one for a
+provider not listed: [`references/status-pages.md`](references/status-pages.md).
 
-**Over-attribution runs the other way too.** In the same session a `git fetch` failed with git's
-stock `Please make sure you have the correct access rights and the repository exists`, and the
-incident took the blame; the page had API Requests and Actions at roughly a 20% error rate and Git
-Operations operational, and that contradiction was explained away as reporting lag. The cause was
-local. Treat a reading from a degraded component as unverified and a failure on a healthy one as
-your own — a status page that disagrees with your theory is a finding, not noise. Pages,
-per-component JSON, and how to find one for a provider not listed:
-[`references/status-pages.md`](references/status-pages.md).
-
-That git message has one very common local cause, and it is not one to work around: the key is not
-loaded in the agent, which is the usual way an SSH credential "expires" after a reboot. Loading it
-needs a passphrase only the user can type, so say what failed and ask them to run `ssh-add`, rather
-than reaching for HTTPS, a deploy key, or a token. Every one of those either fails the same way or
-puts you in contact with a credential you should not be handling.
 
 **The shell is an instrument too, and it fails in the same shapes.** Every rule above assumes the
 command you wrote is the command that ran. Often it is not: a pipeline hands back its filter's
@@ -467,7 +489,7 @@ stdout, and that string compares unequal to a real blob id in exactly the way a 
 platform can do the thing at all is upstream of every option built on it, so an unchecked
 capability does not produce one wrong step — it deletes the alternatives from the menu, and the
 work proceeds soundly toward something that cannot ship. Establish it before offering choices
-that rest on it, and state it as an assumption where it is offered.
+that rest on it, and state it as an assumption where offered.
 
 **A count asserts a population and a scan width.** Both go stale the moment the tree moves, and
 a scan you ran earlier in the session for another purpose does not transfer — re-derive the
@@ -517,9 +539,9 @@ mechanism you were about to read out of it. So ask what the outliers *are* befor
 mean — a question about the sample rather than about the count, and the one nothing in a review
 prompts. *Did I cause this?* is not that question and will answer no: where several sessions share
 a system, the contaminating action is usually a peer's, so the session holding the corrupted
-sample is honestly certain it changed nothing. Two checks are cheap. When the mechanism you are
-reaching for would be a configured behaviour rather than a habit, read the configuration — one
-call settles whether the system does that thing at all. And where you can afford to wait, re-take
+sample is honestly certain it changed nothing. Two checks are cheap. Where the mechanism you are
+reaching for would be a configured behaviour, read the configuration — one call settles whether
+the system does that thing at all. And where you can afford to wait, re-take
 the measurement once your activity has stopped: the same 60 pull requests re-read on 2026-08-21,
 after that batch ended, split 0 and 60. A finding that does not survive the end of the window that
 produced it was a finding about the window.
@@ -528,17 +550,17 @@ produced it was a finding about the window.
 activity, taken while your own work is changing that system, samples your own work* has the
 contamination arriving from the work. Here it arrives from the verification: an earlier step
 writes into the record a later step reads, so the later reading is of the check itself and would
-be identical if nothing under test worked at all. Both instruments are sound, both answer their
-own question correctly, and neither is narrow. What is wrong is the order they were put in, a
-property of the plan rather than of either script, so reviewing either one alone finds nothing.
+be identical if nothing under test worked at all. Both instruments are sound and neither is
+narrow. What is wrong is the order they were put in, a property of the plan rather than of
+either script, so reviewing either one alone finds nothing.
 
-Measured on a dogfood cluster, 2026-08-28. One script fetches a real manifest and attempts an
-upload against every registry mirror, to prove the mirrors serve. A second counts content
-requests in those same mirrors' access logs, to decide whether a CI job's image pulls rode them.
-The plan's own sequence runs the prover first, and it leaves 2 content requests and 1 served on
-every instance before the job starts, so the counter reports PASS whether or not a single client
-was wired: a verdict from an instrument that measured nothing, on a booked cluster session that
-costs a node-pool resize to repeat.
+Measured on a dogfood cluster, 2026-08-28. One script attempts an upload against every registry
+mirror, to prove the mirrors serve. A second counts content requests in those same mirrors'
+access logs, to decide whether a CI job's image pulls rode them. The plan's own sequence runs the
+prover first, and it leaves 2 content requests and 1 served on every instance before the job
+starts, so the counter reports PASS whether or not a single client was wired: a verdict from an
+instrument that measured nothing, on a booked cluster session that costs a node-pool resize to
+repeat.
 
 Two repairs, and the weaker one comes to mind first. Discount the interferer, here by client
 user agent, written so an unrecognised client under-counts into a failure rather than
@@ -551,39 +573,37 @@ eventual 161 content requests evidence rather than assertion.
 
 **A population read off the failure list is missing every case that recovered.** The bullets
 under *A count asserts a population and a scan width* are all about the instrument — what it
-never saw, what it grouped by, how far it scanned. Here the instrument has no blind spot: it
-saw every case, and the count was taken from a view of its output that outcome had already
-filtered. It is survivorship bias arriving backwards. The survivors are absent because you are
-reading the casualty list, and every case on that list is real, so nothing looks wrong.
-A finding about peers addressed by the title of the task chip that started
-them was derived from the listing of messages that never landed, which is filtered to the
-terminal failures, and found three. Re-derived from the address-form classifier, which sees
-every send, the class had six members across five sessions. The three that were missing had
+never saw, what it grouped by, how far it scanned. Here the instrument has no blind spot: it saw
+every case, and the count was taken from a view of its output that outcome had already filtered.
+It is survivorship bias backwards — the survivors are absent because you are reading the
+casualty list, and every case on that list is real. A finding about peers addressed by the title
+of the task chip that started them was derived from the listing of messages that never landed,
+which is filtered to the terminal failures, and found three. Re-derived from the address-form
+classifier, which sees every send, the class had six members across five sessions. The three that were missing had
 been retried under a real name and so never entered the casualty list — and they are what shows
 the failure is usually recoverable, which is the half that decides what the rule should say.
 
 Two things make it expensive. The finding survives a re-read, because it is true and merely
 smaller — three of those sends really were abandoned. And it is invisible to review: the diff
-carries a clean finding rather than a missing half, so no reviewer can catch it. Neither a wider
-scan nor a second run of the same query reaches it, since both re-read the same filtered view.
-What reaches it is re-deriving the population from a different starting point — the instrument's
-own unfiltered output, or a second instrument that sees the whole set — before the number
-decides anything.
+carries a clean finding rather than a missing half. Neither a wider scan nor a second run of the
+same query reaches it, since both re-read the same filtered view. What reaches it is re-deriving
+the population from a different starting point — the instrument's own unfiltered output, or a
+second instrument that sees the whole set — before the number decides anything.
 
 **One observation is not a steady state.** Before calling a condition permanent, take a second
-reading far enough apart to tell churn from stasis, and compare identities rather than counts.
+reading far enough apart to tell churn from stasis, comparing identities not counts.
 
 **A failure on your branch is not yours until the base fails too.** A red gate reads as caused
-by the only thing you changed, and a plausible mechanism is always available. Check out the
-base, run the same gate, read it before naming a cause. The tell that you are a bystander: a
-failing test whose identity moves between runs, or one in a file the diff never touches.
+by the only thing you changed, and a plausible mechanism is always available. Check out the base
+and run the same gate before naming a cause. The tell that you are a bystander: a failing test
+whose identity moves between runs, or one in a file the diff never touches.
 
 **A local gate disagreeing with CI indicts your toolchain first.** CI builds its tools fresh
 from the pin; your build directory holds whatever it held last time. A stale binary takes no
 flag it does not know, prints plausible output, and names real files — nothing about the run
-looks wrong. Rebuild and re-run before reporting anything about the repository. Note the
-compounding: a repeated claim gains authority without gaining evidence, so the second and third
-restatements are the expensive ones.
+looks wrong. Rebuild and re-run before reporting anything about the repository. And a repeated
+claim gains authority without gaining evidence, so the second and third restatements are the
+expensive ones.
 
 **A suite result is only valid for the tree state that held for the whole run.** The two rules
 above hand a red result to somebody else — the base, or your toolchain. This one hands it back,
@@ -605,12 +625,10 @@ opposite?* answers yes and the failure passes the check that catches most of thi
 names an innocent test — whichever one ran during the write — so the obvious next move is to
 debug code that was never wrong. The tell is a syntax or import error arriving inside a test
 assertion rather than as a collection error: a subject the suite never imports cannot fail
-collection, so its unparseable state has nowhere to surface but whatever case was running.
-
-Both checks are cheap and neither is prompted by anything on screen. Before believing a failure,
-ask whether anything under test was written during the run; before starting an edit, ask whether
-a suite is in flight. Where both already happened the run measured nothing either way, and only a
-re-run over a settled tree replaces it.
+collection, so its unparseable state has nowhere to surface but whatever case was running. So
+before believing a failure, ask whether anything under test was written during the run; before
+starting an edit, ask whether a suite is in flight. Where both already happened the run measured
+nothing either way, and only a re-run over a settled tree replaces it.
 
 ## 2. Trusting a check
 
@@ -649,11 +667,11 @@ fi
 ```
 
 A committed checker usually does this already: a read it cannot take records *unmeasurable* and
-says which read failed, rather than handing back the verdict its caller expected. That
-asymmetry is the whole gap — the checks a project commits refuse to guess, while the one-line
-checks its sessions type into a shell still land on an answer, and the shell one is the one
-deciding something right now. Enumerate the ways the probe can fail before you write the
-branch, and where a failure has nowhere to go but a verdict, that verdict is not evidence.
+says which read failed. That asymmetry is the whole gap — the checks a project commits refuse to
+guess, while the one-line checks its sessions type into a shell still land on an answer, and the
+shell one is the one deciding something right now. Enumerate the ways the probe can fail before
+you write the branch, and where a failure has nowhere to go but a verdict, that verdict is not
+evidence.
 
 **A probe that cannot fail can still be narrower than the claim riding on it.** *A probe with two
 verdicts forces every failure onto one of them* gives a failure somewhere to go; here nothing
@@ -661,25 +679,24 @@ fails. The probe runs, answers its own question correctly, and is quoted for a w
 sound instrument still answers only its own question* is the general form, and what it leaves
 out is why nobody writes the gap down: the probe and the claim share their vocabulary, so at the
 moment of writing there is nothing visibly missing. *Is this string in the file* and *does this
-program print this string* differ by one verb. A worker grepped
-a merged script for a message its change had added, got **0**,
-and was seconds from reporting the merge had dropped it — the message is assembled from f-string
-fragments, so it exists at runtime and nowhere contiguous in the source. A second session ran
+program print this string* differ by one verb. A worker grepped a merged script for a message
+its change had added, got **0**, and was seconds from reporting the merge had dropped it — the
+message is assembled from f-string fragments, so it exists at runtime and nowhere contiguous in
+the source. A second session ran
 the same check with a different substring, got **1**, and reported the merge verified; measured
 afterwards against the same file, ``If the blocker has shipped, set`` → 1 because it happens to
-sit inside one fragment, ``set `status: ready` instead`` → 0, ``shipped, set `status: ready` ``
-→ 0, and all three → 1 in what the program prints. The verification was right and the method
-was not, and nothing in either result said which. The third: a pull into the checkout every
+sit inside one fragment, and two neighbouring substrings → 0, while all three → 1 in what the
+program prints. The verification was right and the method was not, and nothing in either result
+said which. The third: a pull into the checkout every
 `~/.claude/skills/` symlink resolves to was cleared as touching no skill by grepping the
 incoming range for `SKILL.md`. Zero matches, while the range changed `queue.py` and its test —
 inside an installed skill, live under every session on the host.
 
-So match the instrument to the claim before running it, which is a different instrument per
-claim: run the program and read its **output** where the claim is about behaviour, diff against
-the reviewed revision where it is about content, enumerate the changed paths where it is about
-blast radius. The tell cannot be found by rereading the sentence, because both halves are
-written in the same words — ask instead what this instrument would report if the claim were
-false **in a way it cannot see**.
+So match the instrument to the claim before running it: run the program and read its **output**
+where the claim is about behaviour, diff against the reviewed revision where it is about
+content, enumerate the changed paths where it is about blast radius. The tell cannot be found by
+rereading the sentence, because both halves are written in the same words — ask instead what
+this instrument would report if the claim were false **in a way it cannot see**.
 
 **Agreement with the enforcer is not evidence when one detail could fool both.** *The probe is
 not the gate* says run the gate, and a *threshold* gate is where that is hardest to follow:
@@ -749,11 +766,9 @@ a different structural reason.
   *sentence* misses every sentence that names its subject anaphorically — and it does not hide
   *a* site, it preferentially hides *the* site. A paragraph names its subject once and refers back
   thereafter, so the sentence carrying the load-bearing claim is systematically the one that has
-  stopped saying what it is about. The sentence that motivated this whole correction read "The two
-  producers therefore own disjoint halves of one condition type, keyed by reason, and neither
-  writes over the other": no subject token anywhere in it, only *the two producers* and *one
-  condition type*. Test the subject over the surrounding paragraph, or a few hundred characters,
-  rather than over the sentence.
+  stopped saying what it is about. The sentence that motivated the whole correction carried no
+  subject token at all, only *the two producers* and *one condition type*. Test the subject over
+  the surrounding paragraph, or a few hundred characters, rather than over the sentence.
 - **Vocabulary.** A pattern built from a literal string lifted off known instances finds
   restatements of that string and nothing else. Six known sites shared a phrase; six further sites
   asserted the same claim sharing no literal with it.
@@ -935,11 +950,11 @@ mechanism, require red *for the reason you expect*, restore, confirm green in th
 - Delete one mechanism, not the branch around it. A deletion coarse enough to redden every
   assertion has measured only that the path is reached.
 - Read the failure, not the colour. Red from a compile error is not evidence.
-- Key the mutant run on the assertion's own report, not the suite's exit status. A suite
-  exits non-zero whether your assertion caught the defect or the run died before reaching
-  it. Require both — that assertion's own pass line absent, and its own failure text
-  present. Absence alone passes a defect destructive enough to abort, because a traceback
-  suppresses the pass line exactly the way a catch does.
+- Key the mutant run on the assertion's own report, not the suite's exit status. A suite exits
+  non-zero whether your assertion caught the defect or the run died before reaching it. Require
+  both — that assertion's own pass line absent, and its own failure text present; absence alone
+  passes a defect destructive enough to abort, since a traceback suppresses the pass line exactly
+  the way a catch does.
 - A green after deletion can mean the assertion cannot see the defect class, or that a redundant
   guard upstream is standing in — not that the mechanism is dead. Ask what the assertion actually
   observes, and what *other* code is keeping the test green.
@@ -1000,12 +1015,12 @@ rm -f control.md adjacent.md gapped.md   # untracked *.md is in the gate's own l
 ```
 
 `control=1` is what makes the other two readable. A fixture one statement under the gate's
-five-statement threshold reports `control=0` beside them, which reads as *the waiver is honoured in
-both constructions* off a run where the gate found nothing to waive. Both waiver arms pass here
-now: the fixed offset has since been replaced by a walk back through blank lines, and the suite has
-grown arms in both directions — the gapped form, a comment behind prose it must not reach past, one
-carrying an indent, and mentions of the syntax that must not waive at all. That is what a falsified
-hatch looks like, and the probe is how you check yours is one.
+five-statement threshold reports `control=0` beside them, which reads as *the waiver is honoured
+in both constructions* off a run where the gate found nothing to waive. Both waiver arms pass
+here now, and the suite has grown arms in both directions — the gapped form, a comment behind
+prose it must not reach past, one carrying an indent, and mentions of the syntax that must not
+waive at all. That is what a falsified hatch looks like, and the probe is how you check yours is
+one.
 
 **A test that supplies the value the mechanism would have supplied tests nothing.** The mutation
 runs, the mechanism is genuinely gone, and the assertion still passes — because the test handed
@@ -1195,24 +1210,22 @@ stable, so "I ran it again and it passed" is not the check it looks like.
 
 - **A rerun that passes is half the evidence, not a dismissal.** Where attempts are kept
   separately, one run holds a failing and a passing log over the same commit — a controlled
-  experiment already run for you. What the failing side contains and the passing side does not
-  is usually one line, and it often reclassifies the fix before any code is read.
+  experiment already run for you. What the failing side contains and the passing side does not is
+  usually one line, and it often reclassifies the fix before any code is read.
 - **Wait on the same signal you assert on.** Two effects of one operation almost never land
   together, so blocking on the earlier and reading the later races a real gap that no timeout
   closes. Ask which component has to observe the state for the assertion to mean what it claims.
-- **Time the unit alone before believing "under load".** Contention predicts the unit is fast by
-  itself. Slow under the full gate and fast standalone is the load story; slow both ways is not.
+- **Time the unit alone before believing "under load".** Slow under the full gate and fast
+  standalone is the load story; slow both ways is not.
 - **Repetition shares process-global state.** A test asserting an absolute value on a global
-  counter or registry passes once and fails deterministically from the second repetition on. The
-  tell is the inverse of a flake's: reproduces at any load, always at repetition ≥ 2, with
-  `actual = expected × count`.
+  counter or registry passes once and fails from the second repetition on. The tell is the
+  inverse of a flake's: any load, always at repetition ≥ 2, `actual = expected × count`.
 - **A stress loop measures the host too.** Long single-process repetition exhausts ports, file
-  descriptors, or pool slots, and the failure surfaces far from the cause. Run the identical loop
-  against the unmodified tree before calling it a second bug.
+  descriptors, or pool slots far from the cause. Run the identical loop against the unmodified
+  tree before calling it a second bug.
 - **Never assert on wall-clock time you actually spent.** Stub the sleep and assert on what the
-  stub recorded. A deadline around a process bounds the scheduler, not the guard — and a margin
-  too large to plausibly elapse, elapsing anyway, is the tell that the assertion is not measuring
-  the quantity it names.
+  stub recorded. A margin too large to plausibly elapse, elapsing anyway, is the tell that the
+  assertion is not measuring the quantity it names.
 
 Depth on all of these — synchronization gaps between participants and between cached and direct
 readers, pinning a process whose signal comes out of its memory, virtual clocks, and calibrating a
@@ -1256,10 +1269,9 @@ failed, the symptom matched that repo's postmortem describing a stale build arti
 the artifact and re-running returned an identical `ok`. That was read as consistent with the
 diagnosis and staleness went to the user as the cause. If staleness were the cause, removing the
 artifact had to change the result. The real cause was elsewhere — a denied Bash call had discarded
-the source edit silently, so the tool was correctly built from unmodified source and the gate had
-been right throughout — and the elimination clause above would have retired the hypothesis before
-the probe ran, since the build script recompiled unconditionally on every invocation and staleness
-had never been possible.
+the source edit silently — and the elimination clause above would have retired the hypothesis
+before the probe ran, since the build script recompiled unconditionally and staleness had never
+been possible.
 
 ## 6. Stating a fact nobody measured
 
@@ -1307,15 +1319,13 @@ carries a second error, and it is the one that survives — the API cannot resol
 not the same as nobody can. The agent runtime's own transcripts are an instrument the service has no
 access to; Claude Code writes each session's commands *and their results* under
 `~/.claude/projects/**/*.jsonl`, so a walk for the object's id and the verb finds the session that
-acted, with the service's own confirmation line quoted beside it — stronger than inferring from a
-command that may have failed. Measured 2026-08-25 across concurrent sessions sharing one `gh`
-credential: one read `convert_to_draft <human>` on its own PR's timeline and told him he had
+acted, with the service's own confirmation line beside it. Measured 2026-08-25 across
+concurrent sessions sharing one `gh` credential: one read `convert_to_draft <human>` on its own PR's timeline and told him he had
 deliberately drafted it, hours after another had made the same inference across four PRs and been
 answered *"i havent personally drafted any prs today. it's all you, claude."* That second session
-then diagnosed the token trap correctly and, correcting the first, asserted both that its own sweep
-was not responsible and that no instrument could settle it — while its own transcript held the
-`gh pr ready --undo` and the `✓ … is converted to "draft"` that answered it, seconds either side of
-the timeline event. The session holding the mechanism is the one that reached for unknowable.
+diagnosed the token trap correctly and then called the actor unresolvable — while its own
+transcript held the `gh pr ready --undo` that answered it, seconds from the timeline event. The
+session holding the mechanism is the one that reached for unknowable.
 
 **A reading of a file you do not control is a snapshot, and it decays silently.** The audit was
 right when it was taken; by the time it is acted on, someone has merged. Nothing prompts a
@@ -1336,8 +1346,8 @@ find; negatives do not, because *the skill says nothing about X* and *the copy h
 session start said nothing about X* read identically and only the second is supported. A session
 reported a gap in the global `CLAUDE.md` as unfiled about three hours after the fix had been
 committed. Re-invoking is not the repair, and it returns as though it were: an installed skill
-resolves through a symlink into a working checkout, and a merge writes nothing on this machine, so
-the second call re-injects the identical body and reports success. `git fetch origin && git show
+resolves through a symlink into a working checkout, so the second call re-injects the identical
+body and reports success. `git fetch origin && git show
 origin/main:<path>` is the read that can come back different from the one you are holding.
 
 **A figure lifted from ambient context was never read from an instrument.** A harness banner, a
@@ -1350,10 +1360,10 @@ the stamps are, the more plausible the number. A session took the
 first prompt, and reported it as idle time after a handback — filing a finding that a pull request
 had gone twelve hours unwatched. Its own background-task mtimes put the window at ten minutes. The
 same session stamped a `git rev-parse` reading with that banner's opening time, twelve minutes
-before the commit it named existed, and a peer reading the inversion diagnosed a clock offset that
-was not there. Both went out in messages, which is where this escapes: a date going into the tree
-meets a reviewer, and nothing lints a message. Read the clock when you take the reading, and where
-a receiver only needs the reading, send it undated and let them stamp it.
+before the commit it named existed, and a peer reading the inversion diagnosed a clock offset
+that was not there. Both went out in messages, which is where this escapes: nothing lints a
+message. Read the clock when you take the reading, and where a receiver only needs the reading,
+send it undated and let them stamp it.
 
 **A figure you derived is not a figure you read.** The rule above quotes a number; this one you
 computed, out of terms that *were* measured, so it carries their credibility and no instrument.
@@ -1371,10 +1381,10 @@ exactly the ones the work will not incidentally verify. Repeating one in a PR de
 summary republishes it under your name, with the original author's confidence and none of their
 evidence. An issue proposing a hook fix argued its trade-off was free because
 a second script validated its input the same way; the PR body repeated that as settled, and it went
-unchecked until a reviewer asked, one turn after it had shipped. It was true — which is the
-ordinary outcome, and the reason the habit survives long enough to be expensive once. The tell is a
-sentence about a file outside your diff. Attribute it to the issue, or spend the one command that
-settles it.
+unchecked until a reviewer asked, one turn after it had shipped. It was true — the ordinary
+outcome, and the reason the habit survives long enough to be expensive once. The tell is a
+sentence about a file outside your diff. Attribute it to the issue, or spend the one command
+that settles it.
 
 **A measured value is a function of the venue it was taken in, and the document names a different
 one.** *A reading of a file you do not control is a snapshot, and it decays silently* is this
@@ -1383,19 +1393,14 @@ reproduces — which is why it survives, because the re-run restores the venue a
 so the one check that would catch it cannot be another measurement. Read the surrounding text
 instead: ask which properties the value turns on — a path depth, a file somebody created, a
 platform's symlink layout, a hostname, a clock — then whether the text states them. Measured
-2026-09-08 across three consecutive review rounds on one backlog row. A table presented
-`cat <<<"$(cat ../../../../etc/hosts)"` as naming `/private/etc/hosts` under a setup given only as
-"a fresh directory outside host temp", which does not fix the value: from five directories at five
-depths that command names five different files, none of them `/etc/hosts`, and `/private/etc/hosts`
-needs a root exactly four levels below `/private`. It is also the realpath of `/etc/hosts` on macOS,
-so the wrong value reads as the right answer and reproducing it teaches the reader nothing. The
-rounds either side carried a file's existence out of the venue that created it into a table about
-`/etc`, and set `/etc/T` against `/private/etc/T` in adjacent columns. So state the property, or
-**pick an exhibit whose value the claim fixes rather than the setup**: the replacement
-pair — `cd /etc && cat <<<"$(cat hosts)"` against `cd /etc && echo "$(cat hosts)"`, same read, same
-`cd`, differing only in the here-string — resolves identically from every reader's root, and the
-gap between its two verdicts is the defect itself, which one command naming a correct-looking path
-could not isolate.
+2026-09-08 across three consecutive review rounds on one backlog row, where a table gave the
+output of a command built from `../../../..` as an absolute path under a setup that fixed neither
+the depth nor the root — and on macOS the wrong value was the realpath of the right one, so
+reproducing it taught the reader nothing. So state the property, or **pick an exhibit whose value
+the claim fixes rather than the setup**: a pair differing only in the construct under test
+resolves identically from every reader's root, and the gap between its two verdicts is the defect
+itself, which one command naming a correct-looking path could not isolate. All three rounds:
+[`references/shell-traps.md`](references/shell-traps.md).
 
 ## The one-line test
 
