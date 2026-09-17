@@ -859,8 +859,7 @@ reads the same. The tree hash says what the ref is. `git merge-tree --write-tree
 prints the id of the tree a merge would produce, and it compares directly against
 `refs/pull/N/merge^{tree}`. Measured on `karlkfi/claude-spill-guard` PR #42, 2026-08-27: base
 `22378bf1` and head `a14b3ed9` gave `34a960849a998fbf6e0a4a510fc54b9087340bfa`, byte-identical
-to the merge ref's own tree. It is also the cheaper read, and it cannot be fooled by any of the
-three things a log can.
+to the merge ref's own tree.
 
 **A merge ref recomputes on a push to the PR branch, not when the base moves.** Measured both
 directions in that run. So a green check can be scoped to a merge base that no longer exists,
@@ -872,16 +871,13 @@ now* are two questions, and the second needs the merge base the ref was built on
 the base branch's current head.
 
 **A count is the wrong instrument for "did every check run".** *Green checks say the run passed*
-sends you to the job list; the reflex once you hold it is to compare two heads by how many runs
-each carries. A total cannot separate a duplicate from a substitution, and two offsetting changes
-leave it unmoved, which is the reading that looks most like proof. Per-group totals are the
-half-measure — counting per group catches a substitution across groups and misses one inside a
-group, because it is still a count. Ask the direct question instead — which job families are
-present at one head and absent at the other — and only the name sets answer it. Measured on
-`karlkfi/claude-bouncer` PR #110, where one head carried 38 check runs and the next 37, all
-`SUCCESS` on both. The drop was a duplicate `release-note` triggered by a PR body edit, and no
-family present at the first head was absent from the second; the count cost an investigation each
-time it moved, and the difference of the two sets says it in a line.
+sends you to the job list, where the reflex is to compare two heads by how many runs each has. A
+total cannot separate a duplicate from a substitution, and two offsetting changes leave it
+unmoved — the reading that looks most like proof. Ask instead which job families are
+present at one head and absent at the other; only the name sets answer it. Measured on
+`karlkfi/claude-bouncer` PR #110: 38 check runs at one head and 37 at the next, all `SUCCESS` on
+both, the drop a duplicate `release-note` from a PR body edit with no family lost — and the count
+cost an investigation each time it moved.
 
 ```bash
 gh pr view <N> --json statusCheckRollup \
@@ -889,14 +885,18 @@ gh pr view <N> --json statusCheckRollup \
 ```
 
 Reduce each head to `cut -f2 | sort -u` and `comm -3` the two: a lost family lands left, a gained
-one right, and a substitution as one of each — the pair a total nets to nothing. Both halves of
-that reduction are load-bearing. Keep the conclusion and a job that merely changed colour reads as
-a loss and a gain; keep duplicates and the duplicate run reports itself as a difference, which is
-the exhibit above. The rollup answers about the head the PR carries now, so an earlier head takes
-the `check-runs` read above and the same cut. Both list the jobs that exist, which is what makes
-the name set the whole instrument: a path-filtered job is visibly `SKIPPED` there, while one that
-was never scheduled is simply absent, and absence is what a set difference reports and no total
-can.
+one right, a substitution as one of each. Keep the conclusion and a job that merely changed colour
+reads as a loss and a gain; keep duplicates and the duplicate run reports itself as a difference.
+The rollup is about the head the PR carries, so an earlier head takes the `check-runs` read
+above and the same cut. Both list the jobs that exist, which is what makes the name set the whole
+instrument: a path-filtered job is visibly `SKIPPED` there, while an absent one is not listed at
+all, and absence is what a set difference reports and no total can. Absence reads three ways,
+the third being *not scheduled yet*: settle the run, nothing `in_progress` or `queued`,
+before a difference decides anything, and otherwise resolve each absent family against its
+`needs:`. An absent `-gate` aggregator beside a running job is the tell: an aggregator is scheduled
+last. On `actions-gateway/github-actions-gateway` #1946 a mid-run difference lost
+`doc-links-gate` and `unit-test-gate` between byte-identical trees; both were waiting on the two
+jobs still running, and settled, the sets matched at 65 families.
 
 **A coverage claim searched for as a mechanism finds one implementation and reports on every
 route.** *A count is the wrong instrument for "did every check run"* swaps a total for the name
