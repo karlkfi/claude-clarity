@@ -8,10 +8,15 @@ A skill is a folder of instructions Claude Code loads when the conversation
 matches its description. An output style is instructions it sends with every
 request, whether or not anyone asked.
 
-Not a linter for your codebase and not a prompt library. These are review and
-drafting passes Claude runs on prose: the docs, READMEs, release notes, issues,
-PR bodies and commit messages an agent writes, plus the replies it gives you in
-the terminal.
+Not a linter for your codebase and not a prompt library. These are passes
+Claude runs on a draft before it leaves: the docs, READMEs, release notes,
+issues, PR bodies and commit messages an agent writes, plus the replies it
+gives you in the terminal.
+
+They answer three questions in order. **Is it true?** **Is it readable?** **Is
+it in the right place?** The skills are grouped below by which one they own,
+and the order is the point: a draft nobody can fault and nobody checked is the
+expensive kind of finished.
 
 ## Why you need it
 
@@ -34,10 +39,12 @@ what, because the register is doing the work the content is not.
 **It pads.** Restating the question, narrating the route, three bullets holding
 one idea each. Then a closing paragraph summarizing the paragraph above it.
 
-`verify-claims` is the largest thing here by a wide margin: 63% of the skill
-text by lines, measured 2026-09-14 over the ten bodies, their `references/`
-files and the output style. A reader who cannot tell a measurement from a guess
-cannot see what they are reading, however well-built the sentence.
+The first question is where most of this repo went. `verify-claims` is 63% of
+the skill text by lines, measured 2026-09-14 over the ten bodies, their
+`references/` files and the output style, because the ways a signal reads clean
+while the thing under it is broken are many and each one is its own specific
+trap. A reader who cannot tell a measurement from a guess cannot see what they
+are reading, however well-built the sentence.
 
 All three are catchable by a careful read, so the problem is cost rather than
 difficulty. Run several sessions at once and each narrates its own work in its
@@ -198,10 +205,11 @@ those:
 scripts/install-skills.sh verify-claims
 ```
 
-That case is worth stating because `verify-claims` is not a prose skill. It
-ships here because the bundle that ships first should hold it rather than every
-consumer vendoring a copy and guaranteeing drift, and somebody who wants one
-verification skill should not have to discover the shape of the bundle at
+That case is worth stating because `verify-claims` is the largest skill here
+and the one whose subject reaches furthest past a draft. It ships in this
+bundle rather than a repo of its own because a consumer vendoring a copy
+guarantees drift and nothing on either side reports it. Wanting only the
+verification pass should not mean discovering the shape of the bundle at
 install time.
 
 To skip a skill on this machine, list its name in

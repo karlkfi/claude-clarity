@@ -47,20 +47,24 @@ promises is no longer the one the majority of the artifact delivers.
 
 ## `verify-claims` ships here rather than standing alone
 
-It is the largest thing in the repo and it is not a prose skill, so it looks
-like a guest. Two alternatives were considered and both are worse. Vendoring a
-copy into each consumer guarantees drift, and nothing on either side reports it.
-Declaring a dependency on it needs it published somewhere first, which is the
-problem restated. Putting it in the bundle that ships first satisfies both.
+The entry above settles why the evidence half is the largest half: the name is
+an outcome and verification serves it. This entry is the narrower question of
+why the skill lives in *this* repo rather than one of its own, and the answer is
+packaging, not theme.
+
+Two alternatives were considered and both are worse. Vendoring a copy into each
+consumer guarantees drift, and nothing on either side reports it. Declaring a
+dependency on it needs it published somewhere first, which is the problem
+restated. Putting it in the bundle that ships first satisfies both.
 
 The cost is real and lands on someone else: a reader who wants one verification
-skill installs a repo of prose passes to get it. `install-skills.sh` takes skill
+skill installs the whole bundle to get it. `install-skills.sh` takes skill
 names, so the single-skill install works, and the README says so under
 [Installing](../README.md#installing).
 
 **What would reverse it:** a second consumer needing `verify-claims` for reasons
-unrelated to prose. At that point it is infrastructure shared by three parties
-and belongs in a repo of its own.
+unrelated to a draft anyone reads. At that point it is infrastructure shared by
+three parties and belongs in a repo of its own.
 
 ## The repo starts at one commit and carries no history
 
