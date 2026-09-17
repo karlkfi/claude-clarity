@@ -340,15 +340,10 @@ So when a result is about to decide something, name the readings that produce it
 that separates them — `gh repo view --json visibility` answers the second question and could not
 have answered the first. The tell is that the response was consistent with the hypothesis: a
 result you expected is where a second cause goes unenumerated, because nothing prompts the search.
-
-Branch protection is the same shape with a ready-made fix, and it comes up whenever a release or a
-merge policy is being reasoned about. `gh api repos/<o>/<n>/branches/main/protection` answers *does
-the legacy branch-protection API hold a record*, not *is this branch protected*: on a repository
-that has moved to rulesets it returns a confident `404 Branch not protected` while the branch is
-protected. Measured 2026-09-01 on `karlkfi/claude-bouncer`, where that 404 was reported to the
-maintainer as an unprotected `main` — while `gh api repos/<o>/<n>/branches/main --jq .protected`
-returned `true` and `gh api repos/<o>/<n>/rules/branches/main` listed three rules on the same
-repository, in the same minute.
+The same shape has a ready-made fix, and release or merge-policy reasoning runs into it:
+`gh api repos/<o>/<n>/branches/main/protection` answers *does the legacy API hold a record*, not
+*is this branch protected*, so on a repository moved to rulesets it returns `404 Branch not
+protected` where `gh api repos/<o>/<n>/branches/main --jq .protected` returns `true`.
 
 **A probe's setup step can silently define what its teardown restores to.** The two rules above
 are about a probe that is broken and a probe that is sound but narrow. This is a third: the probe
@@ -400,9 +395,7 @@ adjacent paragraphs of one file needed to know how close the edits were.
 `git diff -U0 origin/main -- CLAUDE.md` returned `@@ -68,9 +71,14 @@`, and the `14` — the
 **new**-side count — went out as an old-side span, which reads as no gap against a peer's
 `@@ -78,8`. The old spans are 68–76 and 78–85, line 77 separates them, and the two branches
-were never editing the same sentences. The same reading turned `68,6 → 68,9 → 68,14` into one
-quantity growing across three pushes; the first two are old-side counts and the third a new-side
-one, and the old span never moved.
+were never editing the same sentences.
 
 So **derive the quantity instead of reading it**. Where the claim is a span, compute both
 endpoints; where it is a count over a population, compute the population too. Prefer a one-line
@@ -416,11 +409,9 @@ is this rule from the other side, where `comm` was the right instrument and the 
 not. Sending the command beside the claim does not close this, and it is the habit most likely to
 be mistaken for closing it: it buys provenance, not agreement, so both ends can re-run the
 command, agree on every character of its output, and still disagree about what it says. Here the
-peer recomputed and caught it, and no gate could have. Two near neighbours, and it is neither. *One
-field is a projection of a mutable object* is the right field read, ambiguous about which state
-produced it; *A figure you derived is not a figure you read* is this same step failing the other
-way, a derivation that inherits its terms' credibility and carries no instrument — so a span you
-derived is checked too, rather than trusted for having been derived.
+peer recomputed and caught it, and no gate could have. *A figure you derived is not a figure you
+read* is the same step failing the other way, so a span you derived is checked too rather than
+trusted for having been derived.
 
 **One field is a projection of a mutable object, and several of its states project onto the same
 value.** Read straight after a push, `gh pr view <n> --json headRefOid` returned the pre-push SHA
@@ -673,31 +664,6 @@ shell one is the one deciding something right now. Enumerate the ways the probe 
 you write the branch, and where a failure has nowhere to go but a verdict, that verdict is not
 evidence.
 
-**A probe that cannot fail can still be narrower than the claim riding on it.** *A probe with two
-verdicts forces every failure onto one of them* gives a failure somewhere to go; here nothing
-fails. The probe runs, answers its own question correctly, and is quoted for a wider one. *A
-sound instrument still answers only its own question* is the general form, and what it leaves
-out is why nobody writes the gap down: the probe and the claim share their vocabulary, so at the
-moment of writing there is nothing visibly missing. *Is this string in the file* and *does this
-program print this string* differ by one verb. A worker grepped a merged script for a message
-its change had added, got **0**, and was seconds from reporting the merge had dropped it — the
-message is assembled from f-string fragments, so it exists at runtime and nowhere contiguous in
-the source. A second session ran
-the same check with a different substring, got **1**, and reported the merge verified; measured
-afterwards against the same file, ``If the blocker has shipped, set`` → 1 because it happens to
-sit inside one fragment, and two neighbouring substrings → 0, while all three → 1 in what the
-program prints. The verification was right and the method was not, and nothing in either result
-said which. The third: a pull into the checkout every
-`~/.claude/skills/` symlink resolves to was cleared as touching no skill by grepping the
-incoming range for `SKILL.md`. Zero matches, while the range changed `queue.py` and its test —
-inside an installed skill, live under every session on the host.
-
-So match the instrument to the claim before running it: run the program and read its **output**
-where the claim is about behaviour, diff against the reviewed revision where it is about
-content, enumerate the changed paths where it is about blast radius. The tell cannot be found by
-rereading the sentence, because both halves are written in the same words — ask instead what
-this instrument would report if the claim were false **in a way it cannot see**.
-
 **Agreement with the enforcer is not evidence when one detail could fool both.** *The probe is
 not the gate* says run the gate, and a *threshold* gate is where that is hardest to follow:
 under the limit it exits 0 in silence, so the quantity you wanted is nowhere in its output and
@@ -794,10 +760,42 @@ deliberately right until the discriminating case turns up, which is the reason t
 mechanism — naming it is what makes the width reproducible.
 
 **A sound instrument still answers only its own question.** This is the one that survives "check
-more", because nothing is missing. A token reconciliation over a prose edit proves no word was
-*lost* and cannot see a word that was *added*. A merge probe run locally exits 0 through merge
-drivers the server does not have. A field reporting a branch merged carries no base. Ask what
-the signal would read if the alternative were true.
+more", because nothing is missing — *A probe with two verdicts forces every failure onto one of
+them* gives a failure somewhere to go, and here nothing fails. Nobody writes the gap down because
+the probe and the claim share their vocabulary: *is this string in the file* and *does this
+program print this string* differ by one verb. It comes in two shapes. The instrument answers a
+**narrower** question than the claim: a worker grepped a merged script for a message its change
+had added, got **0**, and was seconds from reporting the merge had dropped it, the message being
+assembled from f-string fragments that exist at runtime and nowhere contiguous in the source. Or
+it answers an **adjacent** one — a different quantity, object or definition, at the same type and
+a plausible magnitude, with nothing in the output marking which question it answered. Four
+adjacency instances turned up in one pull request, from four authors, none erroring or returning
+empty. Two were git: `git merge-tree --write-tree` consults `.gitattributes` and returns the
+**merge driver's** answer, and drivers are per-clone while the queue building the real candidate
+runs none, so on a repo configuring one it answers the local driver's question; and a two-dot
+`git diff origin/main..HEAD` against a moved base reported 23 changed paths to three-dot's 15,
+the extra 8 being the base's own commits rendered as the branch changing them — one a file the
+branch never touched, reported as an add. A third reused a sweep showing CPU-seconds flat across
+every fan-out width, sound for *oversubscription wastes no CPU*, to doubt a **wall-time** effect
+on a machine with a quarter of the cores at four times the ratio, where the cost is scheduler and
+memory contention that box cannot observe. The fourth sourced a runner's CPU guarantee to a
+cluster-scoped template the tenant references nowhere, its `templateRef` resolving to a
+namespaced one of the same shape and twice the request.
+
+**Ask what question the instrument answers, not whether its answer looks right.** What does
+`merge-tree` consult; what quantity does this reading measure, on what hardware, at what ratio;
+what is in the cited file. An *over-sourced* citation is the one that gets through: a real file
+with a real number trips none of the reflexes tuned to flag thin sourcing. A hedge rescues none
+of this: it sits on the inference, and the error is upstream in the probe. Both halves of the
+sentence are written in the same words, so ask what this instrument would report if the claim
+were false **in a way it cannot see**.
+
+**Being right by luck is indistinguishable from being right by construction.** Both git
+instruments and both correct re-runs returned the same verdict, and nothing in the agreement
+marked either instrument. That is a different argument from *a negative needs a positive
+control*: there the answer is suspect, here it is right and the method still gets checked,
+because it is reached for again where the luck does not hold. Each of the four was caught by
+another seat and none by its author: the remedy is a second reader, not more care.
 
 **A tool you run has two copies, and a grep finds whichever one you pointed at.** An installed
 plugin, hook, or CLI sits under a versioned cache directory; the project it came from has a
@@ -847,10 +845,6 @@ the probe demonstrably could come back non-empty. Measured on `karlkfi/claude-sp
 status and no mark on it; confirm each tree contains the mechanism its row is about before
 reading the row, and say which rows are blanks rather than befores.
 
-**A hedge does not rescue a measurement that answered the wrong question.** It only makes the
-wrong answer look appropriately humble. The hedge sits on the inference; the error sits
-upstream in the probe.
-
 **Ask what a check would still pass on**, then check whether the thing you care about is in that
 set. A gate named for a class covers one mechanism inside it, and the name is what makes the
 rest of the class feel guarded. Say in the check itself what it does not read. And a
@@ -874,7 +868,9 @@ reads the same. The tree hash says what the ref is. `git merge-tree --write-tree
 prints the id of the tree a merge would produce, and it compares directly against
 `refs/pull/N/merge^{tree}`. Measured on `karlkfi/claude-spill-guard` PR #42, 2026-08-27: base
 `22378bf1` and head `a14b3ed9` gave `34a960849a998fbf6e0a4a510fc54b9087340bfa`, byte-identical
-to the merge ref's own tree.
+to the merge ref's own tree — an identity that rests on no path taking a custom merge driver,
+since `merge-tree` applies whatever driver this clone has and a merge-queue candidate is built
+with none. Where one is configured, reproduce the ref rather than compute it.
 
 **A merge ref recomputes on a push to the PR branch, not when the base moves.** Measured both
 directions in that run. So a green check can be scoped to a merge base that no longer exists,
