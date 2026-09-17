@@ -471,10 +471,8 @@ shape: a plausible refutation of the claim under test rather than a check that s
 changes a verdict instead of raising one. Measured during a six-PR run on
 `karlkfi/claude-spill-guard`, 2026-08-27. Compare ids instead — `git rev-parse --verify
 <commit>:<path>` returns the blob id, and a missing path is an error rather than a value, so
-there is nothing for the comparison to make a verdict out of. Keep the `--verify`: measured here
-on git 2.55.0, the bare form exits 128 having echoed its own argument, `HEAD:no/such/file.md`, on
-stdout, and that string compares unequal to a real blob id in exactly the way a difference does.
-`--verify` leaves stdout empty at 128; `--verify --quiet` leaves it empty at 1.
+there is nothing for the comparison to make a verdict out of. Keep the `--verify`: the bare form
+echoes its own argument on stdout, which compares unequal exactly as a difference does.
 
 **A capability is a claim, and it is load-bearing before the design, not after.** Whether the
 platform can do the thing at all is upstream of every option built on it, so an unchecked
@@ -736,28 +734,30 @@ a different structural reason.
   subject token at all, only *the two producers* and *one condition type*. Test the subject over
   the surrounding paragraph, or a few hundred characters, rather than over the sentence.
 - **Vocabulary.** A pattern built from a literal string lifted off known instances finds
-  restatements of that string and nothing else. Six known sites shared a phrase; six further sites
+  restatements of that string and nothing else. Six known sites shared a phrase; six more
   asserted the same claim sharing no literal with it.
-- **Inherited vocabulary.** The second sweep was written specifically to fix the axis above, and
-  derived its widened signature from the first probe's own hits. A signature built out of the
-  answers it exists to validate can only re-find them. It is nastier than plain vocabulary
-  blindness because it looks like the fix — *A construction derived from its own answer* arriving
-  inside a sweep.
-- **Line breaks.** A line-oriented pattern cannot match a sentence spanning two comment lines.
-  `is dropped` on one line and `when the live condition is X` on the next means `is dropped when`
-  matches nothing, and the site reads as absent. Strip the comment leaders and join the lines
-  before matching.
+- **Inherited vocabulary.** The second sweep, written to fix the axis above, derived its widened
+  signature from the first probe's own hits, and a signature built out of the answers it exists
+  to validate can only re-find them — *A construction derived from its own answer*, inside a
+  sweep, and it looks like the fix.
+- **Line breaks.** A line-oriented pattern cannot match a claim spanning two comment lines, and
+  the site reads as absent. Strip the leaders and join the lines before matching.
 
-**A clean sweep and a blind one both print nothing**, so the reading can never come from the
-silence. Fire the sweep at a state where instances are known to exist — the commit before the
+**A clean sweep and a blind one both print nothing.** Fire the sweep at a state where instances are known to exist — the commit before the
 corrections landed — and require it to find all of them before trusting what it says at head.
-Pick that known positive to be the hard case rather than a convenient one: the control is what
-exposed the subject-scope axis at all, the sweep having found three of four known sites at the
-base commit with the anaphoric sentence as the miss. One of the three sessions did catch that
-sentence, on a window it had chosen because a few hundred characters seemed a reasonable amount
-of context. A design that is accidentally right is indistinguishable from one that is
-deliberately right until the discriminating case turns up, which is the reason to name the
-mechanism — naming it is what makes the width reproducible.
+Pick that known positive to be the hard case rather than a convenient one — the control is what
+exposed the subject-scope axis at all.
+
+**A scan counts text, and text describing a command cannot be told from text that ran it.** The
+same blindness as a false positive — and where the population is your own transcripts it feeds
+itself, since writing about a command adds instances of it. Anchoring to command position narrows
+it and cannot close it: only a parser that knows a heredoc body, a quoted string and a comment
+are data tells a word from an invocation. An anchored count of `git merge-tree` calls held at 264
+over four readings and returned **265** on the fifth — the extra hit the reviewer's own session,
+writing a probe script that contained it. The tell is a count that moves between readings hours
+apart with no new events, always upward, and it is legible only if you predict the direction
+first: one unit against an expected-stable figure otherwise reads as noise. The anchor is in
+[`references/shell-traps.md`](references/shell-traps.md).
 
 **A sound instrument still answers only its own question.** This is the one that survives "check
 more", because nothing is missing — *A probe with two verdicts forces every failure onto one of

@@ -83,6 +83,15 @@ is braced for: a positive control is what an empty result is owed, and here the
 instrument was already saying the answer in one line that had been deleted. Run
 the bare command before concluding anything about a tool's behaviour.
 
+**`git rev-parse` without `--verify` echoes its own argument on failure.**
+Measured on git 2.55.0: the bare form exits 128 having printed
+`HEAD:no/such/file.md` on stdout, and that string compares unequal to a real blob
+id in exactly the way a genuine difference does — so a blob-id comparison
+standing in for a file comparison reports *differ* rather than stopping.
+`--verify` leaves stdout empty at 128; `--verify --quiet` leaves it empty at 1.
+See *A failed read hands its error to whatever consumes the read* in the skill
+body.
+
 ## Quoting and expansion
 
 **`$var:` starts a modifier in zsh, so `"$ref:path/file"` mangles the path.**
@@ -289,6 +298,35 @@ hit a 100.6 KB record and an 85.0 KB one ahead of anything a session did. Which
 bodies they are is a function of which skills fired, so there is no fixed number
 to skip. Exclude on a property of the record — a size threshold, or its being
 a verbatim copy of an installed body — never by index.
+
+**A command-position anchor excludes prose and not a heredoc body.** Counting
+invocations of a command across session transcripts by scanning the Bash command
+string counts every mention of it — a commit message, a drafted PR body, a
+heredoc quoting source. Anchoring to command position removes the bare mentions:
+
+```
+(?:^|[;&|(]|&&|\|\||\n)\s*(?:[A-Za-z_][\w]*=\S*\s+)*git\s+merge-tree\b
+```
+
+The `[;&|(]` class is load-bearing — `$(git merge-tree ...)` is the commonest
+real form, and a `^`-only anchor drops it. Measured 2026-09-16 in
+`actions-gateway/github-actions-gateway`: the raw scan returned 326 hits across
+80 sessions, the anchored one 264 across 74.
+
+What it still cannot exclude is a command-position match inside a heredoc body, a
+quoted script, or a document being drafted, because `$(` is a shell separator and
+the pattern has no notion of quoting context. Over the same corpus the raw count
+climbed 331 → 335 → 337 → 340 while the anchored one was read as stable at 264;
+the fifth reading returned 265, the new hit being a probe script written into a
+heredoc at 2026-09-16T21:29:17 containing `tree=$(git merge-tree --write-tree a
+b); mt=$?`, and the author's own PR-body draft was already in the count as a
+fenced code block inside `cat > .../pr1121-body.md <<'BODY_EOF'`. A genuine
+invocation from the same day, for contrast: `git merge-tree --write-tree
+origin/main HEAD > tmp/q1052/mt.txt`. Only a parser that treats a heredoc body, a
+quoted string and a comment as data separates the two — see *A scan counts text,
+and text describing a command cannot be told from text that ran it* in the skill
+body. Two sessions each built a careful anchor while actively discussing this
+failure mode, and both counted their own drafts.
 
 A control that anchors on a neighbouring string rather than the needle passes
 through all three of the traps in this section — see *A control must exercise
