@@ -35,11 +35,28 @@ work went into the file rather than with anything about a reader.
 
 ## The reading
 
+```bash
+scripts/rule-residency.py skills/verify-claims/SKILL.md \
+    --repo claude-clarity --repo claude-skills
+```
+
+**Both `--repo` flags are load-bearing.** `verify-claims` is maintained across
+two checkouts, and the default names only the one holding this working tree —
+so a bare run leaves 7 `claude-skills` authoring sessions in the reader corpus
+and reports 26 rules and 26.0 kB where the table below says 21 and 20.6 kB. The
+run prints the names it segregated on as its first line; read that before the
+numbers.
+
 Measured 2026-09-18 against `1858849`, over the 94 sessions under
 `~/.claude/projects/` carrying a `Skill(verify-claims)` call: 85 reader
 sessions and 9 authoring ones. 88 rules, 98.6 kB of the 110,854-byte file.
-The corpus grows as sessions run — it was 93 sessions two hours earlier, this
-one among the difference — so re-run rather than quoting these counts later.
+
+The corpus grows as sessions run, so re-run rather than quoting these counts
+later. Re-taken at 11:32 PDT with the corpus two hours larger, the flagged run
+returns this table byte for byte, because the sessions added in between were
+the ones working on this repo and the flags exclude them. The bare run is what
+drifts: its `RAN`/`FLAT` boundary moved by one rule between two readings an hour
+apart.
 
 | verdict | rules | kB | what it means |
 |---|---|---|---|

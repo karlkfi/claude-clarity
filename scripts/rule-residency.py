@@ -377,8 +377,11 @@ def main():
                     help="check the matcher against text the markers are known present in")
     ap.add_argument("--json", metavar="PATH", help="write the full table here")
     ap.add_argument("--repo", action="append", default=[],
-                    help="project-path substring marking an authoring session "
-                         "(repeatable; defaults to the skill's own repo name)")
+                    help="project-path substring marking an authoring session. "
+                         "Repeatable, and the default is the ONE repo holding "
+                         "this working tree -- a skill maintained across two "
+                         "needs both named, or the second's sessions land in "
+                         "the reader corpus and the table moves")
     args = ap.parse_args()
 
     path = pathlib.Path(args.skill_md)
@@ -398,6 +401,7 @@ def main():
               f"{skill!r} -- nothing to measure", file=sys.stderr)
         return 2
 
+    print(f"# authoring repos: {' '.join(repo_names)}", file=sys.stderr)
     for k in sorted(reach):
         print(f"# {k}: {reach[k]}", file=sys.stderr)
     counts = collections.Counter(verdict(r, reach) for r in rows)
@@ -412,8 +416,11 @@ def main():
               f"{r['pre_prose'] + r['pre_action']:>4} {r['auth']:>5} "
               f"{verdict(r, reach):<7} {r['section'][:22]:<22} {r['lead'][:52]}")
     if args.json:
+        for r in rows:
+            r["verdict"] = verdict(r, reach)
         pathlib.Path(args.json).write_text(
-            json.dumps({"reach": dict(reach), "rules": rows}, indent=1))
+            json.dumps({"reach": dict(reach), "repos": repo_names,
+                        "rules": rows}, indent=1))
     return 0
 
 
