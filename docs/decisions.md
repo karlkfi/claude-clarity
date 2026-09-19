@@ -461,8 +461,8 @@ wording ships, never over the turns it was harvested from — showing sessions
 that had the subject in hand and did not fire the skill. That is the measurement
 this entry does not have, and the only one that could show the cap costing
 something. `scripts/validate-skills.py --report <skill>` is where any character
-count in that argument comes from. The fold that motivated Q229 was wrong on 12
-of the 21 skills in the collection this repo was extracted from (Q234). It does
-not reproduce here: folding each of the ten descriptions by hand agrees with the
-gate on all ten. Ask the enforcer because the fold is reimplemented, not because
-it is observably failing.
+count in that argument comes from. Q234 recorded the fold that motivated Q229 as
+wrong on 12 of the 21 skills in the collection this repo was extracted from. It
+does not reproduce here: folding each of the ten descriptions by hand agrees
+with the gate on all ten. Ask the enforcer because the fold is reimplemented,
+not because it is observably failing.
