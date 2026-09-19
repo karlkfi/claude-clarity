@@ -88,9 +88,9 @@ instrument says so in two lines: `corpus = sum(c.values())` sums every arm, and
 segregating the authoring sessions changes which arm a firing lands in and never
 whether one happened. Measured over the six rules that
 left `BLIND` between two readings of one base tree: every one has its entire
-count in the authoring arm and **zero** in the reader arm (2, 1, 2, 6, 1, 7 and
-13 authoring firings against 0 reader firings apiece). The flags protect `RAN`,
-`SAID` and `FLAT` from authoring contamination and leave `BLIND` fully exposed.
+count in the authoring arm and **zero** in the reader arm. The flags protect
+`RAN`, `SAID` and `FLAT` from authoring contamination and leave `BLIND` fully
+exposed.
 
 **And it is a ratchet, not a fluctuation.** Transcripts accumulate and corpus
 counts are cumulative, so on a fixed base tree a rule leaves `BLIND` and never
