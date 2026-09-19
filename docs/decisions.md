@@ -423,19 +423,30 @@ landed on it in one batch without room for a matcher clause apiece. Q234 asked
 what to do about that. The answer is nothing, and the reason is worth keeping
 so the next batch does not re-open it.
 
-**Length does not predict invocation, in either direction.** Over 2,048 local
-transcripts on 2026-09-19, counting `Skill` calls deduped per session and
-splitting authoring sessions out the way `scripts/rule-residency.py` does,
-`verify-claims` fires in 85 reader sessions — first, and 30 clear of second.
-Its description is the longest in the repo. `deslop` is second at 55 and its
-description is the *shortest*, 549 characters with 475 to spare;
-`tech-docs-layers` has 108 characters going unused and fires in 5. The two
-extremes of length are the two top performers.
+**Nothing in the invocation table says winning characters back would help.**
+Over 2,048 local transcripts on 2026-09-19, counting `Skill` calls deduped per
+session and splitting authoring sessions out the way `scripts/rule-residency.py`
+does, `verify-claims` fires in 85 reader sessions — first, and 30 clear of
+second. Its description is the longest in the repo. `deslop` is second at 55 and
+its description is the *shortest*, 549 characters with 475 to spare;
+`tech-docs-layers` has 108 characters going unused and fires in 5.
 
-That measures length, which is not breadth, so it does not touch the caution
-that a broader description is the failure mode. What it settles is narrower and
-enough: winning characters back buys nothing measurable, so the cap is not the
-thing to spend effort on.
+**That is weaker than "length does not predict invocation", which is what this
+entry first said and could not support.** Correlating the ten lengths against
+the ten reader counts gives Pearson **−0.319** and Spearman **+0.394** — the
+signs disagree, because `deslop` is a leverage point 367 characters from its
+nearest neighbour. Drop it and the remaining nine give Spearman **+0.767**: by
+rank the data trends *opposite* to the null. Neither figure carries much, and
+that is the finding. Nine of the ten descriptions span 916–1023, about a tenth
+of the cap, while calls span 28-fold — a nearly constant predictor against a
+wildly varying outcome, so the design cannot see a length effect in either
+direction. Reverse causation fits at least as well: a skill that fires
+constantly is edited constantly, and editing accretes description text toward
+the cap.
+
+None of that disturbs the decision, which needs only that no payoff is visible.
+It is also about length rather than breadth, so it leaves untouched the caution
+that a broader description is the failure mode.
 
 **A rule with no dedicated clause is usually not unreachable.** Q234 named two
 subjects it read as unreachable — a population counted off a view already
