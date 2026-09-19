@@ -64,6 +64,15 @@ uptake is 19% of the file, and the largest rule in it is the most used —
 **What would reverse it:** a body whose growth is genuinely a new tier rather
 than an overrun, which is a tier reassignment rather than a raise.
 
+**That escape is unavailable to a body already in the top band**, which is the
+case it was written about. `hot` is the highest tier and the ceilings fall from
+there, so every reassignment `verify-claims` could take makes its ceiling
+tighter. A band above `hot` is the only reading left, and one with a single
+member whose ceiling is set to what that member measures is the per-skill byte
+budget this ladder replaced. So room for that body comes from relocating rules
+out of it and from nothing else — [decisions.md](decisions.md) settles the
+argument, and the residency reading ranks what goes first.
+
 ## Why it fails rather than warns
 
 The check names the exact number of bytes to take back out of the diff, so the
