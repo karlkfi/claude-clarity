@@ -1,8 +1,9 @@
 # Which parts of `verify-claims` get used
 
-[Q1003](queue/Q1003.md) asks where the worked cases in a 110 KB skill body
-should live, and says the decision needs a reading of which sections are
-*consulted* versus *applied* before it needs an edit.
+Q1003 asked where the worked cases in a 110 KB skill body should live, and said
+the decision needed a reading of which sections are *consulted* versus
+*applied* before it needed an edit. [decisions.md](decisions.md) settles it and
+[Q1014](queue/Q1014.md) is the move.
 [`scripts/rule-residency.py`](../scripts/rule-residency.py) is that instrument.
 This file is the reading it produced and the bounds on it.
 
@@ -65,6 +66,29 @@ apart.
 | `FLAT` | 7 | 8.0 | fires, but no more often after the load than before |
 | `BLIND` | 14 | 12.6 | never fires anywhere in the corpus — a fact about the probe |
 
+**Re-taken 2026-09-19 at `6b88023`, the flagged run still returns this table.**
+Same four verdict counts, the same 21 rules, and 21,120 bytes against the
+110,854-byte file — 19.05%. The authoring arm grew from 9 sessions to 11 and the
+reader arm did not move off 85, which is the segregation working rather than a
+quiet corpus. The bare run on that same tree reports 92 reader sessions,
+`RAN=47 SAID=15 FLAT=12 BLIND=14`, and 26 rules at 26,639 bytes — 24.03%. The
+seven-session gap is the `claude-skills` authoring sessions, exactly as the
+warning above predicts.
+
+**A bare run was read as this table on 2026-09-19**, which is what the warning
+above is for and the only instance recorded here. Its five extra low-uptake
+rules — `FLAT` 7 against 12, `BLIND` 14 either way — were taken for a corpus
+effect, and the control run against that reading passed `--repo claude-clarity`
+explicitly against leaving it implicit. That is one repo either way, so it
+varied the term and never the cause, which is the number of repos segregated.
+Read the run's own first line before its numbers: a bare run names one repo
+there.
+
+**The two candidate sets are not nested, so neither stands in for the other.**
+`Provenance is a claim, and one of the cheapest to settle` is `FLAT` under the
+flags and `SAID` without them, so it is in the 21 and not in the 26. Clearing a
+span against the bare reading does not clear it against this one.
+
 Three things the table settles.
 
 **Size does not track use, so cutting by size cuts the top of the ranking.**
@@ -74,7 +98,11 @@ reaches 3.
 
 **The candidate set is 20.6 kB.** `BLIND` and `FLAT` together are 21 rules and
 19% of the file. That is the most a defensible move could take, and it leaves
-about 90 kB against a 24 KiB ceiling. Whatever settles Q1003, it is not this.
+about 90 kB against a 24 KiB ceiling — so relocation does not reach the tier
+ceiling, which is a true reading of a question nobody needed answered. The gate
+grandfathers this body at its own merge-base size rather than at the ceiling, so
+what an addition needs is room, and any relocation makes room.
+[decisions.md](decisions.md) has the argument.
 
 **Most rules reach few sessions, and that is the shape of a reference work.**
 The median rule reaches 4 of 85; 25 rules reach 10 or more. A rule nobody needed
