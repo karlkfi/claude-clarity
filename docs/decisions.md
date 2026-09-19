@@ -416,3 +416,39 @@ applied, which would turn the ranking into a verdict and put deletion back on
 the table. Or a grandfather keyed to something other than the merge base — a
 recorded high-water mark rather than a re-read of main — which would make room
 bankable and let the move and its spenders be separate items again.
+## A description one character under the cap is not a problem to solve
+
+`verify-claims` measures 1023 against the 1024-character cap, and three rules
+landed on it in one batch without room for a matcher clause apiece. Q234 asked
+what to do about that. The answer is nothing, and the reason is worth keeping
+so the next batch does not re-open it.
+
+**Length does not predict invocation, in either direction.** Over 2,048 local
+transcripts on 2026-09-19, counting `Skill` calls deduped per session and
+splitting authoring sessions out the way `scripts/rule-residency.py` does,
+`verify-claims` fires in 85 reader sessions — first, and 30 clear of second.
+Its description is the longest in the repo. `deslop` is second at 55 and its
+description is the *shortest*, 549 characters with 475 to spare;
+`tech-docs-layers` has 108 characters going unused and fires in 5. The two
+extremes of length are the two top performers.
+
+That measures length, which is not breadth, so it does not touch the caution
+that a broader description is the failure mode. What it settles is narrower and
+enough: winning characters back buys nothing measurable, so the cap is not the
+thing to spend effort on.
+
+**A rule with no dedicated clause is usually not unreachable.** Q234 named two
+subjects it read as unreachable — a population counted off a view already
+filtered by outcome, and a census returning nearly its whole population. Both
+are counts, and the description carries *when a probe, grep, scan, or count is
+about to justify a decision*. Neither `census` nor `population` appears, which
+is the correct shape: a general clause reaches them and no dedicated one names
+them. Before arguing that a rule needs its own clause, check the general ones.
+
+**What would reverse it:** a forward-scored reading — of calls arriving after a
+wording ships, never over the turns it was harvested from — showing sessions
+that had the subject in hand and did not fire the skill. That is the measurement
+this entry does not have, and the only one that could show the cap costing
+something. `scripts/validate-skills.py --report <skill>` is where any character
+count in that argument comes from; a hand-rolled fold disagrees with the gate on
+twelve of this repo's skills, which is what Q229 shipped to stop.
