@@ -141,9 +141,44 @@ linter ran 39 times outside its home repo, and 35 of those were sessions where
 the skill had fired. It makes a pass that already fired better; it does not
 reach past the naming problem.
 
-**What would reverse it:** one of the three finding a rule that is certain and
-has a mechanical repair. [Q1006](queue/Q1006.md) is the pass that goes looking,
-and records a null result as a result.
+**Re-tested 2026-09-18 against all three bodies; the ruling stands.** The
+reasons differ enough to keep separately, and they are stronger than the
+original refusal.
+
+`claim-provenance` cannot be linted at all. Its finding is defined as the gap
+between a sentence's register and its provenance. The register signals are
+surface forms a script can read; the five provenance classes are facts about how
+the author got the sentence, and the body's own test for telling inherited from
+constructed — try to name where it came from — is an act only the author can
+perform. A script computes one term of that subtraction and never the other, so
+every candidate rule reduces to flagging register alone, which marks a measured
+number and an invented one identically.
+
+`semantic-remediation` is certified by its own body: two of its twelve entries
+carry "No repair at this level" and name what they lack, and Phase 2 exists
+because the level with enough context to repair a finding is "frequently
+different" from the level it was found at. The nearest miss is circular
+definition, detectable as a definiens reusing its definiendum; the repair is
+supplying the real definition, which needs the subject matter.
+
+`tech-docs-layers` holds the tempting candidate, worth naming because it looks
+mechanical. Flagging a page missing a front-matter key its siblings all carry is
+certain about the difference and silent about whether the difference is wrong —
+an index page or a draft legitimately differs, so a local majority is a norm
+rather than a rule, and the check is a warning in a fail's clothes. Its repair
+is authoring a description, not typing a fact the document already determines.
+The layer's other probes — a broken cross-reference, a page in no nav manifest —
+are certain and mechanically repairable, and already owned upstream by
+`mkdocs build --strict` and its equivalents.
+
+**Control for the null:** the same test over `readability`'s three shorthand
+kinds reproduces that skill's own split — the invented-shorthand kind passes,
+the other two fail on needing to know what the reader already has. The pass
+could have returned a positive.
+
+**What would reverse it:** unchanged — one of the three finding a rule that is
+certain and has a mechanical repair. The three readings above are the prior a
+future pass argues with.
 
 ## Naming a skill is what moves its trigger count
 
