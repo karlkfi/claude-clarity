@@ -74,15 +74,35 @@ reading above. The split between the two moved inside one hour on that same base
 tree: `BLIND` 14 / `FLAT` 7, then 10 / 11, then 8 / 13. The reader arm did not
 move off 85.
 
-**So quote the union and never the split.** `BLIND` means *no firing anywhere in
-the corpus*, and the corpus grows as sessions run — including the sessions
-working on this file, which quote these rules while deciding what to do with
-them. A rule leaves `BLIND` for `FLAT` on its first firing ever, so the boundary
-between them tracks how much attention the file has had lately rather than
-anything about a reader. The union is insensitive to that, because both verdicts
-are inside it. This is the skill's own *a measurement of recent activity, taken
-while your own work is changing that system, samples your own work*, and the
-table's `rules` and `kB` columns are the figures that survive it.
+**So quote the union and never the split — which means the `BLIND` and `FLAT`
+rows of this table are not quotable on their own.** Their `rules` and `kB` cells
+are exactly where the moving figures live; what survives is those two rows
+added together, 21 rules and 21,120 bytes. The `RAN` and `SAID` rows held across
+both readings, but two readings is not a stability claim and this file does not
+make one for them.
+
+**The `--repo` flags cannot protect that boundary, by construction.** The
+instrument says so in two lines: `corpus = sum(c.values())` sums every arm, and
+`if row["corpus"] == 0: return "BLIND"`. Its own docstring is explicit —
+*"corpus: every firing anywhere, PRE and POST and authoring sessions alike"*. So
+segregating the authoring sessions changes which arm a firing lands in and never
+whether one happened. Measured over the six rules that
+left `BLIND` between two readings of one base tree: every one has its entire
+count in the authoring arm and **zero** in the reader arm (2, 1, 2, 6, 1, 7 and
+13 authoring firings against 0 reader firings apiece). The flags protect `RAN`,
+`SAID` and `FLAT` from authoring contamination and leave `BLIND` fully exposed.
+
+**And it is a ratchet, not a fluctuation.** Transcripts accumulate and corpus
+counts are cumulative, so on a fixed base tree a rule leaves `BLIND` and never
+returns: 14/7 → 10/11 → 8/13 is one-way. Re-taking it will not average out, and
+a later reading is not a better estimate of the same quantity.
+
+This is the skill's own *a measurement of recent activity, taken while your own
+work is changing that system, samples your own work*, and it is not abstract
+here: of the fourteen rules originally `BLIND`, the six that stopped being so
+include all four that this repo's own backlog rows cite by name — the rules a
+review spent an hour quoting are the rules that left. The reading is in its own
+data.
 
 **The bare run on that same tree** reports 92 reader sessions and 26 rules at
 26,639 bytes — 24.03%. The seven-session gap is the `claude-skills` authoring
