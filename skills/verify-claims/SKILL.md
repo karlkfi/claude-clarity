@@ -681,15 +681,15 @@ pulls an argument out of a call site keys its table on the callee's name, and tw
 a name hold that argument at different positions — normal in any codebase with wrappers. It then
 fails in both directions at once: it reports a neighbouring argument as a hit, and reports nothing
 at all for the calls whose index it guessed past. Read the position off each callee's own
-declaration, and fail loudly on a call you cannot place. Two sub-traps inside that: a variadic
-declaration's arity counts the trailing parameter, and a parameter of the enclosing function is a
-forwarder rather than the site that decides the value.
+declaration, and fail loudly on a call you cannot place. Two sub-traps: a variadic declaration's
+arity counts the trailing parameter, and a parameter of the enclosing function forwards rather
+than decides the value.
 
 **A scan that tracks enclosing scope must clear it at the end of the block.** An `awk` or `grep`
 pipeline that remembers which function, section, or block it is inside and never resets attributes
-every later top-level match to the last block it saw. It shares the failure mode above: the wrong
-answer arrives as a confident positive rather than a silence, so nothing in the output looks wrong.
-The positive control is what catches it — count one block by hand and require the scan to agree.
+every later top-level match to the last block it saw. It shares the failure mode above: a
+confident positive rather than a silence, so nothing in the output looks wrong. The positive
+control is what catches it — count one block by hand and require the scan to agree.
 
 **A measurement that reproduces a call is not a test of the code that makes it.** Issuing the
 request yourself from a harness establishes what the *remote* does with it, and nothing about the
@@ -704,59 +704,62 @@ has to confirm.
 **A rule fires on a subject, so confirm the subject existed when the check ran.** A green check
 folds two claims into one — the rule held, and there was something for it to hold on — and when
 the second fails the first is vacuous while the output is identical to a real pass. Three
-instances in one night, 2026-08-21: a store lint's *a flake row may not vanish* rule, taken
-against a merge base carrying no such row; a `staticcheck` exclusion still listed in
-`.golangci.yml` after the directives it excluded had been deleted; and a fail-open introduced by
-an evidence capture, whose failure mode had no fixture until that change created one. Not there
-yet, gone, and never exercised are three ways in and one check covers all three: name the
-subject, count it, and refuse on zero rather than passing.
+instances in one night, 2026-08-21: a store lint's *a flake row may not vanish* rule taken
+against a merge base carrying no such row, a `staticcheck` exclusion still listed in
+`.golangci.yml` after the directives it excluded had been deleted, and a fail-open with no
+fixture until the change that introduced it made one. Not there yet, gone, and never exercised
+are three ways in and one check covers all three: name the subject, count it, and refuse on zero
+rather than passing.
+
+**The checker is a fourth subject, one that check cannot count.** A hook or guard failing
+*before* its first instruction — no execute bit, a missing interpreter, an unreadable config — is
+non-blocking by design, so *it did not object* means either *it passed* or *it was never there*,
+with nothing to separate them. Count its runs the same way and refuse on zero: one guard's record
+over the two days it was installed was 5,427 non-blocking errors at exit 126 and no run.
 
 **A literal-name search is blind to every site that routes the name through a variable.** A
 suite's assertion subjects, a registry's keys, a table's fixture names — two helpers taking the
 name as a parameter is enough, and the search then returns a clean subset of the truth with
-nothing marking it as a subset. A literal-name sweep for a suite's
-twenty-five subjects saw thirteen, on a tree nobody had touched. The blind spot is a property of
-the *file*, not of the change under review, so the size of the miss says nothing about the size
-of the diff — which is exactly why a small change is no reason to trust it. Run the suite and
-read the subjects it reports.
+nothing marking it as a subset. A literal-name sweep for a suite's twenty-five subjects saw
+thirteen, on a tree nobody had touched. The blind spot belongs to the *file* rather than to the
+change under review, so the size of the miss says nothing about the size of the diff — which is
+why a small change is no reason to trust it. Run the suite and read the subjects it reports.
 
 **A sweep that comes back clean has told you about its own representation.** The rule above is
-one such blindness, a name reaching its site through a variable. Four more were measured in a
-single review on 2026-08-25, where three sessions each enumerated every place in a repo asserting
-one claim so the claim could be corrected, and all three sweeps came back falsely clean, each for
-a different structural reason.
+one such blindness, a name reaching its site through a variable. Four more were measured on
+2026-08-25, where three sessions each enumerated every place in a repo asserting one claim so it
+could be corrected, and all three sweeps came back falsely clean for different structural reasons.
 
 - **Subject scope.** A sweep requiring the subject term and the claim language in the same
-  *sentence* misses every sentence that names its subject anaphorically — and it does not hide
-  *a* site, it preferentially hides *the* site. A paragraph names its subject once and refers back
-  thereafter, so the sentence carrying the load-bearing claim is systematically the one that has
-  stopped saying what it is about. The sentence that motivated the whole correction carried no
-  subject token at all, only *the two producers* and *one condition type*. Test the subject over
-  the surrounding paragraph, or a few hundred characters, rather than over the sentence.
+  *sentence* misses every sentence that names its subject anaphorically, and it hides *the* site
+  preferentially rather than *a* site: a paragraph names its subject once and refers back
+  thereafter, so the sentence carrying the load-bearing claim is the one that has stopped saying
+  what it is about. The sentence that motivated the whole correction carried no subject token at
+  all. Test the subject over the surrounding paragraph rather than the sentence.
 - **Vocabulary.** A pattern built from a literal string lifted off known instances finds
   restatements of that string and nothing else. Six known sites shared a phrase; six more
   asserted the same claim sharing no literal with it.
 - **Inherited vocabulary.** The second sweep, written to fix the axis above, derived its widened
-  signature from the first probe's own hits, and a signature built out of the answers it exists
-  to validate can only re-find them — *A construction derived from its own answer*, inside a
-  sweep, and it looks like the fix.
+  signature from the first probe's own hits, and a signature built out of the answers it exists to
+  validate can only re-find them — *A construction derived from its own answer*, and it looks like
+  the fix.
 - **Line breaks.** A line-oriented pattern cannot match a claim spanning two comment lines, and
   the site reads as absent. Strip the leaders and join the lines before matching.
 
-**A clean sweep and a blind one both print nothing.** Fire the sweep at a state where instances are known to exist — the commit before the
-corrections landed — and require it to find all of them before trusting what it says at head.
-Pick that known positive to be the hard case rather than a convenient one — the control is what
-exposed the subject-scope axis at all.
+**A clean sweep and a blind one both print nothing.** Fire it at a state where instances are known
+to exist — the commit before the corrections landed — and require all of them before trusting what
+it says at head. Pick that known positive to be the hard case: the control is what exposed the
+subject-scope axis at all.
 
 **A scan counts text, and text describing a command cannot be told from text that ran it.** The
 same blindness as a false positive — and where the population is your own transcripts it feeds
 itself, since writing about a command adds instances of it. Anchoring to command position narrows
-it and cannot close it: only a parser that knows a heredoc body, a quoted string and a comment
-are data tells a word from an invocation. An anchored count of `git merge-tree` calls held at 264
-over four readings and returned **265** on the fifth — the extra hit the reviewer's own session,
-writing a probe script that contained it. The tell is a count that moves between readings hours
-apart with no new events, always upward, and it is legible only if you predict the direction
-first: one unit against an expected-stable figure otherwise reads as noise. The anchor is in
+it and cannot close it: only a parser that knows a heredoc body, a quoted string and a comment are
+data tells a word from an invocation. An anchored count of `git merge-tree` calls held at 264 over
+four readings and returned **265** on the fifth — the extra hit the reviewer's own session, writing
+a probe script that contained it. The tell is a count that moves between readings hours apart with
+no new events, always upward, and it is legible only if you predict the direction first: one unit
+against an expected-stable figure otherwise reads as noise. The anchor is in
 [`references/shell-traps.md`](references/shell-traps.md).
 
 **A sound instrument still answers only its own question.** This is the one that survives "check
@@ -1397,11 +1400,6 @@ the claim fixes rather than the setup**: a pair differing only in the construct 
 resolves identically from every reader's root, and the gap between its two verdicts is the defect
 itself, which one command naming a correct-looking path could not isolate. All three rounds:
 [`references/shell-traps.md`](references/shell-traps.md).
-
-## The one-line test
-
-Before the sentence goes out: *could this signal have shown me the opposite?* If not, you have not
-measured the thing you are about to say.
 
 ## Sources
 
