@@ -54,10 +54,11 @@ sessions and 9 authoring ones. 88 rules, 98.6 kB of the 110,854-byte file.
 
 The corpus grows as sessions run, so re-run rather than quoting these counts
 later. Re-taken at 11:32 PDT with the corpus two hours larger, the flagged run
-returns this table byte for byte, because the sessions added in between were
-the ones working on this repo and the flags exclude them. The bare run is what
-drifts: its `RAN`/`FLAT` boundary moved by one rule between two readings an hour
-apart.
+returned this table byte for byte. **That reproduction did not survive the
+next day and the paragraph below is the correction**: the `BLIND`/`FLAT`
+boundary moves under the flagged run too, and only the union of the two is
+stable. The bare run drifts in the same place, one rule between two readings an
+hour apart, so it was never the distinguishing symptom it reads as here.
 
 | verdict | rules | kB | what it means |
 |---|---|---|---|
@@ -66,14 +67,26 @@ apart.
 | `FLAT` | 7 | 8.0 | fires, but no more often after the load than before |
 | `BLIND` | 14 | 12.6 | never fires anywhere in the corpus — a fact about the probe |
 
-**Re-taken 2026-09-19 at `6b88023`, the flagged run still returns this table.**
-Same four verdict counts, the same 21 rules, and 21,120 bytes against the
-110,854-byte file — 19.05%. The authoring arm grew from 9 sessions to 11 and the
-reader arm did not move off 85, which is the segregation working rather than a
-quiet corpus. The bare run on that same tree reports 92 reader sessions,
-`RAN=47 SAID=15 FLAT=12 BLIND=14`, and 26 rules at 26,639 bytes — 24.03%. The
-seven-session gap is the `claude-skills` authoring sessions, exactly as the
-warning above predicts.
+**Re-taken 2026-09-19 at `6b88023`: the candidate set holds and the split does
+not.** The union of `BLIND` and `FLAT` came back byte-identical — the same 21
+rules, 21,120 bytes, 19.05% — with a symmetric difference of zero against the
+reading above. The split between the two moved inside one hour on that same base
+tree: `BLIND` 14 / `FLAT` 7, then 10 / 11, then 8 / 13. The reader arm did not
+move off 85.
+
+**So quote the union and never the split.** `BLIND` means *no firing anywhere in
+the corpus*, and the corpus grows as sessions run — including the sessions
+working on this file, which quote these rules while deciding what to do with
+them. A rule leaves `BLIND` for `FLAT` on its first firing ever, so the boundary
+between them tracks how much attention the file has had lately rather than
+anything about a reader. The union is insensitive to that, because both verdicts
+are inside it. This is the skill's own *a measurement of recent activity, taken
+while your own work is changing that system, samples your own work*, and the
+table's `rules` and `kB` columns are the figures that survive it.
+
+**The bare run on that same tree** reports 92 reader sessions and 26 rules at
+26,639 bytes — 24.03%. The seven-session gap is the `claude-skills` authoring
+sessions, exactly as the warning above predicts.
 
 **A bare run was read as this table on 2026-09-19**, which is what the warning
 above is for and the only instance recorded here. Its five extra low-uptake

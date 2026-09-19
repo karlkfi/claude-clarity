@@ -388,13 +388,19 @@ high-uptake prose returned 100, 22, 48 and 60 bytes. So a displacement may not
 be paid out of a relocation candidate — that spends the move's own room early
 and at a worse exchange rate than moving the rule wholesale.
 
-**What the residency reading licenses is a ranking, not a verdict.** Fourteen of
-the 21 candidates are `BLIND` — the probe never found their markers in any
-session, which the instrument's own docstring insists is a fact about the probe
-rather than about the rule. Relocation is reversible and ships the rule either
-way, so a ranking is enough to decide what leaves the hot path. Deletion is not
-on the table at any ranking, because the reading cannot see a rule applied in
-the reader's own words.
+**What the residency reading licenses is a ranking, not a verdict.** Quote the
+union of `BLIND` and `FLAT` — 21 rules, 21,120 bytes — and never the split
+between them: re-taken three times on one base tree inside an hour it went 14/7,
+10/11, 8/13 while the union stayed byte-identical at a symmetric difference of
+zero. `BLIND` means *no firing anywhere in the corpus*, and the corpus grows as
+sessions run, including the sessions working on this file, so that boundary
+tracks how much attention the body has had lately rather than anything about a
+reader. That instability is an argument for relocation and against deletion:
+whether a given rule is *unseen by the probe* or *seen and flat* is not a
+property anyone can hold still. Relocation is reversible and ships the rule
+either way, so a ranking is enough to decide what leaves the hot path. Deletion
+is not on the table at any ranking, because the reading cannot see a rule
+applied in the reader's own words.
 
 The move is Q1014, and it carries the three parked clauses in its own branch
 rather than promising them room afterwards. It was filed rather than made
