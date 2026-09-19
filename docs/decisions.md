@@ -348,9 +348,11 @@ is the top band, and the ceilings fall as residency falls — `warm` is 16 KiB a
 `cold` 12 KiB. Every reassignment available makes the ceiling tighter. Inventing
 a band above `hot` is the remaining reading of it, and a band with one member
 whose ceiling is set to what that member currently measures is the per-skill
-byte budget the tier ladder was built to replace, which
-[skill-body-ceilings.md](skill-body-ceilings.md) records was negotiated 49 times
-and never refused. The reversal condition that file states for the grandfather
+byte budget the tier ladder was built to replace —
+`scripts/validate-skills.py:143:# costs. A number is negotiable in one line and was negotiated 49 times; a tier`
+counts the raises, and [skill-body-ceilings.md](skill-body-ceilings.md) records
+that the review behind them passed every time. The reversal condition that file
+states for the grandfather
 — a growth that is genuinely a new tier — therefore cannot fire for the one body
 it was written about. That file now says so.
 
@@ -371,9 +373,13 @@ a ranking is enough to decide what leaves the hot path. Deletion is not on the
 table at any ranking, because the reading cannot see a rule applied in the
 reader's own words.
 
-The move itself is Q1014, filed rather than made: every candidate rule sits
-above the three `path:N:text` citations into that file, and a concurrent lane
-was repointing them from the other side.
+The move itself is Q1014, filed rather than made. Twenty of the 21 candidates
+sit above the three `path:N:text` citations into that file, so moving them
+shifts all three; the twenty-first **is** one of the cited lines —
+`skills/verify-claims/SKILL.md:1364:**A figure you derived is not a figure you read.** The rule above quotes a number; this one you`
+is `BLIND`, and Q301 cites it. A concurrent lane was repointing the same three
+files from the other side, which is the case where neither branch can settle a
+citation.
 
 **What would reverse it:** a residency instrument that separates consulted from
 applied, which would turn the ranking into a verdict and put deletion back on
