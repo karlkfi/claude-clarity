@@ -49,11 +49,17 @@ A body already over its tier ceiling is therefore frozen at what it measured on
 whole point of the shape: the per-skill dict it replaced was an escape hatch
 with a review attached, and the review always passed.
 
-`verify-claims` is the case that makes this visible. Its body is 109,816 bytes
-against a 24 KiB hot ceiling, measured 2026-09-13 — it carries far more worked
+`verify-claims` is the case that makes this visible. Its body is 110,854 bytes
+against a 24 KiB hot ceiling, measured 2026-09-18 — it carries far more worked
 cases than any other skill here, and the three files under
 `skills/verify-claims/references/` are the split already in progress. It is
 grandfathered shrink-only, so an addition to it has to name what it displaces.
+
+Its residency is now measured rather than assumed, and the reading argues
+against shrinking it to the band: of 88 rules, everything with no observable
+uptake is 19% of the file, and the largest rule in it is the most used —
+[verify-claims-residency.md](verify-claims-residency.md), and
+`scripts/rule-residency.py` to re-take it.
 
 **What would reverse it:** a body whose growth is genuinely a new tier rather
 than an overrun, which is a tier reassignment rather than a raise.

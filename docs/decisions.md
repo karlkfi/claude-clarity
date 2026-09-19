@@ -12,6 +12,8 @@ result.
 
 Settled elsewhere and not repeated here: why a body has a ceiling and why that
 check fails rather than warns ([skill-body-ceilings.md](skill-body-ceilings.md)),
+which parts of `verify-claims` sessions actually use
+([verify-claims-residency.md](verify-claims-residency.md)),
 why the backlog has two ID blocks ([queue/README.md](queue/README.md)), why
 `semantic-remediation` is shaped as it is
 ([semantic-remediation-decisions.md](semantic-remediation-decisions.md)), and why
