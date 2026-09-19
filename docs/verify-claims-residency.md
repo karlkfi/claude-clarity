@@ -100,9 +100,11 @@ reaches 3.
 19% of the file. That is the most a defensible move could take, and it leaves
 about 90 kB against a 24 KiB ceiling — so relocation does not reach the tier
 ceiling, which is a true reading of a question nobody needed answered. The gate
-grandfathers this body at its own merge-base size rather than at the ceiling, so
-what an addition needs is room, and any relocation makes room.
-[decisions.md](decisions.md) has the argument.
+grandfathers this body at its merge-base size rather than at the ceiling, so
+what an addition needs is room. Room is made and spent inside one branch: the
+baseline is re-read per branch, so a shrink that merges makes main's smaller
+size the new limit and banks nothing for later.
+[decisions.md](decisions.md) has the argument and the measurement.
 
 **Most rules reach few sessions, and that is the shape of a reference work.**
 The median rule reaches 4 of 85; 25 rules reach 10 or more. A rule nobody needed
