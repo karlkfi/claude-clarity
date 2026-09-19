@@ -706,16 +706,18 @@ folds two claims into one — the rule held, and there was something for it to h
 the second fails the first is vacuous while the output is identical to a real pass. Three
 instances in one night, 2026-08-21: a store lint's *a flake row may not vanish* rule taken
 against a merge base carrying no such row, a `staticcheck` exclusion still listed in
-`.golangci.yml` after the directives it excluded had been deleted, and a fail-open with no
-fixture until the change that introduced it made one. Not there yet, gone, and never exercised
-are three ways in and one check covers all three: name the subject, count it, and refuse on zero
-rather than passing.
+`.golangci.yml` after the directives it excluded had been deleted, and a fail-open introduced by
+an evidence capture, whose failure mode had no fixture until that change created one. Not there
+yet, gone, and never exercised are three ways in and one check covers all three: name the
+subject, count it, and refuse on zero rather than passing.
 
-**The checker is a fourth subject, one that check cannot count.** A hook or guard failing
+**The checker is a fourth subject, and that check cannot count it.** A hook or guard failing
 *before* its first instruction — no execute bit, a missing interpreter, an unreadable config — is
-non-blocking by design, so *it did not object* means either *it passed* or *it was never there*,
-with nothing to separate them. Count its runs the same way and refuse on zero: one guard's record
-over the two days it was installed was 5,427 non-blocking errors at exit 126 and no run.
+non-blocking by design, and a spec gated on absent credentials reports its usual colour the same
+way, so *it did not object* means either *it passed* or *it was never there* with nothing to
+separate them. Count its runs too, and refuse on zero: one guard's record over the two days it
+was installed was 5,427 non-blocking errors at exit 126 and no run. Where it is the only thing
+asserting something, make the tripwire a change you can watch it catch.
 
 **A literal-name search is blind to every site that routes the name through a variable.** A
 suite's assertion subjects, a registry's keys, a table's fixture names — two helpers taking the
@@ -735,7 +737,8 @@ could be corrected, and all three sweeps came back falsely clean for different s
   preferentially rather than *a* site: a paragraph names its subject once and refers back
   thereafter, so the sentence carrying the load-bearing claim is the one that has stopped saying
   what it is about. The sentence that motivated the whole correction carried no subject token at
-  all. Test the subject over the surrounding paragraph rather than the sentence.
+  all, only *the two producers* and *one condition type*. Test the subject over the surrounding
+  paragraph, or a few hundred characters, rather than over the sentence.
 - **Vocabulary.** A pattern built from a literal string lifted off known instances finds
   restatements of that string and nothing else. Six known sites shared a phrase; six more
   asserted the same claim sharing no literal with it.
@@ -1157,11 +1160,6 @@ proxies, and they are wrong in both directions. Attempt the operation and branch
 Skip on the probe and say what it observed — a silent skip and a passing test look identical in
 the log, which is how a gate rots into a no-op. The reviewer's tell: a test that names an
 environment fact in a comment but never reads it.
-
-**A skip is not a defense.** A spec gated on credentials reports the same colour whether it ran or
-not, so the invariant stops being enforced the moment the credentials are absent. When a gated
-spec is the only thing asserting something, find the code change that could break it and make
-*that* the tripwire.
 
 **Derive a backstop from the subject's own budget.** A flat timeout picked as a round number
 beside the subject's configured waits can expire *inside* the window the same test just
