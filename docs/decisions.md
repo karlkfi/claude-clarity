@@ -416,3 +416,53 @@ applied, which would turn the ranking into a verdict and put deletion back on
 the table. Or a grandfather keyed to something other than the merge base — a
 recorded high-water mark rather than a re-read of main — which would make room
 bankable and let the move and its spenders be separate items again.
+## A description one character under the cap is not a problem to solve
+
+`verify-claims` measures 1023 against the 1024-character cap, and three rules
+landed on it in one batch without room for a matcher clause apiece. Q234 asked
+what to do about that. The answer is nothing, and the reason is worth keeping
+so the next batch does not re-open it.
+
+**Nothing in the invocation table says winning characters back would help.**
+Over 2,048 local transcripts on 2026-09-19, counting `Skill` calls deduped per
+session and splitting authoring sessions out the way `scripts/rule-residency.py`
+does, `verify-claims` fires in 85 reader sessions — first, and 30 clear of
+second. Its description is the longest in the repo. `deslop` is second at 55 and
+its description is the *shortest*, 549 characters with 475 to spare;
+`tech-docs-layers` has 108 characters going unused and fires in 5.
+
+**That is weaker than "length does not predict invocation", which is what this
+entry first said and could not support.** Correlating the ten lengths against
+the ten reader counts gives Pearson **−0.319** and Spearman **+0.394** — the
+signs disagree, because `deslop` is a leverage point 367 characters from its
+nearest neighbour. Drop it and the remaining nine give Spearman **+0.767**: by
+rank the data trends *opposite* to the null. Neither figure carries much, and
+that is the finding. Nine of the ten descriptions span 916–1023, about a tenth
+of the cap, while calls span 28-fold — a nearly constant predictor against a
+wildly varying outcome, so the design cannot see a length effect in either
+direction. Reverse causation fits at least as well: a skill that fires
+constantly is edited constantly, and editing accretes description text toward
+the cap.
+
+None of that disturbs the decision, which needs only that no payoff is visible.
+It is also about length rather than breadth, so it leaves untouched the caution
+that a broader description is the failure mode.
+
+**A rule with no dedicated clause is usually not unreachable.** Q234 named two
+subjects it read as unreachable — a population counted off a view already
+filtered by outcome, and a census returning nearly its whole population. Both
+are counts, and the description carries *when a probe, grep, scan, or count is
+about to justify a decision*. Neither `census` nor `population` appears, which
+is the correct shape: a general clause reaches them and no dedicated one names
+them. Before arguing that a rule needs its own clause, check the general ones.
+
+**What would reverse it:** a forward-scored reading — of calls arriving after a
+wording ships, never over the turns it was harvested from — showing sessions
+that had the subject in hand and did not fire the skill. That is the measurement
+this entry does not have, and the only one that could show the cap costing
+something. `scripts/validate-skills.py --report <skill>` is where any character
+count in that argument comes from. Q234 recorded the fold that motivated Q229 as
+wrong on 12 of the 21 skills in the collection this repo was extracted from. It
+does not reproduce here: folding each of the ten descriptions by hand agrees
+with the gate on all ten. Ask the enforcer because the fold is reimplemented,
+not because it is observably failing.
