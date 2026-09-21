@@ -64,6 +64,19 @@ uptake is 19% of the file, and the largest rule in it is the most used —
 **What would reverse it:** a body whose growth is genuinely a new tier rather
 than an overrun, which is a tier reassignment rather than a raise.
 
+**That escape is unavailable to a body already in the top band, and it is inert
+rather than tighter** — which is the case it was written about. The limit is
+`max(ceiling, baseline)`, so with a baseline of 110,854 the ceiling never binds:
+driven through `oversize()`, `hot`, `warm` and `cold` all return *pass* for
+`verify-claims`, and moving it to `cold` changes nothing at all. A band above
+`hot` is the only reading left, and it would have to set its ceiling **above**
+what its one member measures before it granted a single byte — at which point it
+is the per-skill byte budget this ladder replaced. So room for that body comes
+from relocating rules out of it and from nothing else, and it is made and spent
+inside one branch, because the baseline is re-read per branch.
+[decisions.md](decisions.md) settles the argument and holds the measurement; the
+residency reading ranks what goes first.
+
 ## Why it fails rather than warns
 
 The check names the exact number of bytes to take back out of the diff, so the

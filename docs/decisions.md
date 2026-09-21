@@ -333,3 +333,86 @@ could not be read either way.
 **What would reverse it:** a second output style arriving with a real reason to
 install one and not the other, or Claude Code growing a way to activate a style
 that is not a mutually exclusive settings key.
+
+## Room in `verify-claims` is made and spent in one branch
+
+Its body is 110,854 bytes against a 24 KiB `hot` ceiling, and the gate
+grandfathers it shrink-only at whatever it measured on the merge base. So an
+addition has to name what it displaces, and three rows — Q274, Q1010 and Q1012
+— park measured clauses that were written and reverted for want of the space.
+Q1003 asked which of two routes supplies it.
+
+**Reassigning the tier is not a route, because it is inert.** `oversize()` holds
+a body to `max(ceiling, baseline)` and the baseline here is 110,854, so the
+ceiling is not the binding constraint under any tier: driven through
+`validate-skills.py`'s own function, `hot`, `warm` and `cold` all return *pass*
+for this body, and moving it to `cold` changes nothing. An earlier draft of this
+entry said reassignment makes the ceiling *tighter*; that is wrong, and the
+conclusion it was supporting holds harder without it. A band **above** `hot`
+would have to set its ceiling above what its one member measures before it
+granted a single byte — at which point it is the per-skill byte budget the tier
+ladder was built to replace.
+`scripts/validate-skills.py:143:# costs. A number is negotiable in one line and was negotiated 49 times; a tier`
+counts the raises, and [skill-body-ceilings.md](skill-body-ceilings.md) records
+that the review behind them passed every time. So the reversal condition that
+file states for the grandfather — a growth that is genuinely a new tier — cannot
+fire for the one body it was written about. That file now says so.
+
+**Relocation is the route, and it does not have to reach the ceiling.** Moving
+everything with no measurable uptake recovers 21,120 bytes and leaves about
+90 kB against 24 KiB, which is why
+[verify-claims-residency.md](verify-claims-residency.md) said the ceiling is not
+reachable this way. That reading is correct and answers a question nobody needed
+answered: what an addition needs is room, and the ceiling is not the frame.
+
+**But a relocation merged on its own banks nothing, which is the part that
+decides how the work is shaped.** The baseline is `git merge-base origin/main
+HEAD`, re-read per branch, so the moment a shrink merges, main's smaller size
+*becomes* the new limit. Driven through `oversize()`: a branch relocating the
+21 rules passes at 89,734 against a limit of 110,854; a branch then adding one
+1,024-byte clause off that new main fails at 90,758 against a limit of 89,734 —
+the identical failure it has today; all three clauses fail by 3,072. Only a
+branch that relocates **and** adds passes, at 92,806 against 110,854. The gate's
+docstring says exactly this and it is easy to read past: no body grew past its
+ceiling *on this branch*.
+
+So the room is not a balance that a relocation deposits for later rows to draw
+on. It exists only inside the branch that makes it, and it is gone the moment
+that branch merges. A relocation filed as its own item unsticks nothing.
+
+**And there is no second source to fall back on.** The lane working the small
+rows measured it while paying its own displacement: every unit in the file that
+can be cut without losing a claim is measured low-uptake, which is the
+relocation candidate set. Its first four sentence-compression passes over
+high-uptake prose returned 100, 22, 48 and 60 bytes. So a displacement may not
+be paid out of a relocation candidate — that spends the move's own room early
+and at a worse exchange rate than moving the rule wholesale.
+
+**What the residency reading licenses is a ranking, not a verdict.** Quote the
+union of `BLIND` and `FLAT` — 21 rules, 21,120 bytes — and never the split
+between them: re-taken three times on one base tree inside an hour it went 14/7,
+10/11, 8/13 while the union stayed byte-identical at a symmetric difference of
+zero. `BLIND` means *no firing anywhere in the corpus*, and `corpus` is summed across
+every arm including the authoring one — so the `--repo` flags that keep
+authoring sessions out of the reader arm cannot protect this boundary at all,
+and measurably do not: all six rules that left `BLIND` between two readings had
+their entire count in the authoring arm and zero in the reader arm. It is also
+a ratchet rather than a fluctuation, since corpus counts are cumulative, so a
+rule leaves and does not come back and re-taking the reading will not average
+it out. That instability is an argument for relocation and against deletion:
+whether a given rule is *unseen by the probe* or *seen and flat* is not a
+property anyone can hold still. Relocation is reversible and ships the rule
+either way, so a ranking is enough to decide what leaves the hot path. Deletion
+is not on the table at any ranking, because the reading cannot see a rule
+applied in the reader's own words.
+
+The move is Q1014, and it carries the three parked clauses in its own branch
+rather than promising them room afterwards. It was filed rather than made
+because a concurrent lane was editing the same body and repointing the same
+citations, which is the case where neither branch can settle a citation.
+
+**What would reverse it:** a residency instrument that separates consulted from
+applied, which would turn the ranking into a verdict and put deletion back on
+the table. Or a grandfather keyed to something other than the merge base — a
+recorded high-water mark rather than a re-read of main — which would make room
+bankable and let the move and its spenders be separate items again.

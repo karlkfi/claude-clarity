@@ -1,8 +1,9 @@
 # Which parts of `verify-claims` get used
 
-[Q1003](queue/Q1003.md) asks where the worked cases in a 110 KB skill body
-should live, and says the decision needs a reading of which sections are
-*consulted* versus *applied* before it needs an edit.
+Q1003 asked where the worked cases in a 110 KB skill body should live, and said
+the decision needed a reading of which sections are *consulted* versus
+*applied* before it needed an edit. [decisions.md](decisions.md) settles it and
+[Q1014](queue/Q1014.md) is the move.
 [`scripts/rule-residency.py`](../scripts/rule-residency.py) is that instrument.
 This file is the reading it produced and the bounds on it.
 
@@ -53,10 +54,11 @@ sessions and 9 authoring ones. 88 rules, 98.6 kB of the 110,854-byte file.
 
 The corpus grows as sessions run, so re-run rather than quoting these counts
 later. Re-taken at 11:32 PDT with the corpus two hours larger, the flagged run
-returns this table byte for byte, because the sessions added in between were
-the ones working on this repo and the flags exclude them. The bare run is what
-drifts: its `RAN`/`FLAT` boundary moved by one rule between two readings an hour
-apart.
+returned this table byte for byte. **That reproduction did not survive the
+next day and the paragraph below is the correction**: the `BLIND`/`FLAT`
+boundary moves under the flagged run too, and only the union of the two is
+stable. The bare run drifts in the same place, one rule between two readings an
+hour apart, so it was never the distinguishing symptom it reads as here.
 
 | verdict | rules | kB | what it means |
 |---|---|---|---|
@@ -64,6 +66,61 @@ apart.
 | `SAID` | 14 | 15.2 | fires in prose only |
 | `FLAT` | 7 | 8.0 | fires, but no more often after the load than before |
 | `BLIND` | 14 | 12.6 | never fires anywhere in the corpus — a fact about the probe |
+
+**Re-taken 2026-09-19 at `6b88023`: the candidate set holds and the split does
+not.** The union of `BLIND` and `FLAT` came back byte-identical — the same 21
+rules, 21,120 bytes, 19.05% — with a symmetric difference of zero against the
+reading above. The split between the two moved inside one hour on that same base
+tree: `BLIND` 14 / `FLAT` 7, then 10 / 11, then 8 / 13. The reader arm did not
+move off 85.
+
+**So quote the union and never the split — which means the `BLIND` and `FLAT`
+rows of this table are not quotable on their own.** Their `rules` and `kB` cells
+are exactly where the moving figures live; what survives is those two rows
+added together, 21 rules and 21,120 bytes. The `RAN` and `SAID` rows held across
+both readings, but two readings is not a stability claim and this file does not
+make one for them.
+
+**The `--repo` flags cannot protect that boundary, by construction.** The
+instrument says so in two lines: `corpus = sum(c.values())` sums every arm, and
+`if row["corpus"] == 0: return "BLIND"`. Its own docstring is explicit —
+*"corpus: every firing anywhere, PRE and POST and authoring sessions alike"*. So
+segregating the authoring sessions changes which arm a firing lands in and never
+whether one happened. Measured over the six rules that
+left `BLIND` between two readings of one base tree: every one has its entire
+count in the authoring arm and **zero** in the reader arm. The flags protect
+`RAN`, `SAID` and `FLAT` from authoring contamination and leave `BLIND` fully
+exposed.
+
+**And it is a ratchet, not a fluctuation.** Transcripts accumulate and corpus
+counts are cumulative, so on a fixed base tree a rule leaves `BLIND` and never
+returns: 14/7 → 10/11 → 8/13 is one-way. Re-taking it will not average out, and
+a later reading is not a better estimate of the same quantity.
+
+This is the skill's own *a measurement of recent activity, taken while your own
+work is changing that system, samples your own work*, and it is not abstract
+here: of the fourteen rules originally `BLIND`, the six that stopped being so
+include all four that this repo's own backlog rows cite by name — the rules a
+review spent an hour quoting are the rules that left. The reading is in its own
+data.
+
+**The bare run on that same tree** reports 92 reader sessions and 26 rules at
+26,639 bytes — 24.03%. The seven-session gap is the `claude-skills` authoring
+sessions, exactly as the warning above predicts.
+
+**A bare run was read as this table on 2026-09-19**, which is what the warning
+above is for and the only instance recorded here. Its five extra low-uptake
+rules — `FLAT` 7 against 12, `BLIND` 14 either way — were taken for a corpus
+effect, and the control run against that reading passed `--repo claude-clarity`
+explicitly against leaving it implicit. That is one repo either way, so it
+varied the term and never the cause, which is the number of repos segregated.
+Read the run's own first line before its numbers: a bare run names one repo
+there.
+
+**The two candidate sets are not nested, so neither stands in for the other.**
+`Provenance is a claim, and one of the cheapest to settle` is `FLAT` under the
+flags and `SAID` without them, so it is in the 21 and not in the 26. Clearing a
+span against the bare reading does not clear it against this one.
 
 Three things the table settles.
 
@@ -74,7 +131,13 @@ reaches 3.
 
 **The candidate set is 20.6 kB.** `BLIND` and `FLAT` together are 21 rules and
 19% of the file. That is the most a defensible move could take, and it leaves
-about 90 kB against a 24 KiB ceiling. Whatever settles Q1003, it is not this.
+about 90 kB against a 24 KiB ceiling — so relocation does not reach the tier
+ceiling, which is a true reading of a question nobody needed answered. The gate
+grandfathers this body at its merge-base size rather than at the ceiling, so
+what an addition needs is room. Room is made and spent inside one branch: the
+baseline is re-read per branch, so a shrink that merges makes main's smaller
+size the new limit and banks nothing for later.
+[decisions.md](decisions.md) has the argument and the measurement.
 
 **Most rules reach few sessions, and that is the shape of a reference work.**
 The median rule reaches 4 of 85; 25 rules reach 10 or more. A rule nobody needed
