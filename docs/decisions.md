@@ -176,9 +176,36 @@ kinds reproduces that skill's own split — the invented-shorthand kind passes,
 the other two fail on needing to know what the reader already has. The pass
 could have returned a positive.
 
-**What would reverse it:** unchanged — one of the three finding a rule that is
-certain and has a mechanical repair. The three readings above are the prior a
-future pass argues with.
+**Every reading above scores a checker as a gate, and a second job has since
+turned up.** The pass handed here on 2026-09-24 used the two shipped linters
+for something a gate is not for: scoring a corpus of text those sessions
+actually authored, to ask whether a skill *should* have fired. `deslop-lint.py`
+puts **20 of 224** unfired README units at or above 7.0 hits per 100 words, the
+top of the observed house register. `readability-lint.py` finds **32 of 190**
+carrying a term used and never expanded. Those are the only figures in the
+whole pass bearing on that question; the other eight skills can be scored only
+against a predicate paraphrasing their own description, which measures the
+paraphrase.
+
+A warning nobody reads kills a gate and costs an instrument nothing, because an
+instrument reports an aggregate and has no actor to interrupt. So the
+acceptance criteria are not the same pair, and the refusals above were argued
+against one of them. That does not reopen the three: `claim-provenance`'s
+obstacle is that a script computes one term of the subtraction and never the
+other, which is as fatal to a count as to a warning. It does mean the question
+was asked narrowly, and which of the five skills with no ruling could carry an
+instrument is [Q1021](queue/Q1021.md).
+
+Carry both floors with those figures. The linters see vocabulary and sentence
+mechanics and cannot see a claim with no source, so each is a floor rather than
+a rate. And `readability-lint.py` covers one of that skill's rules rather than
+its subject, which is the split its own entry above describes.
+
+**What would reverse it:** one of the three finding a rule that is certain and
+has a mechanical repair — unchanged, and the three readings above are the prior
+a future pass argues with. Or a reading in which an instrument's aggregate pays
+for a checker that no gate would justify, which is the second condition and did
+not exist when this entry was first written.
 
 ## Naming a skill is what moves its trigger count
 
@@ -231,6 +258,106 @@ ones quoted.
 **What would reverse it:** a re-count in which a skill named at a moment in a
 loaded `CLAUDE.md` stays at zero, or one in which a skill named nowhere climbs
 on a description rewrite alone.
+
+## `tech-docs-layers` lost a competition rather than never entering one
+
+The entry above says naming is the lever. This one is the case that looked like
+its cleanest confirmation and is not: the skill with the widest reach here has
+the lowest use of the ten, and the reason is not that nobody named it.
+
+Handed over on 2026-09-24 from a pass over one workstation's transcripts
+bounded 2026-09-18: listed in **1,552 of 1,574 measured sessions**, more than
+any other skill here, **5 calls lifetime, none since 2026-08-16**, largest
+occasion set of the ten at 856 sessions, lowest rate at 0.58%. Age and
+availability are ruled out — it has been listed since 2026-07-26.
+
+**A local re-derivation on 2026-09-24, unbounded in time over 2,079
+transcripts, reproduces the numerator exactly and the rest closely**: 1,609
+measured after excluding 470 authoring sessions, 1,587 offered, 5 fired, 654
+sessions writing a docs-shaped path. The occasion predicate here is narrower
+than the pass's, which is why 654 sits below 856. The probe is
+`Edit`/`Write`/`MultiEdit` targets matching a docs tree, a `README.md`, or a
+top-level `CAPS.md`, so a page changed through `sed` is invisible.
+
+### The naming lever was applied, in the one repo that has the occasion
+
+**433 of the 654 occasion sessions are in `github-actions-gateway`**, which is
+also the only checkout here carrying a docs framework — `mkdocs.yml` over 428
+pages. Five sibling repos have a `docs/` tree and no framework at all.
+
+That repo's `docs/development/skills.md` names this skill, at a moment and in
+this skill's own words: applied when adding, restructuring, or updating a page
+under `docs/`. Nothing loads that page. Its `CLAUDE.md` does load, and it
+reaches this skill's moment three times — update docs after a change, and
+*writing, editing, or restructuring any doc*, which is the skill's subject
+verbatim — and routes all three to two local pages,
+`docs/development/doc-update-matrix.md` and
+`docs/development/documentation-standards.md`. The same file gives
+moment-shaped **skill** lines to `rendered-page-review`, `verify-claims` and
+`session-retro`.
+
+**So the author reached this skill's moment, at the keyboard, and chose a local
+doc each time.** That is a competition lost, not a lever untried, and it
+disposes of the obvious remedy: a naming line in that `CLAUDE.md` would have to
+displace a page written for that repo by someone who had already considered the
+alternative.
+
+### What the sweep became there
+
+Step 3 is the part of this skill that tells a model to do something it does not
+do by default. In the repo with the occasions it was promoted past prose
+entirely, into gates: `doc-links`, `doc-toc-check`, `roadmap-check`,
+`script-docs-check`, `release-links-check` and `verify-published-docs`, with
+`documentation-standards.md` carrying the residue a gate cannot reach. A rule
+that must hold every time cannot hold in prose, and that repo acted on it.
+
+### The one call that was the skill's own subject wrote its description
+
+Of the five calls, one is a release-notes format fix, one a `gh` issue link,
+one a bare "new release", one a dispatched worker brief. The fifth opens *the
+roadmap web page is a mess … it's a giant wall of text … it doesn't link to
+docs pages enough … it keeps getting stale*, which is this skill's description
+clause word for word. The description was written backwards out of its own
+single success, which is the harvesting failure `decisions.md` warns about
+elsewhere, arriving from the inside.
+
+`readme` fires the skill 0 times in 235 sessions while the description names
+writing a README as a trigger, and an earlier pass recorded that zero at 83.
+Under the reading above, neither clause is the defect.
+
+### It stays, and a rewrite is the open question
+
+Retirement is still not the entry to write, because the skill has never been
+scoped to the case it could win: a repo with a `docs/` tree and no docs
+conventions of its own, which is four of the six checkouts here and 221 of the
+654 occasion sessions. The rewrite is [Q1022](queue/Q1022.md), and its shape
+was settled on 2026-09-24: **two modes off one moment** — where the repo has no
+docs conventions of its own, write it one and propose the gates that carry the
+sweep; where it has one, defer to it and sweep. The bootstrap half is what
+`github-actions-gateway` did for itself, so the skill produces the local page
+that beat it rather than competing with one. Three alternatives were declined
+and are recorded on the row, because the reasons transfer: narrowing to
+survey-and-sweep answers the same question with less, bootstrap alone has a
+ceiling of four firings across these checkouts, and retiring now forecloses the
+framework-less case before it has been tried once.
+
+Two readings bear on it and neither is measured. Layers 3 to 6 — version,
+metadata, navigation, partials — are 28.6% of the body and every one
+presupposes a framework those four repos do not have. And the six layers'
+content is ordinary technical-writing knowledge; what the body supplies that a
+model does not already act on is the instruction to survey first and sweep
+after, which is 28.1% of it. Both are held rather than checked, and the second
+is a claim about training data that nothing here can settle.
+
+Both readings are measured before the rewrite rather than after, which is
+[Q1023](queue/Q1023.md) and why Q1022 is blocked. A cut that rests on the
+second reading and never tests it would be unfalsifiable after the fact, since
+nothing afterwards distinguishes a layer the model never needed from one the
+rewrite removed.
+
+**What would reverse it:** a rewrite shipping against the framework-less case
+and still measuring zero over a comparable window, which would say the subject
+rather than the scoping is what nobody reaches for.
 
 ## The hook ships from here, not from the guard repo
 
