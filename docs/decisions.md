@@ -259,59 +259,90 @@ ones quoted.
 loaded `CLAUDE.md` stays at zero, or one in which a skill named nowhere climbs
 on a description rewrite alone.
 
-## `tech-docs-layers` is offered everywhere, used nowhere, and stays
+## `tech-docs-layers` lost a competition rather than never entering one
 
-The entry above says naming is the lever. This one is the case that tests it
-hardest, because the skill with the widest reach here has never been named
-anywhere and has the lowest use of the ten.
+The entry above says naming is the lever. This one is the case that looked like
+its cleanest confirmation and is not: the skill with the widest reach here has
+the lowest use of the ten, and the reason is not that nobody named it.
 
-Handed over on 2026-09-24 from a pass over one workstation's session
-transcripts bounded at 2026-09-18 — 2,008 dated transcripts, of which 434 in
-the authoring repos were excluded, leaving 1,574 measured. The skill was listed
-in **1,552 of them**, more than any other skill here, and has **5 calls
-lifetime, none since 2026-08-16**. Its occasion set is the largest of the ten
-at 856 sessions and its rate the lowest at 0.58%. All five calls landed before
-their session's docs edits, so none of them answered an occasion.
+Handed over on 2026-09-24 from a pass over one workstation's transcripts
+bounded 2026-09-18: listed in **1,552 of 1,574 measured sessions**, more than
+any other skill here, **5 calls lifetime, none since 2026-08-16**, largest
+occasion set of the ten at 856 sessions, lowest rate at 0.58%. Age and
+availability are ruled out — it has been listed since 2026-07-26.
 
-Age and availability are ruled out rather than argued away: it has been listed
-since the corpus's first day, 2026-07-26.
+**A local re-derivation on 2026-09-24, unbounded in time over 2,079
+transcripts, reproduces the numerator exactly and the rest closely**: 1,609
+measured after excluding 470 authoring sessions, 1,587 offered, 5 fired, 654
+sessions writing a docs-shaped path. The occasion predicate here is narrower
+than the pass's, which is why 654 sits below 856. The probe is
+`Edit`/`Write`/`MultiEdit` targets matching a docs tree, a `README.md`, or a
+top-level `CAPS.md`, so a page changed through `sed` is invisible.
 
-**So retirement is deferred behind an experiment this repo cannot run.** The
-one lever measured to move a trigger count has never been applied to this
-skill: it is named in no `CLAUDE.md` outside its authoring repo, nine files
-checked. That is the condition `rendered-page-review` was in when it measured
-zero, and one moment-shaped line took it to eleven calls. Retiring a skill that
-has never been named would record the wrong cause, and the record is what the
-next pass reasons from.
+### The naming lever was applied, in the one repo that has the occasion
 
-The same pass prices the two naming shapes against each other inside
-`github-actions-gateway`, which names two of these skills both ways in one
-file, holding repo, corpus, window and availability constant: **at a moment,
-8.2% (23 of 279); as a property of a path, 3.3% (9 of 275)**. Take 2.5× as an
-effect measured once, not a coefficient — the two arms count different events,
-and there is no named-nowhere arm, because no repo in that corpus publishes
-pages without naming the skill.
+**433 of the 654 occasion sessions are in `github-actions-gateway`**, which is
+also the only checkout here carrying a docs framework — `mkdocs.yml` over 428
+pages. Five sibling repos have a `docs/` tree and no framework at all.
 
-**The 5 agrees with the count already in this file and is not a second
-instrument.** The entry on the description cap records this skill firing in 5
-reader sessions over 2,048 transcripts on 2026-09-19. That one counts sessions
-and this one counts calls, so landing on the same integer is a coincidence of
-units. Both walk the same `~/.claude/projects/` store on one machine under
-different filters, so the agreement checks the filters and corroborates
-nothing.
+That repo's `docs/development/skills.md` names this skill, at a moment and in
+this skill's own words: applied when adding, restructuring, or updating a page
+under `docs/`. Nothing loads that page. Its `CLAUDE.md` does load, and it
+reaches this skill's moment three times — update docs after a change, and
+*writing, editing, or restructuring any doc*, which is the skill's subject
+verbatim — and routes all three to two local pages,
+`docs/development/doc-update-matrix.md` and
+`docs/development/documentation-standards.md`. The same file gives
+moment-shaped **skill** lines to `rendered-page-review`, `verify-claims` and
+`session-retro`.
 
-**One description clause is measured dead, and on its own it is not evidence.**
-`readme` fires this skill 0 times in 235 sessions, and the description names
-writing a README as a trigger; an earlier pass recorded the same zero at 83
-sessions, so the corpus tripled and the count held. Under the finding above
-that is what a skill nobody names looks like from every angle, not a defect in
-one clause. Cutting it is [Q1020](queue/Q1020.md), and that row is deliberately
-not ready.
+**So the author reached this skill's moment, at the keyboard, and chose a local
+doc each time.** That is a competition lost, not a lever untried, and it
+disposes of the obvious remedy: a naming line in that `CLAUDE.md` would have to
+displace a page written for that repo by someone who had already considered the
+alternative.
 
-**What would reverse it:** a moment-shaped line naming the skill in a
-`CLAUDE.md` that loads where docs get written, followed by a window of
-comparable length still at zero. That reading would make this a dead skill
-rather than an unnamed one, and retirement would then be the honest entry.
+### What the sweep became there
+
+Step 3 is the part of this skill that tells a model to do something it does not
+do by default. In the repo with the occasions it was promoted past prose
+entirely, into gates: `doc-links`, `doc-toc-check`, `roadmap-check`,
+`script-docs-check`, `release-links-check` and `verify-published-docs`, with
+`documentation-standards.md` carrying the residue a gate cannot reach. A rule
+that must hold every time cannot hold in prose, and that repo acted on it.
+
+### The one call that was the skill's own subject wrote its description
+
+Of the five calls, one is a release-notes format fix, one a `gh` issue link,
+one a bare "new release", one a dispatched worker brief. The fifth opens *the
+roadmap web page is a mess … it's a giant wall of text … it doesn't link to
+docs pages enough … it keeps getting stale*, which is this skill's description
+clause word for word. The description was written backwards out of its own
+single success, which is the harvesting failure `decisions.md` warns about
+elsewhere, arriving from the inside.
+
+`readme` fires the skill 0 times in 235 sessions while the description names
+writing a README as a trigger, and an earlier pass recorded that zero at 83.
+Under the reading above, neither clause is the defect.
+
+### It stays, and a rewrite is the open question
+
+Retirement is still not the entry to write, because the skill has never been
+scoped to the case it could win: a repo with a `docs/` tree and no docs
+conventions of its own, which is four of the six checkouts here and 221 of the
+654 occasion sessions. What that rewrite should be is [Q1022](queue/Q1022.md).
+
+Two readings bear on it and neither is measured. Layers 3 to 6 — version,
+metadata, navigation, partials — are 28.6% of the body and every one
+presupposes a framework those four repos do not have. And the six layers'
+content is ordinary technical-writing knowledge; what the body supplies that a
+model does not already act on is the instruction to survey first and sweep
+after, which is 28.1% of it. Both are held rather than checked, and the second
+is a claim about training data that nothing here can settle.
+
+**What would reverse it:** a rewrite shipping against the framework-less case
+and still measuring zero over a comparable window, which would say the subject
+rather than the scoping is what nobody reaches for.
 
 ## The hook ships from here, not from the guard repo
 
