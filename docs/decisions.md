@@ -330,7 +330,16 @@ Under the reading above, neither clause is the defect.
 Retirement is still not the entry to write, because the skill has never been
 scoped to the case it could win: a repo with a `docs/` tree and no docs
 conventions of its own, which is four of the six checkouts here and 221 of the
-654 occasion sessions. What that rewrite should be is [Q1022](queue/Q1022.md).
+654 occasion sessions. The rewrite is [Q1022](queue/Q1022.md), and its shape
+was settled on 2026-09-24: **two modes off one moment** — where the repo has no
+docs conventions of its own, write it one and propose the gates that carry the
+sweep; where it has one, defer to it and sweep. The bootstrap half is what
+`github-actions-gateway` did for itself, so the skill produces the local page
+that beat it rather than competing with one. Three alternatives were declined
+and are recorded on the row, because the reasons transfer: narrowing to
+survey-and-sweep answers the same question with less, bootstrap alone has a
+ceiling of four firings across these checkouts, and retiring now forecloses the
+framework-less case before it has been tried once.
 
 Two readings bear on it and neither is measured. Layers 3 to 6 — version,
 metadata, navigation, partials — are 28.6% of the body and every one
@@ -339,6 +348,12 @@ content is ordinary technical-writing knowledge; what the body supplies that a
 model does not already act on is the instruction to survey first and sweep
 after, which is 28.1% of it. Both are held rather than checked, and the second
 is a claim about training data that nothing here can settle.
+
+Both readings are measured before the rewrite rather than after, which is
+[Q1023](queue/Q1023.md) and why Q1022 is blocked. A cut that rests on the
+second reading and never tests it would be unfalsifiable after the fact, since
+nothing afterwards distinguishes a layer the model never needed from one the
+rewrite removed.
 
 **What would reverse it:** a rewrite shipping against the framework-less case
 and still measuring zero over a comparable window, which would say the subject
