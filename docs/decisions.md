@@ -176,9 +176,36 @@ kinds reproduces that skill's own split — the invented-shorthand kind passes,
 the other two fail on needing to know what the reader already has. The pass
 could have returned a positive.
 
-**What would reverse it:** unchanged — one of the three finding a rule that is
-certain and has a mechanical repair. The three readings above are the prior a
-future pass argues with.
+**Every reading above scores a checker as a gate, and a second job has since
+turned up.** The pass handed here on 2026-09-24 used the two shipped linters
+for something a gate is not for: scoring a corpus of text those sessions
+actually authored, to ask whether a skill *should* have fired. `deslop-lint.py`
+puts **20 of 224** unfired README units at or above 7.0 hits per 100 words, the
+top of the observed house register. `readability-lint.py` finds **32 of 190**
+carrying a term used and never expanded. Those are the only figures in the
+whole pass bearing on that question; the other eight skills can be scored only
+against a predicate paraphrasing their own description, which measures the
+paraphrase.
+
+A warning nobody reads kills a gate and costs an instrument nothing, because an
+instrument reports an aggregate and has no actor to interrupt. So the
+acceptance criteria are not the same pair, and the refusals above were argued
+against one of them. That does not reopen the three: `claim-provenance`'s
+obstacle is that a script computes one term of the subtraction and never the
+other, which is as fatal to a count as to a warning. It does mean the question
+was asked narrowly, and which of the five skills with no ruling could carry an
+instrument is [Q1021](queue/Q1021.md).
+
+Carry both floors with those figures. The linters see vocabulary and sentence
+mechanics and cannot see a claim with no source, so each is a floor rather than
+a rate. And `readability-lint.py` covers one of that skill's rules rather than
+its subject, which is the split its own entry above describes.
+
+**What would reverse it:** one of the three finding a rule that is certain and
+has a mechanical repair — unchanged, and the three readings above are the prior
+a future pass argues with. Or a reading in which an instrument's aggregate pays
+for a checker that no gate would justify, which is the second condition and did
+not exist when this entry was first written.
 
 ## Naming a skill is what moves its trigger count
 
@@ -231,6 +258,60 @@ ones quoted.
 **What would reverse it:** a re-count in which a skill named at a moment in a
 loaded `CLAUDE.md` stays at zero, or one in which a skill named nowhere climbs
 on a description rewrite alone.
+
+## `tech-docs-layers` is offered everywhere, used nowhere, and stays
+
+The entry above says naming is the lever. This one is the case that tests it
+hardest, because the skill with the widest reach here has never been named
+anywhere and has the lowest use of the ten.
+
+Handed over on 2026-09-24 from a pass over one workstation's session
+transcripts bounded at 2026-09-18 — 2,008 dated transcripts, of which 434 in
+the authoring repos were excluded, leaving 1,574 measured. The skill was listed
+in **1,552 of them**, more than any other skill here, and has **5 calls
+lifetime, none since 2026-08-16**. Its occasion set is the largest of the ten
+at 856 sessions and its rate the lowest at 0.58%. All five calls landed before
+their session's docs edits, so none of them answered an occasion.
+
+Age and availability are ruled out rather than argued away: it has been listed
+since the corpus's first day, 2026-07-26.
+
+**So retirement is deferred behind an experiment this repo cannot run.** The
+one lever measured to move a trigger count has never been applied to this
+skill: it is named in no `CLAUDE.md` outside its authoring repo, nine files
+checked. That is the condition `rendered-page-review` was in when it measured
+zero, and one moment-shaped line took it to eleven calls. Retiring a skill that
+has never been named would record the wrong cause, and the record is what the
+next pass reasons from.
+
+The same pass prices the two naming shapes against each other inside
+`github-actions-gateway`, which names two of these skills both ways in one
+file, holding repo, corpus, window and availability constant: **at a moment,
+8.2% (23 of 279); as a property of a path, 3.3% (9 of 275)**. Take 2.5× as an
+effect measured once, not a coefficient — the two arms count different events,
+and there is no named-nowhere arm, because no repo in that corpus publishes
+pages without naming the skill.
+
+**The 5 agrees with the count already in this file and is not a second
+instrument.** The entry on the description cap records this skill firing in 5
+reader sessions over 2,048 transcripts on 2026-09-19. That one counts sessions
+and this one counts calls, so landing on the same integer is a coincidence of
+units. Both walk the same `~/.claude/projects/` store on one machine under
+different filters, so the agreement checks the filters and corroborates
+nothing.
+
+**One description clause is measured dead, and on its own it is not evidence.**
+`readme` fires this skill 0 times in 235 sessions, and the description names
+writing a README as a trigger; an earlier pass recorded the same zero at 83
+sessions, so the corpus tripled and the count held. Under the finding above
+that is what a skill nobody names looks like from every angle, not a defect in
+one clause. Cutting it is [Q1020](queue/Q1020.md), and that row is deliberately
+not ready.
+
+**What would reverse it:** a moment-shaped line naming the skill in a
+`CLAUDE.md` that loads where docs get written, followed by a window of
+comparable length still at zero. That reading would make this a dead skill
+rather than an unnamed one, and retirement would then be the honest entry.
 
 ## The hook ships from here, not from the guard repo
 
