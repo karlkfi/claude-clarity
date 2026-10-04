@@ -87,7 +87,7 @@ It reports violations per 100 words. Read the delta between two drafts, not the 
 
 ## Step 5: the deslop pass (editing an existing draft)
 
-1. Read for content-slop first (Step 3). Mark every claim that names no source, no number, and no mechanism. Fix or cut these before touching style; polishing them wastes the polish.
+1. Read for content-slop first (Step 3). Mark every claim that names no source, no number, and no mechanism. Cut these, or report them to the author when the fix needs a source, number, or mechanism the draft does not hold; polishing them wastes the polish.
 2. Lint against the tell catalog (Step 4). Quote each hit with the pattern name so the author can see the diagnosis, not just the rewrite.
 3. Rewrite at the sentence level in place. Preserve meaning, preserve the author's ordering and argument. Do not restructure the document unless asked.
 4. Delete before you rephrase. Most slop sentences are not bad sentences; they are unnecessary ones. The 41%-shorter version that says the same thing is the better version.
