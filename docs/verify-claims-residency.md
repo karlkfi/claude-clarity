@@ -3,7 +3,7 @@
 Q1003 asked where the worked cases in a 110 KB skill body should live, and said
 the decision needed a reading of which sections are *consulted* versus
 *applied* before it needed an edit. [decisions.md](decisions.md) settles it and
-[Q1014](queue/Q1014.md) is the move.
+Q1014 made the move, recorded under *The move* below.
 [`scripts/rule-residency.py`](../scripts/rule-residency.py) is that instrument.
 This file is the reading it produced and the bounds on it.
 
@@ -166,6 +166,22 @@ counts made `POST` look busier than `PRE` because it is the longer window —
 3.33× by action blocks — so the verdict compares rates, which moved ten of 88
 verdicts one tier. And a bold span at the start of a wrapped line is not a rule
 lead; requiring one to open a paragraph dropped five phantom rules.
+
+## The move
+
+Taken again for Q1014 on 2026-10-04, against `78f0bb3`, with both `--repo` flags:
+89 reader sessions and 13 authoring ones. The union of `BLIND` and `FLAT` was 20
+rules and 19,359 bytes — one fewer than the 21 above, because a sibling branch had
+folded *A skip is not a defense* into a new rule in between. Those 20 moved whole
+into `skills/verify-claims/references/further-rules.md`, cut at the boundaries
+`load_rules()` draws, so what moved is exactly what was measured. Each section of
+`SKILL.md` that lost a rule now ends with a plain paragraph listing their leads,
+plain rather than bold so this probe does not count the list as a rule.
+
+The body went from 110,836 bytes to 93,114 with the move alone, and to 98,882 with
+the nine parked clauses that landed in the same branch. A reading taken after this
+merges measures a different body, so the table above is not comparable to it
+rule for rule.
 
 ## What would reverse this
 
