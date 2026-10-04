@@ -177,7 +177,7 @@ The rest need a reader. Whether a block belongs on this page, whether prose dupl
 
 Prose skills own the words; this one owns what the browser does with them. `readability` owns reading order and whether a non-author can follow the argument, `deslop` owns register and vocabulary, a personal voice skill owns voice, `tech-docs-layers` owns which doc a thing lives in, and `code-restraint` owns the CSS and template diff you write at the end. Rules here that touch copy — the density budgets, the invariant rule — are layout constraints on copy, not style advice, and they yield to those skills anywhere the two collide.
 
-Two adjacent tools that do not replace this:
+Three adjacent tools that do not replace this:
 
 - **Visual regression testing** (Playwright's `toHaveScreenshot`, Percy, BackstopJS) answers "did this change?" against a baseline. It says nothing about a first render, which has no baseline, and a diff never names the element that owns an overflow. Worth having; not a substitute for a probe.
 - **Accessibility linters** (axe-core and friends) catch contrast, labels, and roles, and should be run — but not for this. axe-core carries no reflow or overflow rule at all, and its single Text Spacing rule, `avoid-inline-spacing`, checks whether inline `style` attributes block a reader's override rather than whether the layout survives one. The two criteria closest to this skill are precisely the two it cannot see, which is why probes 1 and 6 exist.
@@ -197,5 +197,3 @@ Public practice supplied the rest, including three things the original review go
 - [Morkes and Nielsen 1997](https://www.nngroup.com/articles/concise-scannable-and-objective-how-to-write-for-the-web/) and NN/g's [F-shaped-pattern research](https://www.nngroup.com/articles/f-shaped-pattern-reading-web-content/) — the scanning premise, the 20–28% figure, and the measured payoff of cutting.
 - [CSS-Tricks on unintended body overflow](https://css-tricks.com/findingfixing-unintended-body-overflow/) — the delete-until-the-scrollbar-goes technique that probe 2 automates.
 - [axe-core's rule list](https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md) — checked directly rather than assumed, to establish that it has no reflow rule and only a partial Text Spacing one.
-
-Container queries and `document.fonts.ready` corrected two rules that shipped wrong: a viewport sweep alone misses a container-queried component's breakpoints, and any text measurement taken before the webfont lands measures the fallback face.
