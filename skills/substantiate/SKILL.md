@@ -1,6 +1,6 @@
 ---
 name: substantiate
-description: Route a draft through the evidence and writing passes in order, running only the ones its document type needs. Use when asked to "substantiate" a draft, and on requests that name no pass in particular — "review this doc", "clean this up", "go over this before I send it", "is this ready to publish", "check this over", "make this good". Also as the default entry point whenever a document needs more than one pass and you do not know which. Covers classifying the document and its reader, selecting passes by type, the run order and the two places the skills contradict each other, handing off to each pass instead of restating its rules, cost control before a long chain, and reporting what ran. Routes to verify-claims, claim-provenance, semantic-remediation, readability, brevity, deslop, tech-docs-layers, code-restraint, and rendered-page-review. Not a pass itself — it makes no edits of its own, and it never authors content the source did not supply.
+description: Route a draft through the evidence and writing passes in order, running only the ones its document type needs. Use when asked to "substantiate" a draft, and on requests that name no pass in particular — "review this doc", "clean this up", "go over this before I send it", "is this ready to publish", "check this over", "make this good". Also as the default entry point whenever a document needs more than one pass and you do not know which. Covers classifying the document and its reader, selecting passes by type, the run order and the two cross-skill dependencies that are not orderings, handing off to each pass instead of restating its rules, cost control before a long chain, and reporting what ran. Routes to verify-claims, claim-provenance, semantic-remediation, readability, brevity, deslop, tech-docs-layers, code-restraint, and rendered-page-review. Not a pass itself — it makes no edits of its own, and it never authors content the source did not supply.
 ---
 
 # Substantiate
@@ -43,7 +43,7 @@ Three questions. Answer them from the draft and the request, and ask only if the
 
 "Evidence" means `verify-claims` then `claim-provenance`, and only when Step 1's third question came back yes.
 
-Three rules the table cannot carry:
+Four rules the table cannot carry:
 
 - **A personal voice skill, if one is loaded, wins every voice conflict** and outranks `deslop` on anything with a byline. Run `deslop` afterwards as a lint and drop any hit that flattens the voice.
 - **`code-restraint` owns the file boundary.** Inside a source file it wins over every prose pass except `readability` M4, which covers the prose inside a doc comment and nothing else.
