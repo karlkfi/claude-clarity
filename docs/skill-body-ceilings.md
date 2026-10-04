@@ -54,7 +54,7 @@ against a 24 KiB hot ceiling, measured 2026-09-18 — it carries far more worked
 cases than any other skill here, and the files under
 `skills/verify-claims/references/` are the split already in progress. Q1014
 moved its 20 low-uptake rules into a fourth on 2026-10-04 and left the body at
-98,882 bytes. It is grandfathered shrink-only, so an addition to it has to name
+99,832 bytes. It is grandfathered shrink-only, so an addition to it has to name
 what it displaces.
 
 Its residency is now measured rather than assumed, and the reading argues

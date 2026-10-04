@@ -61,16 +61,6 @@ peer recomputed and caught it, and no gate could have. *A figure you derived is 
 read* is the same step failing the other way, so a span you derived is checked too rather than
 trusted for having been derived.
 
-**One field is a projection of a mutable object, and several of its states project onto the same
-value.** Read straight after a push, `gh pr view <n> --json headRefOid` returned the pre-push SHA
-— which is what you would see if the push had failed, and equally what you get once the PR has
-merged, because a merged PR's `headRefOid` is a stored value that stops following the branch. (It
-still reports a SHA for a branch the merge deleted; `git ls-remote` finds no such ref.) The field
-that separates those two states is sitting in the same object, so the fix is to widen the read
-rather than to take it again — `--json headRefOid,state` costs one word and returns `MERGED`.
-Before a field decides anything, ask which states of the object project onto the value you got,
-and read a field they disagree on in the same call.
-
 **Re-reading an ambiguous output cannot disambiguate it.** The instinct on a surprising result is
 to run it again and look harder, but if two states produce the same output then the second reading
 produces it too, and the only thing that grows is confidence. What breaks the tie is a second
@@ -83,8 +73,9 @@ capability does not produce one wrong step — it deletes the alternatives from 
 work proceeds soundly toward something that cannot ship. Establish it before offering choices
 that rest on it, and state it as an assumption where offered.
 
-**The tell is a boundary that coincides with your own start.** When the outliers are the most
-recent N, and N begins at the hour you did, that alignment is the finding rather than the
+**The tell is a boundary that coincides with your own start.** For `SKILL.md` §1's *A measurement
+of recent activity, taken while your own work is changing that system, samples your own work*: when
+the outliers are the most recent N, and N begins at the hour you did, that alignment is the finding rather than the
 mechanism you were about to read out of it. So ask what the outliers *are* before asking what they
 mean — a question about the sample rather than about the count, and the one nothing in a review
 prompts. *Did I cause this?* is not that question and will answer no: where several sessions share
@@ -92,7 +83,7 @@ a system, the contaminating action is usually a peer's, so the session holding t
 sample is honestly certain it changed nothing. Two checks are cheap. Where the mechanism you are
 reaching for would be a configured behaviour, read the configuration — one call settles whether
 the system does that thing at all. And where you can afford to wait, re-take
-the measurement once your activity has stopped: the same 60 pull requests re-read on 2026-08-21,
+the measurement once your activity has stopped: the 60 pull requests that rule cites, re-read on 2026-08-21,
 after that batch ended, split 0 and 60. A finding that does not survive the end of the window that
 produced it was a finding about the window.
 

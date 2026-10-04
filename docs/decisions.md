@@ -538,12 +538,12 @@ rather than promising them room afterwards. It was filed rather than made
 because a concurrent lane was editing the same body and repointing the same
 citations, which is the case where neither branch can settle a citation.
 
-**What landed, 2026-10-04.** The move took 20 rules and 19,359 bytes, the union
-re-read that day ([verify-claims-residency.md](verify-claims-residency.md) has
+**What landed, 2026-10-04.** The move took the 20 rules of the union re-read that
+day, 18,531 bytes ([verify-claims-residency.md](verify-claims-residency.md) has
 the reading). By then six more rows besides the three had parked clauses on the
 same branch — Q259, Q1017, Q1019, Q1024, Q1025 and Q1026 — and the maintainer
 chose to land all nine here rather than strand six, since a clause arriving after
-the merge fails the same way the three did before it. The body ended at 98,882
+the merge fails the same way the three did before it. The body ended at 99,832
 bytes against the 110,836 it measured on the merge base. Two rows stayed out:
 Q1018, an open question deferred on a room trigger, and Q1005, which has a
 repair needing no room. From this merge on, an addition names what it displaces

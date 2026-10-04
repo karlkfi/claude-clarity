@@ -174,8 +174,8 @@ Where the instrument is right, the missing state is an input you build. Name the
 make the check fail, then look for one in the population: cannot name it, and the check is not
 scoped yet; named and absent, build it, or the run is a tautology. A `git cat-file --batch`
 parser, which fails by shifting offsets rather than by erroring, agreed with a per-file walk on
-all 260 rows of a tree holding no empty blob and no two paths sharing a blob — the two record
-shapes that misalign it. Three lines built both. The differential stays the right move; this
+all 260 rows of a tree holding no empty blob, where size arithmetic off by one shows, and no two paths
+sharing a blob, which misaligns a reader that de-duplicates its input. Three lines built both. The differential stays the right move; this
 question is what finishes it.
 
 **An empty result from a filtered query is a fact about the filter's subject before it is a
@@ -376,8 +376,8 @@ The same shape has a ready-made fix, and release or merge-policy reasoning runs 
 *is this branch protected*, so on a repository moved to rulesets it returns `404 Branch not
 protected` where `gh api repos/<o>/<n>/branches/main --jq .protected` returns `true`.
 
-**A probe's setup step can silently define what its teardown restores to.** The two rules above
-are about a probe that is broken and a probe that is sound but narrow. This is a third: the probe
+**A probe's setup step can silently define what its teardown restores to.** The denominator rule
+and *One response, two causes* are about a probe that is broken and one that is sound but narrow. This is a third: the probe
 is sound, the question is right, and the *baseline* it compares against is the previous run's
 output rather than the original state. The second measurement then reads the first. Testing whether a linter's escape hatch works, a setup staged the tree with `git add -A`, so the later `git checkout -- <file>` restored from the index — which already held the planted defect — and the "reverted" file still carried it. The probe reported the escape
 hatch failing on a line that was never the exhibit. Nothing errored, and a revert that does not
@@ -396,12 +396,23 @@ than plant-and-revert — and treat agreement between two runs sharing a setup a
 two. A mutation of state you share needs its undo armed *before* the mutation, not appended
 after it; measure in a throwaway clone in the session scratchpad where you can.
 
+**One field is a projection of a mutable object, and several of its states project onto the same
+value.** Read straight after a push, `gh pr view <n> --json headRefOid` returned the pre-push SHA
+— which is what you would see if the push had failed, and equally what you get once the PR has
+merged, because a merged PR's `headRefOid` is a stored value that stops following the branch. (It
+still reports a SHA for a branch the merge deleted; `git ls-remote` finds no such ref.) The field
+that separates those two states is sitting in the same object, so the fix is to widen the read
+rather than to take it again — `--json headRefOid,state` costs one word and returns `MERGED`.
+Before a field decides anything, ask which states of the object project onto the value you got,
+and read a field they disagree on in the same call.
+
 **The far end of an instrument can be sick, and it answers in the shape of a finding.** Three readings can settle the same way and all be wrong. `gh run list --commit
 <sha>` returned `HTTP 404: Not Found` for three PRs, which reads as *no runs on this commit* —
 indistinguishable from the path-gated workflow that silently skipped, a real hazard and the reading
 you would go and chase; `gh pr checks` on the same PRs returned four passing jobs each. Later that
 day GraphQL answered HTTP 503 where the REST pulls endpoint answered normally, twice within an
-hour. So the move is the rule above pointed at a remote: **a different endpoint on the same data**,
+hour. So the move is *Re-reading an ambiguous output cannot
+disambiguate it* pointed at a remote: **a different endpoint on the same data**,
 not a retry. Retrying is the obvious advice and the weaker one, because it re-reads the sick
 instrument, and the sickness clears on the platform's schedule rather than yours.
 
