@@ -1401,7 +1401,7 @@ itself, which one command naming a correct-looking path could not isolate. All t
 
 ## Sources
 
-Distilled from the failure record of a production Kubernetes CI gateway — its diagnosis
-conventions and the incident write-ups that justified them, where each rule was paid for by a
-wrong verdict that reached a document, a pull request, or a release. Examples here are rewritten;
-the originals are repo-specific.
+Distilled from the failure record of a production Kubernetes CI gateway and a set of Claude Code
+guard plugins, where each rule was paid for by a wrong verdict that reached a document, a pull
+request, or a release. Examples naming a repository, commit, or pull request are quoted from it;
+the rest are rewritten.
