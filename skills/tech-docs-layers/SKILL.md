@@ -87,18 +87,6 @@ Doc PRs are reviewed differently from code PRs. To make review possible:
 - In the commit message, name which layers the change touches if more than one. "Move install guide under Getting Started; updates sidebars.js and 4 inbound links." tells the reviewer where to look.
 - If the framework's build is part of CI, run it locally before committing. A broken doc build is a wasted CI cycle and a slow review.
 
-## Anti-patterns to avoid
-
-These are the failure modes that the six-layer model exists to prevent. If you catch yourself doing any of them, stop and reread the relevant layer.
-
-- Editing one page's terminology without searching the rest of the doc set, leaving the same concept named two different ways in neighboring pages (Layer 1).
-- Renaming a page and only updating the nav, not inbound links from other pages (Layer 2).
-- Writing instructions that read as universal when they only apply to one product version (Layer 3).
-- Inventing a new tag or front matter key when the repo already has a convention (Layer 4).
-- Dropping a new page into the navigation wherever there happens to be a gap, instead of where the reader would look (Layer 5).
-- Pasting a "Prerequisites" block instead of referencing the shared partial (Layer 6).
-- Treating a doc change as "just a text change" without doing the sweep in step 3.
-
 ## A note on scope
 
 The six-layer model applies to repo-resident user-facing documentation: tutorials, how-tos, references, conceptual guides, READMEs that the public reads. It is less relevant to in-code comments, ADRs about internal architecture decisions, or marketing copy that lives outside the docs tree. When the user asks for those, follow the request without forcing the six-layer frame on it.

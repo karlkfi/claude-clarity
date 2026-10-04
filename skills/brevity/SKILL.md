@@ -98,7 +98,7 @@ Exact numbers, proper names, units, versions, and stated conditions. These are t
 
 ## Where this sits
 
-`readability` structures a draft and holds every claim in it — its rule is that nothing leaves. This skill is the one allowed to remove content, and only by the tests above: it drops *units the named reader does not need*, and never precision inside a unit that stays. Where both apply, brevity decides whether a unit survives and readability decides how it reads.
+`readability` structures a draft and holds every claim in it — its rule is that nothing leaves. This skill removes content for length, and only by the tests above: it drops *units the named reader does not need*, and never precision inside a unit that stays. The cuts other passes make — `deslop`'s filler sentences, `claim-provenance`'s ornamental claims — remove a defect, not length. Where both apply, brevity decides whether a unit survives and readability decides how it reads.
 
 **The two share triggers on purpose, and each routes to the other.** "Too long" and "too dense" arrive in the same breath and name opposite repairs, so whichever skill fires first hands over when the complaint turns out to belong to its neighbour: a draft that is dense goes to `readability` to be unpacked, and one that is merely long stays here. Narrowing either description to end the overlap is the wrong repair — a mis-fire costs one hop, and a missing trigger costs the whole skill.
 
