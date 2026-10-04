@@ -51,9 +51,11 @@ with a review attached, and the review always passed.
 
 `verify-claims` is the case that makes this visible. Its body is 110,854 bytes
 against a 24 KiB hot ceiling, measured 2026-09-18 — it carries far more worked
-cases than any other skill here, and the three files under
-`skills/verify-claims/references/` are the split already in progress. It is
-grandfathered shrink-only, so an addition to it has to name what it displaces.
+cases than any other skill here, and the files under
+`skills/verify-claims/references/` are the split already in progress. Q1014
+moved its 20 low-uptake rules into a fourth on 2026-10-04 and left the body at
+99,832 bytes. It is grandfathered shrink-only, so an addition to it has to name
+what it displaces.
 
 Its residency is now measured rather than assumed, and the reading argues
 against shrinking it to the band: of 88 rules, everything with no observable
