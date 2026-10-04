@@ -122,30 +122,15 @@ Then check, in order:
 - No added defensive check its sibling call sites lack; failure paths stay loud.
 - No unused imports or parameters, commented-out code, or suppression casts left from an earlier draft.
 
-## Anti-patterns
-
-- Writing the block first and reading the file afterwards, or not at all.
-- Measuring a machine-written file's 1.2 comment/code ratio and preserving it as "local idiom to match".
-- Rebuilding a helper that already exists 200 lines up the same file.
-- A comment above each of three call sites explaining the same magic number, instead of one named constant.
-- Explaining the design decision in the code because the PR description felt like the wrong place for it. It is the right place.
-- Uniform wrapped paragraphs above every block, at a density nothing else in the file comes close to.
-- Wrapping a call in try/catch that no sibling call site has, on a path already validated upstream.
-- An interface, factory, or option parameter with exactly one consumer, added "for flexibility".
-- `// now handles the empty case` — a comment narrating the diff instead of describing the code.
-- Silencing a type error with a cast instead of fixing the type.
-- Restructuring the file's decomposition mid-change because the existing shape is not the one you would have picked.
-- Treating "the tests pass" as done. The tests passing is orthogonal to whether the diff reads like the file.
-
 ## Scope
 
 Applies to source files: implementation, tests, build scripts, anything a reviewer reads as code.
 
-Two things this does not mean:
+Three things this does not mean:
 
 - **Doc comments on exported symbols are convention, not density.** Godoc, docstrings, Javadoc, JSDoc on public API are required by the file's convention and already counted in its baseline. Match the convention — one per exported symbol, in the house format — and let the density number cover the rest.
 - **Generated files, vendored code, and config formats with comment-as-documentation conventions are out of scope.** Do not apply density matching to a Dockerfile or a heavily annotated CI config.
-- **Correctness is a different review.** Wrong logic, missed edge cases, and APIs that don't exist are bugs, not style — this skill will not catch them, and passing it does not mean the change works.
+- **Correctness is a different review.** Wrong logic, missed edge cases, and APIs that don't exist are bugs, not style — this skill will not catch them, and passing it does not mean the change works. The reverse holds too: passing tests say nothing about whether the diff reads like the file.
 
 Related skills:
 
