@@ -183,9 +183,10 @@ the probe's boundaries carried it out with the measured rule; review caught it,
 and it stays in `SKILL.md`. The same blind spot folds other wrapped leads into
 their predecessors: the review of PR #26 counted ten in the body the table above
 was taken on, which is why it counts 88 rules.
-Each section of
-`SKILL.md` that lost a rule now ends with a plain paragraph listing their leads,
-plain rather than bold so this probe does not count the list as a rule.
+
+Each section of `SKILL.md` that lost a rule now ends with a plain paragraph
+listing their leads, plain rather than bold so this probe does not count the list
+as a rule.
 
 The body went from 110,836 bytes to 93,942 with the move alone, and to 99,832 with
 the nine parked clauses that landed in the same branch. A reading taken after this

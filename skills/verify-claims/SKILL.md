@@ -172,11 +172,11 @@ it is none, and the fix is a different instrument rather than a closer look.
 
 Where the instrument is right, the missing state is an input you build. Name the input that would
 make the check fail, then look for one in the population: cannot name it, and the check is not
-scoped yet; named and absent, build it, or the run is a tautology. A `git cat-file --batch`
-parser, which fails by shifting offsets rather than by erroring, agreed with a per-file walk on
-all 260 rows of a tree holding no empty blob, where size arithmetic off by one shows, and no two paths
-sharing a blob, which misaligns a reader that de-duplicates its input. Three lines built both. The differential stays the right move; this
-question is what finishes it.
+scoped yet; named and absent, build it, or the run is a tautology. A `git cat-file --batch` parser,
+which fails by shifting offsets rather than by erroring, agreed with a per-file walk on all 260 rows
+of a tree holding no empty blob, where size arithmetic off by one shows, and no two paths sharing a
+blob, which misaligns a reader that de-duplicates its input. Three lines built both. The
+differential stays the right move; this question is what finishes it.
 
 **An empty result from a filtered query is a fact about the filter's subject before it is a
 fact about the query.** *A negative needs a positive control* covers the query that could
@@ -354,12 +354,12 @@ commands while you run nothing. Which fetch forms move it, and the two measureme
 **A comparison validated in one state is silent about the others.** Where a change must hold in
 several trees, each is a different left operand, and a probe correct in the one you ran comes back
 clean there and says nothing about the rest. A citation audit run against a stacked branch's head
-rather than the PR's base returned three confident misses where all four citations resolved
-against `main`; three branches each run through `git merge-tree --write-tree origin/main` came
-back clean, correctly, for a set that still conflicted, because the first merge moves the line
-the second cites. Ask which states the thing must hold in, and build a merge sequence in order. A
-ref handed over in a message is re-measured before it becomes an operand: *#179's ancestry reaches
-`b9d91ae7`* was true, and was used as a diff base where the merge-base `dbd19eb4` was needed.
+rather than the PR's base returned three confident misses where all four citations resolved against
+`main`; three branches each run through `git merge-tree --write-tree origin/main` came back clean,
+correctly, for a set that still conflicted, because the first merge moves the line the second cites.
+Ask which states the thing must hold in, and build a merge sequence in order. A ref handed over in a
+message is re-measured before it becomes an operand: *#179's ancestry reaches `b9d91ae7`* was true,
+and was used as a diff base where the merge-base `dbd19eb4` was needed.
 
 **One response, two causes — and a positive control cannot separate them.** The denominator
 rule above catches a probe that is broken. This catches a probe that works perfectly and answers a narrower
