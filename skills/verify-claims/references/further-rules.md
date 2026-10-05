@@ -170,6 +170,13 @@ check whether it predicts a different number** — if it predicts the same one, 
 measurement you need. And when a pattern looks overwhelming, count the points it rests on: two
 items at the bottom of a table is n=2, however cleanly they line up.
 
+The trigger is a number that arrives **agreeing** with one already held. Agreement reads as
+corroboration, and a second reading that inherits the first one's assumption is the same reading
+taken twice. A reviewer capped reads at 1 MiB per file and got a corpus total within 1% of the
+stated uncapped figure, because few files exceeded the cap, so the byte total could not separate
+*the corpus is that size* from *this read is truncated*. The file count could, and nobody compared
+it. Before an agreeing figure counts as a second source, ask whether it could have disagreed.
+
 ## 3. Writing a check that can fail
 
 **A mutation aimed at a constant tests the constant.** Where a change ships a lookup table and a

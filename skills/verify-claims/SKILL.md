@@ -114,17 +114,13 @@ it means after reading it.
 has the three causes above; an empty *input* has one effect and it is the inverse of silence — the
 command answers about a wider population than you asked about, in the shape of a successful
 filtered read. The general form is any `--flag "$VAR"` fed from a read that can fail, where empty
-means *no filter* rather than *no match*. Under HTTP 503 `gh pr view --json headRefOid --jq
-.headRefOid` returned empty, and `gh run list --commit ""` then listed every run in the
-repository — exit 0, well formed, and carrying a plausible green row for the branch in question.
-Commit-scoped was the entire point of the flag, and branch-scoped is how a stale run reads as a
-pass. Re-measured against a healthy API with a control in both directions: `--commit ""` returns
-what no filter returns, the 40-character SHA only that commit's runs. So check the value's *form*
-before it filters anything, and check it against what it should be rather than against emptiness —
-a 40-character test refuses the truncated reads and error strings that `-n` accepts — then confirm
-it from a second source, here `git ls-remote`. **Do it unconditionally.** The session that hit this
-had been warned about the window it was in, ran the pattern across eight PRs, and guarded one of
-them by reflex; a guard reached for on suspicion is absent wherever the failure is quiet.
+means *no filter* rather than *no match*: under an API outage a SHA read came back empty, and
+`gh run list --commit ""` then listed every run in the repository, exit 0, with a plausible green
+row for the branch in question. So check the value's *form* before it filters anything, and check
+it against what it should be rather than against emptiness — a 40-character test refuses the
+truncated reads and error strings that `-n` accepts — then confirm it from a second source, here
+`git ls-remote`. **Do it unconditionally**: a guard reached for on suspicion is absent wherever the
+failure is quiet.
 
 **A negative needs a positive control.** This is the sharpest rule here. A wrong positive gets
 argued with by the thing it names; a wrong negative simply agrees with whatever you already
@@ -134,35 +130,23 @@ an alternation mangled by quoting — each returns the empty result that means "
 each agreed with the defect being investigated and went on agreeing after it was fixed.
 
 **Some instruments could not have gone positive at all, and care does not recover the
-difference.** The rule above treats the control as a check on a probe that might be broken.
-The sharper case is a probe that is written correctly, run correctly and read correctly, whose
-answer was fixed before it ran: no state of the world reachable from where it was pointed would
-have made it say anything else. Reading it more carefully returns the same reading, and each of
-the three below was run by a session holding these rules and applying them correctly in the
-direction it was looking. Measured 2026-08-28 across two sessions on
-`actions-gateway/github-actions-gateway`.
+difference.** *A negative needs a positive control* treats the control as a check on a probe
+that might be broken. The sharper case is a probe that is written correctly, run correctly and
+read correctly, whose answer was fixed before it ran: no state of the world reachable from where
+it was pointed would have made it say anything else. Reading it more carefully returns the same
+reading, and each of the three below was run by a session applying these rules correctly in the
+direction it was looking.
 
-- **An assertion whose two endpoints cannot move relative to each other.** A bash suite asserted
-  an ordering on two needles the function's own body emits whether or not the mechanism named in
-  the assertion runs between them. Deleting the entire block the assertion is named for left the
-  suite at 88 ok, 0 FAIL. §3's *Delete the mechanism* is what surfaced it, and the green does not
-  mean the assertion cannot see that defect class: it means the two needles were never able to
-  separate. Re-anchored on a marker only the mechanism itself emits, the same deletion moved the
-  index off 0.
-- **A green the instrument reports *in order to* report the absence.** `gh run list --commit
-  <sha>` gives workflow-**run** conclusions. A workflow whose heavy job skips while its `-gate`
-  job passes concludes `success`, so at run level "ran and passed" and "correctly skipped" are
-  the same row by construction — the gate job exists precisely to be green when the heavy job is
-  correctly absent. A session read five such greens, wrote into a PR body that five named lanes
-  had "ran and passed, confirmed by `gh run list --commit` rather than by branch", and told its
-  user twice. The check-runs API showed all five heavy jobs **skipped**, only the gate jobs
-  reporting, and no `security-scan` job run at all. Note where the care went: `--commit` fixes
-  *which commit*, which is why it reads as the guarded form, and it says nothing about *which
-  job*, which is what the sentence needed.
-- **A probe fired where the code path had already emptied its subject.** A reviewer searched a
-  captured-manifests file for a string and got 0 hits, seconds from reporting it. The probe sat
-  after a loop exercising an abort path, where the script exits before writing any manifest — so
-  the file was empty by construction and would have been empty for any string.
+- **An assertion whose two endpoints cannot move relative to each other.** A suite asserted an
+  ordering on two needles the function emits whether or not the mechanism runs between them, so
+  deleting the mechanism left it green. Anchor on a marker only the mechanism itself emits.
+- **A green the instrument reports *in order to* report the absence.** A workflow whose heavy job
+  skips while its `-gate` job passes concludes `success`, so at run level "ran and passed" and
+  "correctly skipped" are the same row by construction. `gh run list --commit` fixes *which
+  commit*, which is why it reads as the guarded form, and says nothing about *which job*.
+- **A probe fired where the code path had already emptied its subject.** A search of a captured
+  file for a string returned 0 hits from a point after the script had exited without writing it,
+  so the file was empty for any string.
 
 So before a zero or a green decides anything, name the state of the world that would have made
 this instrument say something else, and go and put it in front of it: the string where it is
@@ -183,19 +167,14 @@ fact about the query.** *A negative needs a positive control* covers the query t
 never have matched — a misspelled key, a build target no rule builds. This is the query that
 would have matched yesterday: the search worked, the object is still there, and a predicate
 moved underneath it. Both return the same nothing, and the mechanism reading is the
-interesting-sounding one, so it is the one that gets drawn. `gh pr list --search "Q1009"
---state open` came back empty for a pull request whose body cites Q1009, and the session
-concluded that GitHub had not yet indexed a PR opened fifteen minutes earlier — a conclusion
-that went into a code comment as design rationale. The PR had merged six minutes before the
-probe, so `--state open` was excluding it correctly; re-run as `--state all` it returns for two
-different body-only IDs, which is the opposite of what was concluded. What settled it was one
-command against the object rather than the query, `gh pr view 1759 --json state,mergedAt`.
-Measured on `actions-gateway/github-actions-gateway`, 2026-08-27. The shape is any filter that
-can move while the object sits still — a time-windowed log query, a status-scoped API call, a
-`--since` that has passed the event.
+interesting-sounding one, so it is the one that gets drawn. A `gh pr list --state open` search
+came back empty and was read as a search-index lag; the PR had merged minutes before, and one
+command against the object rather than the query, `gh pr view <n> --json state,mergedAt`,
+settled it. The shape is any filter that can move while the object sits still — a time-windowed
+log query, a status-scoped API call, a `--since` that has passed the event.
 
-**A control has to vary the cause you suspect, not the term you happened to type.** That
-session did run one: it searched a distinctive phrase from the same PR's title and got empty
+**A control has to vary the cause you suspect, not the term you happened to type.** The
+session above did run one: it searched a distinctive phrase from the same PR's title and got empty
 again, and read the second zero as confirmation. Both queries carried `--state open`, so the
 control re-ran the failing filter with a different word inside it and could only ever agree.
 Vary the suspected cause — here the state scope, never the search term — and where the
@@ -203,17 +182,17 @@ hypothesis was already in mind when the probe ran, treat that zero as the one ow
 reading. An empty result is consistent with the explanation you arrived with, which is what
 makes it easy to read past rather than explain.
 
-**A control drawn from inside the enumeration it is testing cannot fail.** The rule above is
-satisfied, on a literal read, by a control that varies a *member* of a list when the *list* is
-what you doubt. A sweep for `gh` invocations across a repo's workflows matched
-`gh\s+(pr|api|issue|repo|release|run)` and missed `gh attestation verify`; its positive control
-injected `gh pr view`, whose `pr` is already inside the alternation, so it proved the pattern
-worked for what the list already covered and was structurally incapable of showing the list to be
-incomplete. Any probe keyed on a table of known values has this shape — a per-command table
-deciding which token is a path, an extension allowlist, a set of recognised error strings — and
-the control has to come from outside the table: an input you know the subject accepts and the
-table does not name. The asymmetry is what makes this worse than forgetting a control: a missing
-one is visible, and this one *passes*.
+**A control drawn from inside the enumeration it is testing cannot fail.** *A control has to vary
+the cause you suspect* is satisfied, on a literal read, by a control that varies a *member* of a
+list when the *list* is what you doubt. A sweep for `gh` invocations across a repo's workflows
+matched `gh\s+(pr|api|issue|repo|release|run)` and missed `gh attestation verify`; its positive
+control injected `gh pr view`, whose `pr` is already inside the alternation, so it proved the
+pattern worked for what the list already covered and was structurally incapable of showing the list
+to be incomplete. Any probe keyed on a table of known values has this shape — a per-command table
+deciding which token is a path, an extension allowlist, a set of recognised error strings — and the
+control has to come from outside the table: an input you know the subject accepts and the table does
+not name. The asymmetry is what makes this worse than forgetting a control: a missing one is
+visible, and this one *passes*.
 
 Where the table is an index the probe built from its subject, outside the table is not far
 enough. A probe of which skill rules reach sessions keyed each rule on word sequences unique to it
@@ -229,23 +208,11 @@ from inside the enumeration it is testing cannot fail* is about a control whose 
 weak; this is one whose *pattern* is. A neighbouring string in the same region establishes that
 the file and the section are reachable and nothing more — a line wrap, a smart quote, an em
 dash, a case difference each break the needle and leave the anchor matching, so the control
-passes while the probe stays broken. Measured 2026-09-01 on `karlkfi/claude-spill-guard`: a
-clause in `docs/queue/Q107.md` wrapped between "a" and "finding" returned empty from a single-
-line grep at three commits, two of which carried the text. One session read that empty as
-"(empty = gone)". A second ran a control first — the neighbouring `No allowing arm meets that`,
-count 1 at all three heads — and still nearly drew the same conclusion, because the anchor does
-not cross the break the claim does. The interpretable form carries known-present cases for the
-same pattern:
-
-```
-head       anchor   line-grep   unwrapped
-77e59d4    True     False       True
-34e1038    True     False       True
-2fe79a9    True     False       False
-```
-
-The two rows where `line-grep` is False over text that exists are what convict the probe rather
-than the file; without them there is nothing to read the third against. History usually supplies
+passes while the probe stays broken. A clause wrapped mid-phrase returned empty from a
+single-line grep at three commits, two of which carried the text, while a neighbouring-string
+control matched at all three. The interpretable form runs the same pattern over known-present
+cases: a row where the line-grep is False over text that exists convicts the probe rather than the
+file, and without one there is nothing to read the absent case against. History usually supplies
 the known-present case for free — an earlier commit carrying the string. Where it does not, plant
 it and confirm the probe finds it before trusting any zero.
 
@@ -264,30 +231,28 @@ which is most of them. The control was already in that session's own history and
 command: run the census over the inputs you have personally verified before believing what it
 says about the rest.
 
-**Uniformity across inputs you varied is a finding about the instrument, whatever the answer
-is.** The rule above is one instance of a wider shape, and reading it as being about censuses
-leaves the shape unnamed: a probe returning the *same* verdict for every input you deliberately
-varied has told you about itself rather than about the inputs. A zero and a near-total are the
-two variants that get looked at, because both read as results; a uniform plausible-looking
-answer is the one that gets used. Three mechanisms produce it. A `case`-based shell harness whose
-`case` was the script's last command, so all four shapes inherited its status and returned
-`rc=1` — the variant to lead with, because it produced a wrong answer rather than a false clean.
-A three-dot diff against an ancestor: `git diff origin/main...origin/main~1` is empty by
-construction, the merge base *being* `main~1`, and the form that answers is
+**Uniformity across inputs you varied is a finding about the instrument, whatever the answer is.**
+*A census that returns nearly its whole population* is one instance of a wider shape, and reading it
+as being about censuses leaves the shape unnamed: a probe returning the *same* verdict for every
+input you deliberately varied has told you about itself rather than about the inputs. A zero and a
+near-total are the two variants that get looked at, because both read as results; a uniform
+plausible-looking answer is the one that gets used. Three mechanisms produce it. A `case`-based
+shell harness whose `case` was the script's last command, so all four shapes inherited its status
+and returned `rc=1` — the variant to lead with, because it produced a wrong answer rather than a
+false clean. A three-dot diff against an ancestor: `git diff origin/main...origin/main~1` is empty
+by construction, the merge base *being* `main~1`, and the form that answers is
 `origin/main~1...origin/main`. And two fixtures whose mutation landed and was then neutralised
-downstream by a rule that is itself correct, so they passed against every implementation
-variant. So when the answers stop varying,
-stop reading them: fire the probe at a case whose answer you already know, and where no such
-case exists, build one — the ref sweep above was cleared by constructing a diverged branch for
-it to find. A real population is scattered by construction. The instrument is what can be
-uniform.
+downstream by a rule that is itself correct, so they passed against every implementation variant. So
+when the answers stop varying, stop reading them: fire the probe at a case whose answer you already
+know, and where no such case exists, build one — the ref sweep above was cleared by constructing a
+diverged branch for it to find. A real population is scattered by construction. The instrument is
+what can be uniform.
 
-**A control tests the probe's logic and says nothing about whether its input is current.** The
-rule above sends you to a case whose answer you already know; a probe over a cache passes that
-while answering about a stale world: the remedy fires, passes, and licenses the wrong answer.
-Measured 2026-09-03 on `karlkfi/claude-spill-guard`, a ref sweep fired at a known positive and the
-control fired, while `git branch -r` reported 19 refs against 4 real remote heads and none for two
-that had merged. Ask the remote (`git ls-remote --heads origin`); a tracking ref reports the last
+**A control tests the probe's logic and says nothing about whether its input is current.**
+*Uniformity across inputs you varied* sends you to a case whose answer you already know; a probe
+over a cache passes that while answering about a stale world: the remedy fires, passes, and licenses
+the wrong answer. A ref sweep's control fired while `git branch -r` listed 19 refs against 4 real
+remote heads. Ask the remote (`git ls-remote --heads origin`); a tracking ref reports the last
 fetch.
 
 **A zero for a category is refuted by the mechanism that would produce it, and that check
@@ -311,45 +276,29 @@ narrows a population in most of its pipelines, and a rule firing on all is dead 
 `wc -l` either side of the step, or the count beside the verdict, catches it in the same command
 that introduces it.
 
-A *broken* narrowing is the easy half. Measured 2026-09-04, a transcript scan reported `inbound
-peer messages scanned: 0` beside its `hits: NONE` with three such messages known to exist: user
-records store `message.content` as a plain string rather than a list of blocks, so an
-`isinstance(content, list)` filter had skipped every one. The two zeros want opposite fixes — an
-unreached population indicts the filter, a reached one settles the absence.
+A *broken* narrowing is the easy half: a transcript scan reported `inbound peer messages scanned:
+0` beside its `hits: NONE`, because a type filter had skipped every record. The two zeros want
+opposite fixes — an unreached population indicts the filter, a reached one settles the absence.
 
 The hard half is a narrowing that is *correct*: the dedup is right, the flag is right, and it
-removes what the reading needed anyway, so re-reading finds nothing. Three instances from one
-parallel-dispatch run on `actions-gateway/github-actions-gateway`, 2026-09-16.
-
-Lead with the report that carried no denominator at all, because the person who wrote its fix
-filed it as a different kind of defect until the rule was stated — which is the argument for
-naming it. `scripts/ci/check-withheld-runs.sh` printed a fixed line on zero findings and never
-said how many pull requests it had examined, so a scan over twenty and a scan over none
-were byte-identical: stubbed both ways, exit 0 each time and `cmp` reporting no difference. A
-watch workflow then closed its tracking issue on the strength of that line, commenting that every
-open PR's checks had been released. Fixed by printing the reach count, and by having the workflow
-quote the checker's own line rather than restate its verdict.
-
-Then `sort -u` over a lossy key. Reconciling the row sets of `scripts/README.md` across a
-merge-driver resolution, the comparison keyed on the markdown link *label* alone and put the
-keys through `sort -u`. The file has 263 rows and 262 distinct labels — `dev/setup.sh` and
-`dogfood/setup.sh` collide — so the dedup dropped a row, and a dropped `setup.sh` row was exactly
-the substitution the check existed to catch. Re-keyed on label plus path with no dedup, compared
-both directions with `comm`, it holds — and a disagreement about the row total does not reach the
-verdict, so long as one definition is applied to both sides. The wrapped-prose grep and the
-`--state open` filter above are this rule with the narrowing living in a pattern and in a flag.
+removes what the reading needed anyway, so re-reading finds nothing. A checker that printed a fixed
+line on zero findings and never said how many pull requests it had examined was byte-identical over
+twenty and over none, and a workflow closed its tracking issue on that line. A `sort -u` over a
+link-label key dropped one of two rows sharing a label, which was exactly the substitution the
+comparison existed to catch; key on label plus path, keep duplicates, and `comm` both directions.
+The wrapped-prose grep and the `--state open` filter above are this rule with the narrowing living
+in a pattern and in a flag.
 
 **Where it stops: a reference that moved is not a population that shrank.** Printing both sizes
-would not have caught the third instance. A session reconciled a branch's rows against
-`origin/main` as a live ref rather than against the branch's own merge base, got two spurious
-extra rows, and was one message from reporting a fabricated defect in a peer's rebase. Both
-readings were correct when taken and nothing narrowed, so the fix differs: pin to a SHA or to
-`git merge-base` before anything compares against it. And `origin/main` does not go *stale*:
-`refs/remotes` lives in git's **common** dir (`git rev-parse --git-common-dir`), not the
-per-worktree one, and that clone carried 264 worktrees under roughly 28 concurrent sessions — so
-it is shared mutable state owned by other processes, and it can change between two of your own
-commands while you run nothing. Which fetch forms move it, and the two measurements behind that:
-[`references/shell-traps.md`](references/shell-traps.md).
+would not have caught this one. A session reconciled a branch's rows against `origin/main` as a live
+ref rather than against the branch's own merge base, got two spurious extra rows, and was one
+message from reporting a fabricated defect in a peer's rebase. Both readings were correct when taken
+and nothing narrowed, so the fix differs: pin to a SHA or to `git merge-base` before anything
+compares against it. And `origin/main` does not go *stale*: `refs/remotes` lives in git's **common**
+dir (`git rev-parse --git-common-dir`), not the per-worktree one, so in a clone carrying many
+worktrees and sessions it is shared mutable state owned by other processes, and it can change
+between two of your own commands while you run nothing. Which fetch forms move it, and the two
+measurements behind that: [`references/shell-traps.md`](references/shell-traps.md).
 
 **A comparison validated in one state is silent about the others.** Where a change must hold in
 several trees, each is a different left operand, and a probe correct in the one you ran comes back
@@ -361,27 +310,30 @@ Ask which states the thing must hold in, and build a merge sequence in order. A 
 message is re-measured before it becomes an operand: *#179's ancestry reaches `b9d91ae7`* was true,
 and was used as a diff base where the merge-base `dbd19eb4` was needed.
 
-**One response, two causes — and a positive control cannot separate them.** The denominator
-rule above catches a probe that is broken. This catches a probe that works perfectly and answers a narrower
-question than the one being asked. `gh api repos/<o>/<n>/pages` returns the same 404 for "no
-Pages site is configured here" and for "this account cannot have one on a private repo", and the
-first reading is the one that agrees with wanting to build on it. Running the probe against a
-repository that *does* publish returns 200 and confirms the probe works, which is exactly no help.
-So when a result is about to decide something, name the readings that produce it and pick a probe
-that separates them — `gh repo view --json visibility` answers the second question and could not
-have answered the first. The tell is that the response was consistent with the hypothesis: a
-result you expected is where a second cause goes unenumerated, because nothing prompts the search.
-The same shape has a ready-made fix, and release or merge-policy reasoning runs into it:
-`gh api repos/<o>/<n>/branches/main/protection` answers *does the legacy API hold a record*, not
-*is this branch protected*, so on a repository moved to rulesets it returns `404 Branch not
-protected` where `gh api repos/<o>/<n>/branches/main --jq .protected` returns `true`.
+**One response, two causes — and a positive control cannot separate them.** *A step that narrows a
+population reports both sizes* catches a probe that is broken. This catches a probe that works
+perfectly and answers a narrower question than the one being asked. `gh api repos/<o>/<n>/pages`
+returns the same 404 for "no Pages site is configured here" and for "this account cannot have one on
+a private repo", and the first reading is the one that agrees with wanting to build on it. Running
+the probe against a repository that *does* publish returns 200 and confirms the probe works, which
+is exactly no help. So when a result is about to decide something, name the readings that produce it
+and pick a probe that separates them — `gh repo view --json visibility` answers the second question
+and could not have answered the first. The tell is that the response was consistent with the
+hypothesis: a result you expected is where a second cause goes unenumerated, because nothing prompts
+the search. The same shape has a ready-made fix, and release or merge-policy reasoning runs into it:
+`gh api repos/<o>/<n>/branches/main/protection` answers *does the legacy API hold a record*, not *is
+this branch protected*, so on a repository moved to rulesets it returns `404 Branch not protected`
+where `gh api repos/<o>/<n>/branches/main --jq .protected` returns `true`.
 
-**A probe's setup step can silently define what its teardown restores to.** The denominator rule
-and *One response, two causes* are about a probe that is broken and one that is sound but narrow. This is a third: the probe
-is sound, the question is right, and the *baseline* it compares against is the previous run's
-output rather than the original state. The second measurement then reads the first. Testing whether a linter's escape hatch works, a setup staged the tree with `git add -A`, so the later `git checkout -- <file>` restored from the index — which already held the planted defect — and the "reverted" file still carried it. The probe reported the escape
-hatch failing on a line that was never the exhibit. Nothing errored, and a revert that does not
-revert is reported by nothing.
+**A probe's setup step can silently define what its teardown restores to.** *A step that narrows a
+population reports both sizes* and *One response, two causes* are about a probe that is broken and
+one that is sound but narrow. This is a third: the probe is sound, the question is right, and the
+*baseline* it compares against is the previous run's output rather than the original state. The
+second measurement then reads the first. Testing whether a linter's escape hatch works, a setup
+staged the tree with `git add -A`, so the later `git checkout -- <file>` restored from the index —
+which already held the planted defect — and the "reverted" file still carried it. The probe reported
+the escape hatch failing on a line that was never the exhibit. Nothing errored, and a revert that
+does not revert is reported by nothing.
 
 The shape is wider than reverts: a baseline copied *after* a mutation, a fixture generated once
 and reused across cases, a temporary directory not removed between runs. Each makes run two a
@@ -389,12 +341,16 @@ reading of run one, and the direction of the error is unconstrained — here it 
 failure, but the same setup can as easily manufacture a pass.
 
 What makes it expensive is standing: a probe is trusted more than the thing it measures, so its
-artefact arrives as a finding *about the code*, and the probe above appeared to have found a
-defect of exactly the class the session was already working on. So re-derive from a fresh
-baseline rather than a restored one — extract the tree again, use a new directory, append rather
-than plant-and-revert — and treat agreement between two runs sharing a setup as one reading, not
-two. A mutation of state you share needs its undo armed *before* the mutation, not appended
-after it; measure in a throwaway clone in the session scratchpad where you can.
+artefact arrives as a finding *about the code*, and the probe above appeared to have found a defect
+of exactly the class the session was already working on. So re-derive from a fresh baseline rather
+than a restored one — extract the tree again, use a new directory, append rather than
+plant-and-revert — and treat agreement between two runs sharing a setup as one reading, not two. A
+benchmark control fails the other way: it licenses comparing two arms only from inside the same
+process, because across two sittings it moves with the machine, and one lane's two separate runs
+read as a 2× regression while its control arm had itself dropped by half. Compare runs only where
+their controls agree, and say that they do. A mutation of state you share needs its undo armed
+*before* the mutation, not appended after it; measure in a throwaway clone in the session scratchpad
+where you can.
 
 **One field is a projection of a mutable object, and several of its states project onto the same
 value.** Read straight after a push, `gh pr view <n> --json headRefOid` returned the pre-push SHA
@@ -406,14 +362,14 @@ rather than to take it again — `--json headRefOid,state` costs one word and re
 Before a field decides anything, ask which states of the object project onto the value you got,
 and read a field they disagree on in the same call.
 
-**The far end of an instrument can be sick, and it answers in the shape of a finding.** Three readings can settle the same way and all be wrong. `gh run list --commit
-<sha>` returned `HTTP 404: Not Found` for three PRs, which reads as *no runs on this commit* —
-indistinguishable from the path-gated workflow that silently skipped, a real hazard and the reading
-you would go and chase; `gh pr checks` on the same PRs returned four passing jobs each. Later that
-day GraphQL answered HTTP 503 where the REST pulls endpoint answered normally, twice within an
-hour. So the move is *Re-reading an ambiguous output cannot
-disambiguate it* pointed at a remote: **a different endpoint on the same data**,
-not a retry. Retrying is the obvious advice and the weaker one, because it re-reads the sick
+**The far end of an instrument can be sick, and it answers in the shape of a finding.** Three
+readings can settle the same way and all be wrong. `gh run list --commit <sha>` returned `HTTP 404:
+Not Found` for three PRs, which reads as *no runs on this commit* — indistinguishable from the
+path-gated workflow that silently skipped, a real hazard and the reading you would go and chase; `gh
+pr checks` on the same PRs returned four passing jobs each. Later that day GraphQL answered HTTP 503
+where the REST pulls endpoint answered normally, twice within an hour. So the move is *Re-reading an
+ambiguous output cannot disambiguate it* pointed at a remote: **a different endpoint on the same
+data**, not a retry. Retrying is the obvious advice and the weaker one, because it re-reads the sick
 instrument, and the sickness clears on the platform's schedule rather than yours.
 
 **A status page starts an investigation or stops one; it cannot clear the instrument.** Read it
@@ -439,18 +395,17 @@ counts lines rather than matches, and BSD `sed` on macOS accepts a GNU pattern, 
 and exits 0. Each returns a well-formed result that is about a different question. The mechanics,
 with the invocation to use instead: [`references/shell-traps.md`](references/shell-traps.md).
 
-**A failed read hands its error to whatever consumes the read.** The rules above are about a
-command answering the wrong question; this is one that answers nothing and has the refusal
+**A failed read hands its error to whatever consumes the read.** *The shell is an instrument too* is
+about a command answering the wrong question; this is one that answers nothing and has the refusal
 recorded as data. `git show <commit>:<path> > f 2>&1` on a path absent from that commit writes
 `fatal: path '<path>' does not exist in '<commit>'` into `f` and exits 128, so a reviewer
 establishing whether a file is identical on two commits by extracting both and running `cmp`
-compares an error message against real content. It reports *differ*, which is the expensive
-shape: a plausible refutation of the claim under test rather than a check that stopped, so it
-changes a verdict instead of raising one. Measured during a six-PR run on
-`karlkfi/claude-spill-guard`, 2026-08-27. Compare ids instead — `git rev-parse --verify
-<commit>:<path>` returns the blob id, and a missing path is an error rather than a value, so
-there is nothing for the comparison to make a verdict out of. Keep the `--verify`: the bare form
-echoes its own argument on stdout, which compares unequal exactly as a difference does.
+compares an error message against real content. It reports *differ*, which is the expensive shape: a
+plausible refutation of the claim under test rather than a check that stopped, so it changes a
+verdict instead of raising one. Compare ids instead — `git rev-parse --verify <commit>:<path>`
+returns the blob id, and a missing path is an error rather than a value, so there is nothing for the
+comparison to make a verdict out of. Keep the `--verify`: the bare form echoes its own argument on
+stdout, which compares unequal exactly as a difference does.
 
 **A count asserts a population and a scan width.** Both go stale the moment the tree moves, and
 a scan you ran earlier in the session for another purpose does not transfer — re-derive the
@@ -472,16 +427,16 @@ number as you write the sentence, and say what population it is true of. Specifi
   gap.** Establish the blind spots before quoting the number, because nothing in the output
   will. Quote a total with the shape it cannot see named beside it.
 
-**The measurement that justifies a change is taken on the tree without the change in it.** The
-bullets above have a number going stale because the tree moved; this is the case where your own
-branch is what moves it, so a census taken to argue for a diff is falsified by that same diff, and
-the two readings are a rebase apart. Nothing marks the difference and nothing can go red: a gate
-reads the tree, while a number already written into a document is prose. Seven figures went stale
-under one worker across five rebases with `make check` green through every one — a suite count, a
-store total that moved 54 → 53 → 54 → 55, an invisible-citation total, a documented highest ID —
-and one census was re-invalidated by its own thread three times before it landed. Re-derive every
-figure against the head you are about to publish from, and where a figure counts a population your
-own diff edits, say which side of the change it is true of.
+**The measurement that justifies a change is taken on the tree without the change in it.** *A count
+asserts a population and a scan width* has a number going stale because the tree moved; this is the
+case where your own branch is what moves it, so a census taken to argue for a diff is falsified by
+that same diff, and the two readings are a rebase apart. Nothing marks the difference and nothing
+can go red: a gate reads the tree, while a number already written into a document is prose. Seven
+figures went stale under one worker across five rebases with `make check` green through every one —
+a suite count, a store total that moved 54 → 53 → 54 → 55, an invisible-citation total, a documented
+highest ID — and one census was re-invalidated by its own thread three times before it landed.
+Re-derive every figure against the head you are about to publish from, and where a figure counts a
+population your own diff edits, say which side of the change it is true of.
 
 **A measurement of recent activity, taken while your own work is changing that system, samples
 your own work.** Everything else here has something wrong with the instrument. This has nothing
@@ -520,8 +475,9 @@ looks wrong. Rebuild and re-run before reporting anything about the repository. 
 claim gains authority without gaining evidence, so the second and third restatements are the
 expensive ones.
 
-**A suite result is only valid for the tree state that held for the whole run.** The two rules
-above hand a red result to somebody else — the base, or your toolchain. This one hands it back,
+**A suite result is only valid for the tree state that held for the whole run.** *A local gate
+disagreeing with CI* and *A failure on your branch is not yours until the base fails too* hand a
+red result to somebody else — your toolchain, or the base. This one hands it back,
 and not through the change under test: a file written while the suite runs is read half-written
 by whatever executes next. A gate started in the background and an edit made while it ran is the
 ordinary shape, and neither step feels like it touches the other.
@@ -529,11 +485,9 @@ ordinary shape, and neither step feels like it touches the other.
 How far the corruption reaches is decided by how the suite loads the subject. An imported module
 is read once at import, so an edit after that lands in the next process. A helper that spawns the
 subject as a **subprocess** re-reads the file from disk on every call, so a mid-run write breaks
-whichever case happens to run during it. Measured 2026-09-09 on karlkfi/claude-bouncer #126:
-comment edits applied to `bash-workspace-guard.py` while `make check` ran in the background
-returned `FAILED (failures=1)` in a test about remote interpreter scripts, carrying
-`SyntaxError: '(' was never closed` inside the assertion text. Re-run over the settled tree:
-1,556 tests, OK.
+whichever case happens to run during it: comment edits made while `make check` ran in the
+background failed one unrelated test with `SyntaxError: '(' was never closed` inside its assertion
+text, and the settled tree passed.
 
 It misleads in two directions at once. The result is red, so *could this have shown me the
 opposite?* answers yes and the failure passes the check that catches most of this section. And it
@@ -564,8 +518,8 @@ misses `integration-test` because it matched on `^integration`. When a probe's a
 to decide something, run the gate. When the gate is too slow for the loop, keep the probe but
 give it a case whose answer you already know, and disbelieve it when the two disagree.
 
-**A probe with two verdicts forces every failure onto one of them.** The rule above keeps a
-probe honest about the question it answers; this one is about the answers it can give. A
+**A probe with two verdicts forces every failure onto one of them.** *The probe is not the gate*
+keeps a probe honest about the question it answers; this one is about the answers it can give. A
 hand-rolled check whose output space is `LIVE`/`DEAD`, `CLEAN`/`CONFLICT`, present/absent has
 no room for *I could not tell*, so a lookup that failed, a name that never resolved and a
 genuine negative all arrive at the same arm and print the same word. Nothing marks it, because
@@ -630,9 +584,9 @@ thirteen, on a tree nobody had touched. The blind spot belongs to the *file* rat
 change under review, so the size of the miss says nothing about the size of the diff — which is
 why a small change is no reason to trust it. Run the suite and read the subjects it reports.
 
-**A sweep that comes back clean has told you about its own representation.** The rule above is
-one such blindness, a name reaching its site through a variable. Four more were measured on
-2026-08-25, where three sessions each enumerated every place in a repo asserting one claim so it
+**A sweep that comes back clean has told you about its own representation.** *A literal-name
+search is blind* to one such representation, a name reaching its site through a variable. Four
+more turned up where three sessions each enumerated every place in a repo asserting one claim so it
 could be corrected, and all three sweeps came back falsely clean for different structural reasons.
 
 - **Subject scope.** A sweep requiring the subject term and the claim language in the same
@@ -664,7 +618,7 @@ opened. A code comment called a fixture the one case in its file built outside t
 tests there already were, the comment was fixed, and the claim survived verbatim in the PR body. A
 claim written once was usually written twice, out of the same paragraph of thinking. So sweep for
 the claim, not the file you edited, before correcting it while the phrasing is still to hand — and
-make the sweep able to see by the two rules above.
+make the sweep able to see, by the two rules before this one.
 
 **A scan counts text, and text describing a command cannot be told from text that ran it.** The
 same blindness as a false positive — and where the population is your own transcripts it feeds
@@ -682,38 +636,30 @@ more", because nothing is missing — *A probe with two verdicts forces every fa
 them* gives a failure somewhere to go, and here nothing fails. Nobody writes the gap down because
 the probe and the claim share their vocabulary: *is this string in the file* and *does this
 program print this string* differ by one verb. It comes in two shapes. The instrument answers a
-**narrower** question than the claim: a worker grepped a merged script for a message its change
-had added, got **0**, and was seconds from reporting the merge had dropped it, the message being
-assembled from f-string fragments that exist at runtime and nowhere contiguous in the source. Or
-it answers an **adjacent** one — a different quantity, object or definition, at the same type and
-a plausible magnitude, with nothing in the output marking which question it answered. Four
-adjacency instances turned up in one pull request, from four authors, none erroring or returning
-empty. Two were git: `git merge-tree --write-tree` consults `.gitattributes` and returns the
+**narrower** question than the claim: a grep of a merged script for a message its change had added
+returned **0**, the message being assembled from f-string fragments that exist at runtime and
+nowhere contiguous in the source. Or it answers an **adjacent** one — a different quantity, object
+or definition, at the same type and a plausible magnitude, with nothing in the output marking which
+question it answered. `git merge-tree --write-tree` consults `.gitattributes` and returns the
 **merge driver's** answer, and drivers are per-clone while the queue building the real candidate
-runs none, so on a repo configuring one it answers the local driver's question; and a two-dot
-`git diff origin/main..HEAD` against a moved base reported 23 changed paths to three-dot's 15,
-the extra 8 being the base's own commits rendered as the branch changing them — one a file the
-branch never touched, reported as an add. A third reused a sweep showing CPU-seconds flat across
-every fan-out width, sound for *oversubscription wastes no CPU*, to doubt a **wall-time** effect
-on a machine with a quarter of the cores at four times the ratio, where the cost is scheduler and
-memory contention that box cannot observe. The fourth sourced a runner's CPU guarantee to a
-cluster-scoped template the tenant references nowhere, its `templateRef` resolving to a
-namespaced one of the same shape and twice the request.
+runs none; a two-dot `git diff origin/main..HEAD` against a moved base renders the base's own
+commits as the branch changing them.
 
 **Ask what question the instrument answers, not whether its answer looks right.** What does
-`merge-tree` consult; what quantity does this reading measure, on what hardware, at what ratio;
+`merge-tree` consult; what quantity does this reading measure, and under what conditions;
 what is in the cited file. An *over-sourced* citation is the one that gets through: a real file
 with a real number trips none of the reflexes tuned to flag thin sourcing. A hedge rescues none
 of this: it sits on the inference, and the error is upstream in the probe. Both halves of the
 sentence are written in the same words, so ask what this instrument would report if the claim
 were false **in a way it cannot see**.
 
-**Being right by luck is indistinguishable from being right by construction.** Both git
-instruments and both correct re-runs returned the same verdict, and nothing in the agreement
-marked either instrument. That is a different argument from *a negative needs a positive
+**Being right by luck is indistinguishable from being right by construction.** An instrument
+answering an adjacent question can still return the right verdict, as both git instruments above
+did against correct re-runs, and nothing in the agreement marks it. That is a different argument from *a negative needs a positive
 control*: there the answer is suspect, here it is right and the method still gets checked,
-because it is reached for again where the luck does not hold. Each of the four was caught by
-another seat and none by its author: the remedy is a second reader, not more care.
+because it is reached for again where the luck does not hold. Each adjacency instance behind this
+rule was caught by another seat and none by its author: the remedy is a second reader, not more
+care.
 
 **A tool you run has two copies, and a grep finds whichever one you pointed at.** An installed
 plugin, hook, or CLI sits under a versioned cache directory; the project it came from has a
@@ -732,20 +678,15 @@ written against — and say which one you read.
 different question than "which of these did this change produce", and the two numbers differ
 by more than you expect. Run the probe against the base tree too, and diff.
 
-**A two-tree comparison is controlled only where both trees carry the mechanism.** The rule
-above sends you to the base tree; this one is about what you find when you get there. *A rule
-fires on a subject* catches a check that passed with nothing to check. Inside a comparison the
-same vacuity surfaces as a *row*, where it reads as fixed rather than as absent — a zero in a
-before-and-after table is what a fix looks like. A leak table
-compared a fixed binary against the trunk across seven shapes and reported the trunk leaking on
-one and clean on six. The package implementing those six did not exist on the trunk, so no code
-path could have fired: six of the seven "before" cells were blank, and the single real row was
-carrying the whole finding. `git ls-tree -r origin/main -- internal/readers` returned nothing
-and the same command against the fixed head returned three files — same command, same path, so
-the probe demonstrably could come back non-empty. Measured on `karlkfi/claude-spill-guard`,
-2026-08-27. `git ls-tree` exits 0 on a path that is not there, so the blank arrives with a clean
-status and no mark on it; confirm each tree contains the mechanism its row is about before
-reading the row, and say which rows are blanks rather than befores.
+**A two-tree comparison is controlled only where both trees carry the mechanism.** *A claim about
+what a change did needs a before-and-after* sends you to the base tree; this one is about what you
+find when you get there. *A rule fires on a subject* catches a check that passed with nothing to
+check. Inside a comparison the same vacuity surfaces as a *row*, where it reads as fixed rather than
+as absent — a zero in a before-and-after table is what a fix looks like. A leak table reported the
+trunk clean on six of seven shapes because the package implementing those six did not exist on the
+trunk, so six "before" cells were blanks. `git ls-tree` exits 0 on a path that is not there, so the
+blank arrives with a clean status and no mark on it; confirm each tree contains the mechanism its
+row is about before reading the row, and say which rows are blanks rather than befores.
 
 **Ask what a check would still pass on**, then check whether the thing you care about is in that
 set. A gate named for a class covers one mechanism inside it, and the name is what makes the
@@ -753,6 +694,12 @@ rest of the class feel guarded. Say in the check itself what it does not read. A
 fail-closed refusal must name the condition it actually detected — "unrecognized record format"
 routes the reader at a migration; "the value was empty" routes them at a corrupt file they do
 not have.
+
+A gate also trains a habit, and the habit is scoped to the gate's pattern rather than to the
+claim's class. A session that re-checked a quoted test line after a rebase, crediting the citation
+linter that flags stale `path:N:text` pointers, left a commit count in the same PR body that the
+same rebase had falsified. Where a gate covers part of a class of claim, name the members its
+pattern cannot see, and treat them as unchecked rather than as covered by the habit.
 
 **Green checks say the run passed, never that your change is gated.** The two come apart exactly
 when a gate is new, which is when nobody looks. Verify by naming the gate's *job* in the run's
@@ -762,35 +709,29 @@ conclusions per run, and a run whose heavy job skipped while its `-gate` job pas
 lists jobs and their `skipped` conclusions, and it is the only one that separates a lane that
 ran from a lane that reported on behalf of one that did not.
 
-**To learn what CI actually checked out, reproduce the merge ref's tree; do not read a run
-log.** The rule above names the job in the job list, which settles whether your gate ran. This
-settles what it ran *over*, and a log line is the wrong instrument for it — a log says what one
-job did on one attempt, and a rerun, a stale annotation or a skipped job each leave a line that
-reads the same. The tree hash says what the ref is. `git merge-tree --write-tree <base> <head>`
+**To learn what CI actually checked out, reproduce the merge ref's tree; do not read a run log.**
+*Green checks say the run passed* names the job in the job list, which settles whether your gate
+ran. This settles what it ran *over*, and a log line is the wrong instrument for it — a log says
+what one job did on one attempt, and a rerun, a stale annotation or a skipped job each leave a line
+that reads the same. The tree hash says what the ref is. `git merge-tree --write-tree <base> <head>`
 prints the id of the tree a merge would produce, and it compares directly against
-`refs/pull/N/merge^{tree}`. Measured on `karlkfi/claude-spill-guard` PR #42, 2026-08-27: base
-`22378bf1` and head `a14b3ed9` gave `34a960849a998fbf6e0a4a510fc54b9087340bfa`, byte-identical
-to the merge ref's own tree — an identity that rests on no path taking a custom merge driver,
-since `merge-tree` applies whatever driver this clone has and a merge-queue candidate is built
-with none. Where one is configured, reproduce the ref rather than compute it.
+`refs/pull/N/merge^{tree}`, an identity that rests on no path taking a custom merge driver, since
+`merge-tree` applies whatever driver this clone has and a merge-queue candidate is built with none.
+Where one is configured, reproduce the ref rather than compute it.
 
-**A merge ref recomputes on a push to the PR branch, not when the base moves.** Measured both
-directions in that run. So a green check can be scoped to a merge base that no longer exists,
-and nothing in the PR marks it: the checkmark, the head SHA it names and the ref it ran over are
-all still exactly what they were, and only the base has changed underneath. The window is not
-theoretical — the trunk moved twice in about an hour there, and one PR's CI finished 48 seconds
-before the next merge landed. *Was this green* and *was this green against what is on the trunk
-now* are two questions, and the second needs the merge base the ref was built on, read against
-the base branch's current head.
+**A merge ref recomputes on a push to the PR branch, not when the base moves.** So a green check can
+be scoped to a merge base that no longer exists, and nothing in the PR marks it: the checkmark, the
+head SHA it names and the ref it ran over are all still exactly what they were, and only the base
+has changed underneath. *Was this green* and *was this green against what is on the trunk now* are
+two questions, and the second needs the merge base the ref was built on, read against the base
+branch's current head.
 
 **A count is the wrong instrument for "did every check run".** *Green checks say the run passed*
 sends you to the job list, where the reflex is to compare two heads by how many runs each has. A
 total cannot separate a duplicate from a substitution, and two offsetting changes leave it
 unmoved — the reading that looks most like proof. Ask instead which job families are
-present at one head and absent at the other; only the name sets answer it. Measured on
-`karlkfi/claude-bouncer` PR #110: 38 check runs at one head and 37 at the next, all `SUCCESS` on
-both, the drop a duplicate `release-note` from a PR body edit with no family lost — and the count
-cost an investigation each time it moved.
+present at one head and absent at the other; only the name sets answer it. A drop from 38 check
+runs to 37, all `SUCCESS`, was a duplicate run from a PR body edit with no family lost.
 
 ```bash
 gh pr view <N> --json statusCheckRollup \
@@ -807,9 +748,7 @@ all, and absence is what a set difference reports and no total can. Absence read
 the third being *not scheduled yet*: settle the run, nothing `in_progress` or `queued`,
 before a difference decides anything, and otherwise resolve each absent family against its
 `needs:`. An absent `-gate` aggregator beside a running job is the tell: an aggregator is scheduled
-last. On `actions-gateway/github-actions-gateway` #1946 a mid-run difference lost
-`doc-links-gate` and `unit-test-gate` between byte-identical trees; both were waiting on the two
-jobs still running, and settled, the sets matched at 65 families.
+last.
 
 **A coverage claim searched for as a mechanism finds one implementation and reports on every
 route.** *A count is the wrong instrument for "did every check run"* swaps a total for the name
@@ -820,10 +759,8 @@ have found one. A `run: make` sweep over a repo's workflows came back empty for 
 nearly shipped *it is gated nowhere*; the linter runs on every push, through a test in the root
 suite that no pattern over `run:` lines can reach. Ask what would have to be true for the effect to
 occur by **any** route, and settle it downstream of the mechanism — plant a violation and watch
-something go red. Measured 2026-09-09 on `karlkfi/claude-bouncer`, where this was one of seven
-probes built unable to return the answer they were trusted for, and the one that names what the
-other six shared: each **searched for the mechanism its author expected rather than the effect its
-author was claiming**.
+something go red. It names what a family of such probes share: each **searched for the
+mechanism its author expected rather than the effect its author was claiming**.
 
 **A completeness claim inherits the blind spots of its inventory.** A derived inventory can
 answer "nothing is missing"; a curated one answers "nothing that someone recorded is missing",
@@ -925,20 +862,17 @@ exists to produce, then stop passing it. Copying a neighbouring test's invocatio
 extra argument usually arrives, so a suite where every case is set up identically is where to
 look first.
 
-**An assertion fed only values the subject already validated cannot fail.** The rule above has
-the test handing the subject an answer; this is the same trade running the other way, with the
-subject handing the test one. Where the code under test checks its own inputs, every value it
-gives back has been through that check one call earlier, so a value that would fail your
-assertion raises *inside* the subject instead. The assertion re-runs a check that has already
-run: it reads as a guarantee and is a tautology. This is not a sampling weakness a wider fixture
-would fix — the argument holds for every input the assertion can see. On a sort-key allocator, a suite asserted that every generated key satisfies the key checker. The only keys it read were ones it had handed back to the allocator as neighbours, and the allocator
-checks its neighbours, so a planted defect that makes the generator emit an illegal key aborted
-the run at the first allocation, long before the assertion. Routing the same illegal key down a path the
-assertion did not read left the suite green instead — exit 0, that assertion's own pass line
-printed, while the generator emitted the illegal key. The repair is to find a value the subject
-has not already approved: here the bulk-import series, generated, never fed back, and written
-into the store as it stands, which made it both the failable input and the one nothing was
-checking.
+**An assertion fed only values the subject already validated cannot fail.** *A test that supplies
+the value the mechanism would have supplied* has the test handing the subject an answer; this is the
+same trade running the other way, with the subject handing the test one. Where the code under test
+checks its own inputs, every value it gives back has been through that check one call earlier, so a
+value that would fail your assertion raises *inside* the subject instead. The assertion re-runs a
+check that has already run: it reads as a guarantee and is a tautology. This is not a sampling
+weakness a wider fixture would fix — the argument holds for every input the assertion can see. A
+suite asserting that every key a sort-key allocator generates satisfies the key checker read only
+keys it had fed back to the allocator, which checks them, so an illegal key aborted the run before
+the assertion ever saw one. The repair is to find a value the subject has not already approved, such
+as output written straight to the store and never fed back.
 
 **Repeated passes do not validate a flake fix.** A green run of twenty is equally consistent with
 "the race is closed" and "the race did not fire" — and on an idle machine the second is more
@@ -976,10 +910,7 @@ empty needle — so a probe checking that a quoted excerpt still appears in the 
 quotes passes for a *deleted* quote as readily as for a correctly trimmed one. It is *a
 negative control that an empty run satisfies is not a control* arriving on a positive: the
 degenerate output clears the predicate rather than failing it, and the reviewer who named
-that failure mode in prose then shipped a probe that had it. Measured 2026-09-11 over one
-PR's three states, the containment answer read True, False, True while the quote's line
-count read 3, 3, 2 — only the pair says a sentence was trimmed rather than the block
-dropped, and only the middle False makes either True readable. So assert a quantity that
+that failure mode in prose then shipped a probe that had it. So assert a quantity that
 moves with the repair — a length, a line count, a match position — alongside any test
 whose empty case is a pass, and reject an empty needle before comparing.
 
@@ -988,12 +919,9 @@ command that wrote it.** A control breaks a checker's input and demands red; whe
 silently fails to land, the checker sees clean input, passes, and the control reports green —
 testing nothing, and reading exactly like a control that worked. The tool fails more quietly than
 the logic does, because a flag the installed binary rejects, or a GNU pattern under a BSD one,
-leaves no mark on the control's own status. Both arms of a citation gate were driven with
-`sed -i 's/…/…/' file`, where BSD `sed` takes the expression following `-i` as a backup suffix,
-so neither mutation applied; both arms came back exit 0, and the conclusion drawn — the gate is silent on
-both — was the inverse of the truth on one. Redone with a precondition asserting the file had
-actually changed, the arms separate: a wrong path exits 2 naming the row, and only a wrong line
-inside the gate's ten-line window is silent. Measured 2026-08-28. And a green arm is evidence for
+leaves no mark on the control's own status: under BSD `sed`, `sed -i 's/…/…/' file` takes the
+expression as a backup suffix, so a mutation driven that way never applies and its arm comes back
+green. Assert the file actually changed before reading the arm. And a green arm is evidence for
 whichever hypothesis predicted green, including the one you were already drafting.
 
 **Generate a fixture with the producer's own code.** A hand-written fixture encodes what its
@@ -1048,17 +976,14 @@ started, the cleanup killed the thing being measured, the oracle misclassified r
 the subject changed mid-run because you kept working. Assert the harness's own preconditions,
 print the raw figure it measured, and freeze the tree for the duration.
 
-**A check with one binary outcome cannot report that you were right for the wrong reason.**
-*Delete the mechanism* settles whether a mechanism is load-bearing; this is what to ask for when
-somebody else runs the check. *Is this real?* comes back yes and stops, leaving whatever mechanism
-was asserted beside the defect unread — and the mechanism is the half a fix gets written against.
-Separate the existence of the problem from the explanation of it, so the run can disagree on
-either axis independently. Measured 2026-08-25: a session delegated a claim as "re-derive
-independently, and file nothing if it refutes", and the run came back confirming the defect and
-refuting the stated mechanism. The real consequence was worse than either of the two sessions that
-raised it had concluded, and worse in the direction that sounds safe. Ask for the mechanism to be
-re-derived rather than confirmed, and give the run somewhere to put an answer that is neither yes
-nor no.
+**A check with one binary outcome cannot report that you were right for the wrong reason.** *Delete
+the mechanism* settles whether a mechanism is load-bearing; this is what to ask for when somebody
+else runs the check. *Is this real?* comes back yes and stops, leaving whatever mechanism was
+asserted beside the defect unread — and the mechanism is the half a fix gets written against.
+Separate the existence of the problem from the explanation of it, so the run can disagree on either
+axis independently: a run told to "re-derive independently, and file nothing if it refutes" came
+back confirming the defect and refuting its stated mechanism. Ask for the mechanism to be re-derived
+rather than confirmed, and give the run somewhere to put an answer that is neither yes nor no.
 
 Also in this section, in [`references/further-rules.md`](references/further-rules.md): *A mutation
 aimed at a constant tests the constant*; *A payload chosen for being harmless is often exempt for
@@ -1125,15 +1050,10 @@ confirms, and every other reading is noise. A symptom matching a postmortem in t
 is how a hypothesis gets accepted ahead of any measurement, so the probe runs as a formality and
 its result is read to close the question rather than to decide it. Writing the refuting outcome
 down first is what keeps the run legible, and for a causal hypothesis that outcome is always a
-*change* — an outcome identical to the one being diagnosed is the refutation, not a null. Measured
-2026-09-10 in `actions-gateway/github-actions-gateway`: a gate reported `ok` where it should have
-failed, the symptom matched that repo's postmortem describing a stale build artifact, and deleting
-the artifact and re-running returned an identical `ok`. That was read as consistent with the
-diagnosis and staleness went to the user as the cause. If staleness were the cause, removing the
-artifact had to change the result. The real cause was elsewhere — a denied Bash call had discarded
-the source edit silently — and the elimination clause above would have retired the hypothesis
-before the probe ran, since the build script recompiled unconditionally and staleness had never
-been possible.
+*change* — an outcome identical to the one being diagnosed is the refutation, not a null. A gate
+reporting `ok` matched a postmortem about a stale build artifact; deleting the artifact and
+re-running returned the identical `ok`, which was read as consistent with staleness when it was
+the refutation of it.
 
 ## 6. Stating a fact nobody measured
 
@@ -1147,13 +1067,10 @@ decided on the strength of a sentence, and nothing was ever read to write it.
 **A pre-written form field hides the claim's role.** A checkbox in a PR template, a cell in a
 status table, a bullet in a release note — each asserts something a reviewer then acts on, and
 none of them reads as reporting a result, because the wording arrived with the template and
-ticking it feels like completing paperwork rather than saying anything. Both shapes measured
-2026-08-18. `- [x] make check is green` went out on a PR whose entire subject was that
-self-attested template boxes are unreliable, ticked without the run; the run passed when it was
-finally taken, so the claim cost nothing and nothing in the process would have caught it either
-way. And a release note's fold enumerating the release's new tests named three that do not
-exist — plausible names written from the code diff rather than from the artifact, which one diff
-of the test function names against the previous tag settled. So tick the box after the run, and
+ticking it feels like completing paperwork rather than saying anything. `- [x] make check is
+green` went out ticked without the run, on a PR whose entire subject was that self-attested boxes
+are unreliable; a release note enumerating new tests named three that do not exist, written from
+the code diff rather than from the artifact. So tick the box after the run, and
 build an enumeration by reading the thing it describes rather than the change that produced it.
 The document is where a claim gets consumed: a wrong belief held privately is corrected by the
 next command, and the same belief in a PR body is what a reviewer approves on.
@@ -1179,51 +1096,56 @@ carries a second error, and it is the one that survives — the API cannot resol
 not the same as nobody can. The agent runtime's own transcripts are an instrument the service has no
 access to; Claude Code writes each session's commands *and their results* under
 `~/.claude/projects/**/*.jsonl`, so a walk for the object's id and the verb finds the session that
-acted, with the service's own confirmation line beside it. Measured 2026-08-25 across
-concurrent sessions sharing one `gh` credential: one read `convert_to_draft <human>` on its own PR's timeline and told him he had
-deliberately drafted it, hours after another had made the same inference across four PRs and been
-answered *"i havent personally drafted any prs today. it's all you, claude."* That second session
-diagnosed the token trap correctly and then called the actor unresolvable — while its own
-transcript held the `gh pr ready --undo` that answered it, seconds from the timeline event. The
-session holding the mechanism is the one that reached for unknowable.
+acted, with the service's own confirmation line beside it. A session that diagnosed the token trap
+correctly then called the actor unresolvable while its own transcript held the `gh pr ready
+--undo` that answered it.
 
 **A reading of a file you do not control is a snapshot, and it decays silently.** The audit was
-right when it was taken; by the time it is acted on, someone has merged. Nothing prompts a
-re-read, because there is no measurement to re-examine — only a reading whose subject moved, and
-the report still looks exactly as it did when it was true. Measured the same day: an audit of two
-repo docs against three installed skills was obsoleted 35 minutes later by an upstream merge, in
-the one section the audit had deliberately kept. Record what each reading was taken from — a SHA,
-a fetch time — and take it again when it is about to decide something, rather than when it is
-written down.
+right when it was taken; by the time it is acted on, someone has merged. Nothing prompts a re-read,
+because there is no measurement to re-examine — only a reading whose subject moved, and the report
+still looks exactly as it did when it was true: an audit of two repo docs was obsoleted 35 minutes
+later by an upstream merge, in the one section it had deliberately kept. Record what each reading
+was taken from — a SHA, a fetch time — and take it again when it is about to decide something,
+rather than when it is written down.
 
-**Context you did not read carries no read time, so a negative taken from it dates to nothing.**
-The rule above is a reading you took and can stamp; this is text that arrived with no command in
-front of it. A file opened with `cat` announces when it was opened, because the invocation sits in
-the transcript above its output. Context the harness injects — a `CLAUDE.md`, a memory file, a
-skill body — has no such line, and was loaded when the session started rather than at the moment
-you quote it. Positives survive the gap, since a sentence you quote is one somebody can go and
-find; negatives do not, because *the skill says nothing about X* and *the copy handed to me at
-session start said nothing about X* read identically and only the second is supported. A session
+**Context you did not read carries no read time, so a negative taken from it dates to nothing.** *A
+reading of a file you do not control* is a reading you took and can stamp; this is text that arrived
+with no command in front of it. A file opened with `cat` announces when it was opened, because the
+invocation sits in the transcript above its output. Context the harness injects — a `CLAUDE.md`, a
+memory file, a skill body — has no such line, and was loaded when the session started rather than at
+the moment you quote it. Positives survive the gap, since a sentence you quote is one somebody can
+go and find; negatives do not, because *the skill says nothing about X* and *the copy handed to me
+at session start said nothing about X* read identically and only the second is supported. A session
 reported a gap in the global `CLAUDE.md` as unfiled about three hours after the fix had been
 committed. Re-invoking is not the repair, and it returns as though it were: an installed skill
-resolves through a symlink into a working checkout, so the second call re-injects the identical
-body and reports success. `git fetch origin && git show
-origin/main:<path>` is the read that can come back different from the one you are holding.
+resolves through a symlink into a working checkout, so the second call re-injects the identical body
+and reports success. `git fetch origin && git show origin/main:<path>` is the read that can come
+back different from the one you are holding.
 
 **A figure lifted from ambient context was never read from an instrument.** A harness banner, a
 status header, a neighbouring row: each carries numbers that are right for what they describe and
 wrong for nearly everything else, and quoting one costs nothing and reads as a measurement. Time
 is where it bites hardest, because an interval is derived rather than read — subtracting two
 stamps you did not take yields a plausible number instead of an obvious error, and the more real
-the stamps are, the more plausible the number. A session took the
-`12h 3m since the previous turn` from its own harness banner, which measures from the session's
-first prompt, and reported it as idle time after a handback — filing a finding that a pull request
-had gone twelve hours unwatched. Its own background-task mtimes put the window at ten minutes. The
-same session stamped a `git rev-parse` reading with that banner's opening time, twelve minutes
-before the commit it named existed, and a peer reading the inversion diagnosed a clock offset
-that was not there. Both went out in messages, which is where this escapes: nothing lints a
+the stamps are, the more plausible the number. A harness banner's `12h 3m since the previous turn`,
+which measures from the session's first prompt, went out as twelve hours of idle time where the
+real window was ten minutes. It went out in a message, which is where this escapes: nothing lints a
 message. Read the clock when you take the reading, and where a receiver only needs the reading,
 send it undated and let them stamp it.
+
+**A figure committed to the tree is anchored to a revision or a date, never to a wall time.** A
+message is read once; a backlog row, a PR body or a commit message outlives every session that
+could re-derive it. `read at 8adb878` or `measured 2026-09-07` can be re-taken from the tree
+whatever the producing clock was doing, while `14:32 PDT` is checkable against nothing once the
+session has gone, and its timezone suffix makes a guess read as a reading. Grep what a branch adds
+for a clock time: each hit cites a record carrying its own timestamp, or is a claim nobody can
+re-take.
+
+**A selectivity rate is not a throughput prediction.** A rejection rate says how often work is
+skipped. Turning it into a speed needs the share of total cost the skipped work carries, and
+without that measurement the rate licenses a claim about work avoided and none about wall-clock. A
+filter passing 27 of 554 keyword hits to its second stage was framed as a speedup and measured
+neutral, because the skipped work was not where the time went.
 
 **A claim you inherited becomes yours the moment you repeat it.** An issue, a ticket, or a brief
 arrives as the frame for the work rather than as a set of claims inside it, so its assertions get
@@ -1243,14 +1165,11 @@ failure in time; this is it across setups. The author did go and measure, and th
 reproduces — which is why it survives, because the re-run restores the venue along with the value,
 so the one check that would catch it cannot be another measurement. Read the surrounding text
 instead: ask which properties the value turns on — a path depth, a file somebody created, a
-platform's symlink layout, a hostname, a clock — then whether the text states them. Measured
-2026-09-08 across three consecutive review rounds on one backlog row, where a table gave the
-output of a command built from `../../../..` as an absolute path under a setup that fixed neither
-the depth nor the root — and on macOS the wrong value was the realpath of the right one, so
-reproducing it taught the reader nothing. So state the property, or **pick an exhibit whose value
-the claim fixes rather than the setup**: a pair differing only in the construct under test
-resolves identically from every reader's root, and the gap between its two verdicts is the defect
-itself, which one command naming a correct-looking path could not isolate. All three rounds:
+platform's symlink layout, a hostname, a clock — then whether the text states them. So state the
+property, or **pick an exhibit whose value the claim fixes rather than the setup**: a pair
+differing only in the construct under test resolves identically from every reader's root, and the
+gap between its two verdicts is the defect itself, which one command naming a correct-looking path
+could not isolate. A worked case over three review rounds:
 [`references/shell-traps.md`](references/shell-traps.md).
 
 Also in this section, in [`references/further-rules.md`](references/further-rules.md): *Provenance
@@ -1261,4 +1180,5 @@ is a claim, and one of the cheapest to settle*; *A figure you derived is not a f
 Distilled from the failure record of a production Kubernetes CI gateway and a set of Claude Code
 guard plugins, where each rule was paid for by a wrong verdict that reached a document, a pull
 request, or a release. Examples naming a repository, commit, or pull request are quoted from it;
-the rest are rewritten.
+the rest are rewritten. The incidents in full, with their dates, repositories and counts, are in
+[`references/exhibits.md`](references/exhibits.md), keyed by rule lead.

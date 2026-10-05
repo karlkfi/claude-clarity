@@ -549,11 +549,25 @@ Q1018, an open question deferred on a room trigger, and Q1005, which has a
 repair needing no room. From this merge on, an addition names what it displaces
 again, and the inventory the 2026-10-04 reading named is spent.
 
+**A second move, the same day.** Q1027 took the incident narratives out of
+every rule rather than taking whole rules out: each rule kept its bold lead,
+its mechanism and at most a sentence of exhibit, and the date, the repository
+and the counts went to `references/exhibits.md`, keyed by lead. That left the
+body 99,832 → 93,018 bytes, and the maintainer chose to spend the room in the
+same branch on five rows rather than lose it at the merge: Q1018, which the
+maintainer's choice also routed here rather than to `gate-audit`, and the four
+ready rows Q292, Q298, Q300 and Q301. Q292 went into `further-rules.md`, the
+placement its own row named as cheapest, so it took no body bytes. The figure
+above includes the other four. The ready rows were not parked on room, so this
+is a choice about what rides in a shrinking branch, not a rule that later ones
+must.
+
 **What would reverse it:** a residency instrument that separates consulted from
 applied, which would turn the ranking into a verdict and put deletion back on
 the table. Or a grandfather keyed to something other than the merge base — a
 recorded high-water mark rather than a re-read of main — which would make room
 bankable and let the move and its spenders be separate items again.
+
 ## A description one character under the cap is not a problem to solve
 
 `verify-claims` measures 1023 against the 1024-character cap, and three rules
