@@ -55,7 +55,7 @@ cases than any other skill here, and the files under
 `skills/verify-claims/references/` are the split already in progress. Q1014
 moved its 20 low-uptake rules into a fourth on 2026-10-04 and left the body at
 99,832 bytes. Q1027 moved the incident narratives into a fifth, `exhibits.md`,
-the same day and left it at 92,911 with five new clauses inside that figure. It
+the same day and left it at 93,018 with four new clauses inside that figure. It
 is grandfathered shrink-only, so an addition to it has to name
 what it displaces.
 

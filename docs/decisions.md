@@ -553,7 +553,7 @@ again, and the inventory the 2026-10-04 reading named is spent.
 every rule rather than taking whole rules out: each rule kept its bold lead,
 its mechanism and at most a sentence of exhibit, and the date, the repository
 and the counts went to `references/exhibits.md`, keyed by lead. That left the
-body 99,832 → 92,911 bytes, and the maintainer chose to spend the room in the
+body 99,832 → 93,018 bytes, and the maintainer chose to spend the room in the
 same branch on five rows rather than lose it at the merge: Q1018, which the
 maintainer's choice also routed here rather than to `gate-audit`, and the four
 ready rows Q292, Q298, Q300 and Q301. Q292 went into `further-rules.md`, the

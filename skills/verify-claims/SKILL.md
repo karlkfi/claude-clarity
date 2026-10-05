@@ -142,8 +142,8 @@ direction it was looking.
   deleting the mechanism left it green. Anchor on a marker only the mechanism itself emits.
 - **A green the instrument reports *in order to* report the absence.** A workflow whose heavy job
   skips while its `-gate` job passes concludes `success`, so at run level "ran and passed" and
-  "correctly skipped" are the same row by construction. `--commit` fixes *which commit*, which is
-  why it reads as the guarded form, and says nothing about *which job*.
+  "correctly skipped" are the same row by construction. `gh run list --commit` fixes *which
+  commit*, which is why it reads as the guarded form, and says nothing about *which job*.
 - **A probe fired where the code path had already emptied its subject.** A search of a captured
   file for a string returned 0 hits from a point after the script had exited without writing it,
   so the file was empty for any string.
@@ -646,7 +646,7 @@ runs none; a two-dot `git diff origin/main..HEAD` against a moved base renders t
 commits as the branch changing them.
 
 **Ask what question the instrument answers, not whether its answer looks right.** What does
-`merge-tree` consult; what quantity does this reading measure, on what hardware, at what ratio;
+`merge-tree` consult; what quantity does this reading measure, and under what conditions;
 what is in the cited file. An *over-sourced* citation is the one that gets through: a real file
 with a real number trips none of the reflexes tuned to flag thin sourcing. A hedge rescues none
 of this: it sits on the inference, and the error is upstream in the probe. Both halves of the
@@ -654,8 +654,8 @@ sentence are written in the same words, so ask what this instrument would report
 were false **in a way it cannot see**.
 
 **Being right by luck is indistinguishable from being right by construction.** An instrument
-answering an adjacent question often returns the right verdict anyway, and nothing in the agreement
-marks it. That is a different argument from *a negative needs a positive
+answering an adjacent question can still return the right verdict, as both git instruments above
+did against correct re-runs, and nothing in the agreement marks it. That is a different argument from *a negative needs a positive
 control*: there the answer is suspect, here it is right and the method still gets checked,
 because it is reached for again where the luck does not hold. Each adjacency instance behind this
 rule was caught by another seat and none by its author: the remedy is a second reader, not more
@@ -1144,8 +1144,8 @@ re-take.
 **A selectivity rate is not a throughput prediction.** A rejection rate says how often work is
 skipped. Turning it into a speed needs the share of total cost the skipped work carries, and
 without that measurement the rate licenses a claim about work avoided and none about wall-clock. A
-4.9% rejection rate framed as a speedup measured neutral, because the skipped work was not where
-the time went.
+filter passing 27 of 554 keyword hits to its second stage was framed as a speedup and measured
+neutral, because the skipped work was not where the time went.
 
 **A claim you inherited becomes yours the moment you repeat it.** An issue, a ticket, or a brief
 arrives as the frame for the work rather than as a set of claims inside it, so its assertions get
