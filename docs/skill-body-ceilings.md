@@ -55,9 +55,10 @@ cases than any other skill here, and the files under
 `skills/verify-claims/references/` are the split already in progress. Q1014
 moved its 20 low-uptake rules into a fourth on 2026-10-04 and left the body at
 99,832 bytes. Q1027 moved the incident narratives into a fifth, `exhibits.md`,
-the same day and left it at 93,018 with four new clauses inside that figure. It
-is grandfathered shrink-only, so an addition to it has to name
-what it displaces.
+the same day and left it at 93,018 with four new clauses inside that figure. On
+2026-10-25 a split by moment into six more files took it to 17,769, under the
+ceiling, so it is held to 24 KiB like any other `hot` body from then on.
+[decisions.md](decisions.md) has the split.
 
 Its residency is now measured rather than assumed, and the reading argues
 against shrinking it to the band: of 88 rules, everything with no observable

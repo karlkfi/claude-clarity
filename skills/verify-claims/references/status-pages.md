@@ -1,6 +1,7 @@
 # Provider status pages
 
-The lookup table behind one rule in `verify-claims` §1: when a remote read fails, returns empty, or
+The lookup table behind one rule in `verify-claims`, kept in `negatives-and-controls.md`: when a
+remote read fails, returns empty, or
 comes back red, the provider's own status page says whether the instrument was sick at read time.
 GitHub is the example in the skill because it is the one most of this work runs through, but
 the rule is about any hosted dependency — a registry, a CDN, a CI service, an API you call.

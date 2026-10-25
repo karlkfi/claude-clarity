@@ -1,6 +1,6 @@
 # Exhibits
 
-The incidents behind rules in `SKILL.md` and `further-rules.md`, moved out so the body carries each rule's instruction
+The incidents behind rules in `SKILL.md` and the files beside this one, moved out so the body carries each rule's instruction
 and mechanism once and the full record lives here. Keyed by the rule's bold lead, under the
 section that holds it. Read one when a rule's mechanism is not clear from the body, or before
 changing a rule — the incident is usually what the wording is defending against.
@@ -109,7 +109,7 @@ both directions with `comm`, it holds — and a disagreement about the row total
 verdict, so long as one definition is applied to both sides.
 
 The third instance from that run is the one *Where it stops: a reference that moved is not a
-population that shrank* carries in `SKILL.md`. That clone carried 264 worktrees under roughly 28
+population that shrank* carries in `negatives-and-controls.md`. That clone carried 264 worktrees under roughly 28
 concurrent sessions.
 
 ### A probe's setup step can silently define what its teardown restores to

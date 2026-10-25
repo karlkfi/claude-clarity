@@ -1,9 +1,9 @@
 # Further rules
 
 Rules moved out of `SKILL.md` because they reach the fewest sessions that load it. Each is
-still a rule, kept whole: `SKILL.md` lists them by lead at the end of the section they came
-from, so read the one whose lead matches your situation. An italicised rule name that is not
-in this file is in `SKILL.md`.
+still a rule, kept whole: the reference file each `SKILL.md` section points to lists them by lead
+at its end, so read the one whose lead matches your situation. An italicised rule name that is not
+in this file is in `SKILL.md` or in a sibling file under `references/`.
 
 ## 1. Reading a result
 
@@ -52,7 +52,7 @@ which was laid out for a different reader. A cleaner specimen than the hunk head
 the reader to know the field's structure: a verdict line printed the opposite of the SHAs sitting
 directly above it, because `before` had been captured from two commands, so the string compare
 ran against a two-line value. So **print the raw value beside the verdict and read both** — a
-derived sentence with its inputs missing is unfalsifiable on the page. `SKILL.md` §1's `sort -u` case
+derived sentence with its inputs missing is unfalsifiable on the page. `negatives-and-controls.md`'s `sort -u` case
 is this rule from the other side, where `comm` was the right instrument and the key fed to it was
 not. Sending the command beside the claim does not close this, and it is the habit most likely to
 be mistaken for closing it: it buys provenance, not agreement, so both ends can re-run the
@@ -73,7 +73,7 @@ capability does not produce one wrong step — it deletes the alternatives from 
 work proceeds soundly toward something that cannot ship. Establish it before offering choices
 that rest on it, and state it as an assumption where offered.
 
-**The tell is a boundary that coincides with your own start.** For `SKILL.md` §1's *A measurement
+**The tell is a boundary that coincides with your own start.** For `counts.md`'s *A measurement
 of recent activity, taken while your own work is changing that system, samples your own work*: when
 the outliers are the most recent N, and N begins at the hour you did, that alignment is the finding rather than the
 mechanism you were about to read out of it. So ask what the outliers *are* before asking what they
@@ -190,7 +190,7 @@ username as `--remove-timestamp`, concluded sudo would run nothing, and deferred
 runs — fail-open in a production guard, reached by ordinary usage rather than a crafted bypass, and
 caught by a reviewer's own matrix rather than by the author's inversion. Restoring the whole-token
 scan reddens 12 tests, so an assertion aimed at the walk would have caught the shipped code
-verbatim. A defect in the code that reads a constant needs a mutation aimed at that code. §2's *a
+verbatim. A defect in the code that reads a constant needs a mutation aimed at that code. `negatives-and-controls.md`'s *a
 control drawn from inside the enumeration it is testing cannot fail* is the neighbour and not this
 rule: there the table is what you doubt, and the repair is an input from outside it; here the table
 is right and its reader is not.

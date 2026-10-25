@@ -193,6 +193,16 @@ the nine parked clauses that landed in the same branch. A reading taken after th
 merges measures a different body, so the table above is not comparable to it
 rule for rule.
 
+## The split by moment
+
+On 2026-10-25 the body was split by the moment each rule applies rather than by
+uptake, and went to 17,769 bytes, under the ceiling this file calls unreachable.
+Both statements hold: relocating by uptake cannot reach the ceiling, and a split
+by moment does not need to, because it moves the most-used rules as readily as
+the least. [decisions.md](decisions.md) has the argument. The command above now
+reads the body alone, so the tables here are not comparable to a reading taken
+after the split until the reference files are counted too.
+
 ## What would reverse this
 
 A rule reaching zero sessions here has not been shown to be unused — the probe
