@@ -1,6 +1,7 @@
 # Shell and tool traps that fake a clean result
 
-The concrete mechanics behind `verify-claims` §1. Each entry is a way a command
+The concrete mechanics behind `verify-claims` §1, whose rules sit in `reading-a-result.md`
+and `negatives-and-controls.md`. Each entry is a way a command
 reports success, or reports nothing, while having measured something other than
 what you asked — the shell-level instances of "the instrument did not run and
 said so quietly".

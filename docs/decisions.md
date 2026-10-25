@@ -568,6 +568,55 @@ the table. Or a grandfather keyed to something other than the merge base — a
 recorded high-water mark rather than a re-read of main — which would make room
 bankable and let the move and its spenders be separate items again.
 
+**Superseded 2026-10-25 by the entry below**, which takes the body under its
+ceiling. Once the limit is the ceiling rather than the merge base, room under it
+carries from one branch to the next, so the one-branch rule above stops binding.
+
+## `verify-claims` reaches its ceiling by moment, not by uptake
+
+The entry above relocated by uptake and said, correctly, that uptake cannot
+reach 24 KiB. This one splits by the moment a rule applies, which can. The body
+went from 93,018 bytes to 17,769, measured with `wc -c` on 2026-10-25, and
+every rule it lost sits whole in one of six files under
+`skills/verify-claims/references/`: `reading-a-result.md`,
+`negatives-and-controls.md` and `counts.md` from §1, then
+`trusting-a-check.md`, `writing-a-check.md` and `stating-a-fact.md` from §2,
+§3 and §6.
+
+**The cut follows the pointer shape, because only one shape gets read.** Each
+section of the body now opens with a plain sentence naming the moment and the
+file: "Before a zero, an empty result … decides anything, read
+`references/negatives-and-controls.md`. You leave it holding …". This is
+inherited from `claude-skills`, not measured here. Its Q316 found a file behind
+a pointer of that form read by 54–80% of sessions, while the three pointers this
+body already had, each appended after a rule's gist, scored 0 reads in 77
+firings (claude-skills Q312, 2026-09-12). `verify-claims` has no step sequence,
+so each pointer names a moment a session reaches by acting — before a result
+becomes a verdict, before a count goes in a sentence, before writing a test,
+before writing a PR body — and the moments are the ones *Fire this when*
+already lists. The pointers are plain rather than bold so
+`scripts/rule-residency.py` does not count them as rules.
+
+**What stayed in the body** is what binds at every moment or is the procedure
+the others feed: the move, *Fire this when*, the four sources of an
+unfalsifiable check, *A negative needs a positive control* (the most-used rule
+in the reading above), *The probe is not the gate*, *Delete the mechanism* with
+its bullets, and §4 and §5 whole. §4's trailing pointer to
+`timing-and-concurrency.md` became an opening one.
+
+**Two consequences to know about.** The 6,807 bytes under the ceiling are room
+that later branches can spend, which the one-branch rule above never allowed.
+And `scripts/rule-residency.py` reads one file, and of the 86 lines that opened
+with a bold rule lead in the old body, 4 remain in the new one (counted with a
+`^\*\*` match, not with the script). Re-taking the residency table needs the
+reference files counted as well.
+
+**What would reverse it:** a forward reading, taken over firings after this
+merges, showing the six files read at the rate of the appended pointers rather
+than the in-step ones. That would mean a subject skill's moments are not
+reached the way a procedure's steps are, and the content would have to come
+back or move to a hook's payload.
+
 ## A description one character under the cap is not a problem to solve
 
 `verify-claims` measures 1023 against the 1024-character cap, and three rules
