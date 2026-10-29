@@ -124,6 +124,16 @@ as the parser written beside it, so both agree and both are wrong. Escaping, quo
 precision, field order, and null-versus-absent are where memory is unreliable, and all five fail
 silently.
 
+**When the producer is a third-party API there is nothing to generate from — read the live one,
+once per value you branch on.** The same belief-shaped error without that remedy: the stub returns
+what the author thinks the service says, the consumer reads it the same way, and the suite pins the
+belief rather than the contract. The axis here is semantic rather than syntactic — not escaping or
+field order but what a field's values *mean*, and which way round they are. GitHub's
+`compare/BASE...HEAD` reports `.status` as the head's position relative to the base, so "has my
+commit landed" is `ahead`; a stub written around `behind` carried a 19-assertion suite green while
+the code treated the not-yet-deployed state as deployed. Call the endpoint for each value the code
+switches on and pin what actually comes back.
+
 **Adjusting a fake to make a test pass is a finding about the real interface.** Teaching the stub
 to send the missing field is one line and always works — and the suite stops describing the
 system and starts describing itself. Ask what the real service sends, and get the answer from a
