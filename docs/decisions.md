@@ -701,3 +701,58 @@ exclude them.
 **What would reverse it:** an A/B over a fixed prompt set showing Opus 5.5
 narrates or hedges again once the removed rules are gone, or a model whose tell
 profile moves back toward the word lists.
+
+## A suite that avoids the corpus may fabricate one
+
+`scripts/test-rule-residency.sh` was written to stay off `~/.claude/projects`,
+because that tree is machine state and a check reading it changes answer between
+runs. That left nothing checking the two outputs that say which reading a run
+took: the `# authoring repos` line on stderr and the `repos` and `verdict` keys
+in `--json`. A reading taken on 2026-09-19 swung from 21 low-uptake rules to 26
+and back, and the repos line was the only thing in the output saying the larger
+one was the bare run, so it is the line worth gating.
+
+The suite now builds its own transcript tree in a temp directory, two projects
+with one four-record session each, and points the module's `PROJECTS` global at
+it. Nothing on the machine is read, so the answers are fixed by construction
+like the rest of the suite's. The whole suite went from 0.22 s to 0.28 s with
+the arm added, three warm runs each on 2026-11-01.
+
+**It asserts the discrimination, not the wording.** One corpus is read twice,
+each run marking the other project as authoring, and the checks require each
+run's first stderr line to name its own repo and not the other's, each `--json`
+to record its own `repos`, and the verdict tables to come out `[RAN, FLAT]` and
+`[FLAT, RAN]`. None of them matches the `# authoring repos:` prefix, so renaming
+it does not redden anything; dropping it does. The script's JSON is read with
+`.get`, so a missing key fails a named assertion and the rest still run. A probe
+that indexed the keys directly died on `KeyError` before any assertion ran,
+and reported two of these mutants by exit status alone.
+
+Measured 2026-11-01 against the shipped script, with each mutation confirmed by
+`cmp` before its run:
+
+| mutant | assertions red | assertions run |
+|---|---|---|
+| drop the `# authoring repos` print | 1 | 13 |
+| drop `"repos": repo_names` from `--json` | 1 | 13 |
+| drop the `r["verdict"] = ...` loop | 1 | 13 |
+| ignore `--repo`, always `[default_repo()]` | 3 | 13 |
+| harness: drop the `PROJECTS` reassignment | 3 | 13 |
+
+**The fixture's symmetry is what lets the verdict check fail.** The two sessions
+have equal block counts and fire opposite rules after the load, so the two
+readings differ in nothing but which project is the reader. Give them different
+block counts and the verdict tables can differ for reasons that have nothing to
+do with segregation. That is why the first-line check names the repo rather than
+comparing the two runs' stderr as a whole: whole-stderr inequality holds or
+breaks with the fixture, not with the script.
+
+This meets the bar the linter entry above set: the check is certain and its
+repair is mechanical. A key is present or it is not, and the fix is to restore
+the line.
+
+**What would reverse it:** the arm reaches the script through one module global,
+`PROJECTS`. A refactor that makes the projects root an argument or a class
+attribute breaks that seam, and the arm has to move with it rather than be
+dropped. A suite with no corpus at all is right again only if the selection
+outputs stop existing.
