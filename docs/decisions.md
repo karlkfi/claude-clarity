@@ -715,8 +715,10 @@ one was the bare run, so it is the line worth gating.
 The suite now builds its own transcript tree in a temp directory, two projects
 with one four-record session each, and points the module's `PROJECTS` global at
 it. Nothing on the machine is read, so the answers are fixed by construction
-like the rest of the suite's. The whole suite went from 0.22 s to 0.28 s with
-the arm added, three warm runs each on 2026-11-01.
+like the rest of the suite's. Adding the arm took the whole suite from 0.22 s
+to 0.28 s over three warm runs on 2026-11-01, and from 0.24–0.27 s to
+0.35–0.40 s on a loaded machine in review, so the cost is a fraction of a
+second either way.
 
 **It asserts the discrimination, not the wording.** One corpus is read twice,
 each run marking the other project as authoring, and the checks require each
@@ -739,13 +741,13 @@ Measured 2026-11-01 against the shipped script, with each mutation confirmed by
 | ignore `--repo`, always `[default_repo()]` | 3 | 13 |
 | harness: drop the `PROJECTS` reassignment | 3 | 13 |
 
-**The fixture's symmetry is what lets the verdict check fail.** The two sessions
-have equal block counts and fire opposite rules after the load, so the two
-readings differ in nothing but which project is the reader. Give them different
-block counts and the verdict tables can differ for reasons that have nothing to
-do with segregation. That is why the first-line check names the repo rather than
-comparing the two runs' stderr as a whole: whole-stderr inequality holds or
-breaks with the fixture, not with the script.
+**Only a whole-stderr comparison would depend on the fixture, and none is
+asserted.** The two sessions have equal block counts, so the runs' stderr
+differs only in the repos line, and whether two runs' stderr differs at all
+turns on that symmetry. The first-line check names the repo instead. The verdict
+check does not lean on it: with one unrelated action block added to one session,
+before the load or after it, the tables still read `[RAN, FLAT]` and
+`[FLAT, RAN]`, and ignoring `--repo` still collapses both to `[FLAT, FLAT]`.
 
 This meets the bar the linter entry above set: the check is certain and its
 repair is mechanical. A key is present or it is not, and the fix is to restore
