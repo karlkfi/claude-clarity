@@ -369,13 +369,19 @@ high and identical tool grants. The skilled arm opened with
 `/tech-docs-layers`, and its own transcript holds the expanded body. The
 control ran with `--disallowedTools "Skill(tech-docs-layers)"`, which a probe
 showed refusing the call, and its transcript holds no `Skill` call at all.
-Karl's global `CLAUDE.md` and hooks loaded in both.
+The flag blocks only the body: the control's skill listing still carried this
+skill's description, which says an edit "still touches terminology,
+cross-references, …". So the arms compare description alone against
+description plus body, not no skill against skill. Karl's global `CLAUDE.md`
+and hooks loaded in both.
 
 **Both arms swept completely.** Each left the old term only in release notes,
 and both left those for the same reason, published history. Each added no
 broken link, rewrote all nine outbound links, split the rename and the move
 into two commits, and ran `make check`. The control did the link sweep with
-nothing in the prompt asking for one.
+nothing in the prompt asking for one, though not with nothing in context: the
+description names cross-references. Whether a model with no trace of the skill
+sweeps was not measured.
 
 **Where the skilled arm did more, it was terminology.** In `README.md` and
 `docs/DESIGN.md` there is a sentence describing the feature without naming it.
