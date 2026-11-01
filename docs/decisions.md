@@ -747,7 +747,9 @@ differs only in the repos line, and whether two runs' stderr differs at all
 turns on that symmetry. The first-line check names the repo instead. The verdict
 check does not lean on it: with one unrelated action block added to one session,
 before the load or after it, the tables still read `[RAN, FLAT]` and
-`[FLAT, RAN]`, and ignoring `--repo` still collapses both to `[FLAT, FLAT]`.
+`[FLAT, RAN]`, and ignoring `--repo` still gives both readings one shared table
+(`[FLAT, FLAT]` with the block after the load, `[RAN, RAN]` with it before), so
+the check fails either way.
 
 This meets the bar the linter entry above set: the check is certain and its
 repair is mechanical. A key is present or it is not, and the fix is to restore
