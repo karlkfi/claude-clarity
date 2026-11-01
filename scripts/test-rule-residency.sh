@@ -4,9 +4,11 @@
 # passes tells you nothing, so the twin fixture below is the point of this file:
 # it confirms --self-test can fail before any green is read as evidence.
 #
-# Nothing here touches ~/.claude/projects. The corpus arm is machine state and
+# Nothing here touches ~/.claude/projects. That corpus is machine state and
 # changes between runs; what is testable is the parsing, the marker build, the
-# self-test's own discrimination, and the verdict.
+# self-test's own discrimination, and the verdict. The two-reading arm at the
+# end fabricates a transcript tree of its own and points the module's PROJECTS
+# global at it, so its answers are fixed by construction like the rest.
 set -uo pipefail
 
 cd "$(dirname "$0")/.." || exit 1
@@ -32,8 +34,8 @@ description: fixture
 
 ## One
 
-**A backup tape rewinds before the audit.** The reel spools to its magnetic
-origin, and **the operator** reading a mid-paragraph emphasis is not a rule.
+**A backup tape rewinds before the audit.** The reel spools to its magnetic origin, and
+**the operator** reading a mid-paragraph emphasis is not a rule.
 
 **Blue herons nest downstream of the weir.** Counting nests from the towpath
 undercounts the colony by roughly a third.
@@ -155,6 +157,78 @@ check silent BLIND "a rule that never fires anywhere reads BLIND, not unused"
 check flat   FLAT  "more hits in a window ten times the size is not uptake"
 check uptake RAN   "a rule firing in commands at a raised rate reads RAN"
 check talked SAID  "a rule firing only in prose reads SAID"
+
+# Which sessions count as authoring decides the whole table, and only the
+# `# authoring repos` line and the --json `repos` key say which reading was
+# taken. So one fabricated tree is read twice, each run marking the other's
+# project as authoring. The sessions mirror each other: the same block counts,
+# so the runs' stderr differs only in that line, and opposite rules firing
+# after the load, so the verdicts read [RAN, FLAT] against [FLAT, RAN].
+# Keys are read with .get so a missing one fails an assertion by name.
+mkdir -p "$tmp/residencyfixture" "$tmp/projects/-work-aardvarkrepo" "$tmp/projects/-work-zebrarepo"
+cat > "$tmp/residencyfixture/SKILL.md" <<'EOF'
+---
+name: residencyfixture
+description: fixture
+---
+
+# Residency fixture
+
+## One
+
+**Backup tapes rewind before audits.** The reel spools to its magnetic origin.
+
+**Blue herons nest below weirs.** Counting nests from the towpath runs low.
+EOF
+out=$(python3 - "$tmp" <<'EOF'
+import contextlib, importlib.util, io, json, sys
+tmp = sys.argv[1]
+spec = importlib.util.spec_from_file_location("rr", "scripts/rule-residency.py")
+rr = importlib.util.module_from_spec(spec); spec.loader.exec_module(rr)
+tape, heron = "backup tapes rewind before audits", "blue herons nest below weirs"
+def act(text):
+    return {"message": {"role": "assistant",
+                        "content": [{"type": "tool_use", "input": {"command": text}}]}}
+load = act(""); load["message"]["content"][0]["input"] = {"skill": "residencyfixture"}
+for proj, before, after in (("aardvarkrepo", heron, tape), ("zebrarepo", tape, heron)):
+    recs = [act(before), load, act(after), act(before)]
+    with open(f"{tmp}/projects/-work-{proj}/s.jsonl", "w") as f:
+        f.write("\n".join(json.dumps(r) for r in recs) + "\n")
+rr.PROJECTS = rr.pathlib.Path(f"{tmp}/projects")
+for repo, other in (("zebrarepo", "aardvarkrepo"), ("aardvarkrepo", "zebrarepo")):
+    sys.argv = ["rule-residency.py", f"{tmp}/residencyfixture/SKILL.md",
+                "--repo", repo, "--json", f"{tmp}/{repo}.json"]
+    err = io.StringIO()
+    with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+        status = rr.main()
+    first = (err.getvalue().splitlines() or [""])[0]
+    try:
+        doc = json.load(open(f"{tmp}/{repo}.json"))
+    except (OSError, ValueError):
+        doc = {}
+    print(f"{repo} status {status}")
+    print(f"{repo} names-own {repo in first and other not in first}")
+    print(f"{repo} repos {doc.get('repos')}")
+    print(f"{repo} verdicts {[r.get('verdict') for r in doc.get('rules', [])]}")
+EOF
+)
+# Every line but the last argument must appear in the output whole.
+claim() {
+    local name=${*: -1} line
+    for line in "${@:1:$#-1}"; do
+        case $'\n'$out$'\n' in
+            *$'\n'"$line"$'\n'*) ;;
+            *) bad "$name"$'\n'"$out"; return ;;
+        esac
+    done
+    ok "$name"
+}
+claim "zebrarepo names-own True" "aardvarkrepo names-own True" \
+    "each reading's first line names its own authoring repo"
+claim "zebrarepo repos ['zebrarepo']" "aardvarkrepo repos ['aardvarkrepo']" \
+    "each reading's --json records its own repos"
+claim "zebrarepo verdicts ['RAN', 'FLAT']" "aardvarkrepo verdicts ['FLAT', 'RAN']" \
+    "the two readings of one corpus give the verdicts their segregation builds"
 
 [ "$rc" -eq 0 ] && echo "test-rule-residency: all checks passed"
 exit "$rc"
