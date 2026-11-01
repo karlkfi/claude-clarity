@@ -23,24 +23,29 @@ produce is a case, and each one needs an arm. What skipping them costs is not a 
 loud, but a silently unusable hatch — and a waiver nobody can make fire gets routed around, after which the waivers that do exist stop carrying reasons.
 
 Both arms need a control, for the reason *size the fixture to the threshold* gives in `SKILL.md`. Against
-a fenced-code gate of my own:
+a fenced-code gate of my own, which is not in this repo, so set `gate` to yours and `marker` to
+the comment text it reads as a waiver. The statuses below are what that gate returned, not what
+yours will:
 
 ```bash
+gate=./path/to/your-gate      # replace: a command taking one markdown file, exit 0 = clean
+marker='check-fenced-code'    # replace: the waiver keyword your gate recognises
 q='```'                       # keep the fence marker off the start of a line
 prog=$'import os\nx = 1\ny = 2\nz = x + y\nprint(os.getcwd())\nprint(z)'
-printf '%s\n' '<!-- check-fenced-code: worked example -->' '' "${q}python" "$prog" "$q" > gapped.md
-printf '%s\n' '<!-- check-fenced-code: worked example -->'    "${q}python" "$prog" "$q" > adjacent.md
+printf '%s\n' "<!-- $marker: worked example -->" '' "${q}python" "$prog" "$q" > gapped.md
+printf '%s\n' "<!-- $marker: worked example -->"    "${q}python" "$prog" "$q" > adjacent.md
 printf '%s\n'                                                 "${q}python" "$prog" "$q" > control.md
 for f in control adjacent gapped; do
-    scripts/check-fenced-code.py "$f.md" >/dev/null 2>&1; echo "$f=$?"
+    "$gate" "$f.md" >/dev/null 2>&1; echo "$f=$?"
 done
-rm -f control.md adjacent.md gapped.md   # untracked *.md is in the gate's own list
+rm -f control.md adjacent.md gapped.md   # untracked *.md is in my gate's own list
 ```
 
-`control=1` is what makes the other two readable. A fixture one statement under the gate's
-five-statement threshold reports `control=0` beside them, which reads as *the waiver is honoured
-in both constructions* off a run where the gate found nothing to waive. Both waiver arms pass
-here now, and the suite has grown arms in both directions — the gapped form, a comment behind
+My gate returned `control=1`, which is what makes the other two readable. A fixture one statement
+under its five-statement threshold reports `control=0` beside them, which reads as *the waiver is
+honoured in both constructions* off a run where the gate found nothing to waive. Size `prog` to
+your gate's threshold, and expect your own statuses. Both waiver arms pass on my gate now, and its
+suite has grown arms in both directions — the gapped form, a comment behind
 prose it must not reach past, one carrying an indent, and mentions of the syntax that must not
 waive at all. That is what a falsified hatch looks like, and the probe is how you check yours is
 one.
