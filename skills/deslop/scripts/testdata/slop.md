@@ -14,6 +14,8 @@ agree this cannot be overstated; it marks a pivotal moment.
 
 No dashboards. No guesswork. Just answers.
 
+- **Key insight:** tracing is the backbone of modern systems.
+
 In conclusion, observability is a comprehensive, multifaceted, transformative practice that
 empowers a myriad of teams to elevate their operations. I hope this helps — let me know if
 you'd like me to delve deeper!

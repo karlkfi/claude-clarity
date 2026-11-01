@@ -79,6 +79,7 @@ TACKED_ANALYSIS = re.compile(
 SUMMARY_OPENER = re.compile(r"^(overall|in conclusion|in summary|ultimately|in essence)\b[, ]", re.I | re.M)
 EMOJI_HEADER = re.compile(r"^#{1,6}\s*[^\w\s#>`\[]", re.M)
 CURLY = re.compile(r"[“”‘’]")
+LABELLED_LINE = re.compile(r"^\s*(?:[-*+]|\d+[.)])?\s*\*\*[^*\n]{1,40}(?::\*\*|\*\*:)", re.M)
 
 # --- STE mechanics: plain + strict -------------------------------------------
 
@@ -159,6 +160,7 @@ def lint(raw, mode):
     dashes = raw.count("—") + raw.count("–")
     per_kw = dashes * 1000.0 / words
     put("em_dash(>2/1000w)", dashes if per_kw > 2 else 0, [f"{dashes} total, {per_kw:.1f}/1000w"])
+    put("labelled_line", len(LABELLED_LINE.findall(raw)))
     put("emoji_header", len(EMOJI_HEADER.findall(raw)))
     put("curly_quote", len(CURLY.findall(raw)))
 
