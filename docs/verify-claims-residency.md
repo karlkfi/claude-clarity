@@ -176,13 +176,16 @@ folded *A skip is not a defense* into a new rule in between. Those 20 moved whol
 into `skills/verify-claims/references/further-rules.md`, 18,531 bytes of them.
 
 **The 828-byte difference is a rule this probe never measured.** `load_rules()`
-recognises a lead only where its closing `**` is on the same line, so *One field
+recognised a lead only where its closing `**` was on the same line, so *One field
 is a projection of a mutable object…*, whose lead wraps, was read as part of
 *A correct reading of the wrong field*'s span and inherited its `FLAT`. Cutting at
 the probe's boundaries carried it out with the measured rule; review caught it,
-and it stays in `SKILL.md`. The same blind spot folds other wrapped leads into
+and it stays in `SKILL.md`. The same blind spot folded other wrapped leads into
 their predecessors: the review of PR #26 counted ten in the body the table above
-was taken on, which is why it counts 88 rules.
+was taken on, which is why it counts 88 rules. Since 2026-11-01 a lead may close
+on any later line of its paragraph. Every `SKILL.md` here then held no wrapped
+lead, so no reading of a body moved; the 19 it separates sit in
+`skills/verify-claims/references/`, which the probe does not read.
 
 Each section of `SKILL.md` that lost a rule now ends with a plain paragraph
 listing their leads, plain rather than bold so this probe does not count the list
