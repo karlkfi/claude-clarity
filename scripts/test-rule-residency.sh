@@ -57,6 +57,51 @@ description: fixture
 **A backup tape rewinds before the audit.** The reel spools to its magnetic origin.
 EOF
 
+# A lead too long for one line closes its bold span on the next. An opening
+# that never closes is not a rule, whether it would borrow the `**` of the
+# paragraph after it or of inline bold later in its own.
+mkdir -p "$tmp/wrapped"
+cat > "$tmp/wrapped/SKILL.md" <<'EOF'
+---
+name: wrapped
+description: fixture
+---
+
+# Wrapped
+
+## One
+
+**A backup tape rewinds before the audit.** The reel spools to its magnetic origin.
+
+**Stray markup opens this paragraph and
+never closes it.
+
+**Unclosed markup opens this one, and
+later **inline bold** sits in the same paragraph.
+
+**Blue herons nest downstream of the weir, and the count from the
+towpath runs low.** Counting nests undercounts the colony by roughly a third.
+EOF
+
+out=$(python3 - "$tmp/wrapped/SKILL.md" <<'EOF'
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("rr", "scripts/rule-residency.py")
+rr = importlib.util.module_from_spec(spec); spec.loader.exec_module(rr)
+rules = rr.load_rules(sys.argv[1])
+print("leads:", " | ".join(r["lead"] for r in rules))
+print("folded:", "herons" in rules[0]["text"])
+EOF
+)
+case $out in
+    *"leads: A backup tape rewinds before the audit | Blue herons nest downstream of the weir, and the count from the towpath runs low"$'\n'*)
+        ok  "a lead wrapped onto a second line is a rule, named in full" ;;
+    *)  bad "a lead wrapped onto a second line is a rule, named in full"$'\n'"$out" ;;
+esac
+case $out in
+    *"folded: False"*) ok   "a wrapped lead's paragraph is not folded into the rule before it" ;;
+    *)                 bad "a wrapped lead's paragraph is not folded into the rule before it"$'\n'"$out" ;;
+esac
+
 out=$("$PROBE" "$tmp/good/SKILL.md" --self-test 2>&1); status=$?
 if [ "$status" -eq 0 ]; then
     ok "a well-formed body passes --self-test"

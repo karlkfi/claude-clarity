@@ -90,11 +90,21 @@ def load_rules(path):
     for i, line in enumerate(lines):
         if line.startswith("## "):
             section = line[3:].strip()
-        m = re.match(r"^\*\*(.+?)\*\*", line)
         # A bold span is a rule lead only where it opens a paragraph. Mid-
         # paragraph emphasis lands at the start of a line whenever the wrap
         # falls there, and reads as a rule with a fragment for a name.
-        if m and (i == 0 or lines[i - 1].strip() == ""):
+        if not line.startswith("**") or (i > 0 and lines[i - 1].strip() != ""):
+            continue
+        # A long lead closes on a later line of its paragraph. Missed, it
+        # reads as body text of the rule before it and takes that verdict.
+        para = []
+        for nxt in lines[i:]:
+            if not nxt.strip():
+                break
+            para.append(nxt)
+        m = re.match(r"^\*\*(.+?)\*\*", " ".join(para))
+        # A `**` after a space opens inline bold rather than closing the lead.
+        if m and not m.group(1)[-1].isspace():
             heads.append((i, section, m.group(1)))
     rules = []
     for n, (i, section, lead) in enumerate(heads):
