@@ -102,8 +102,9 @@ def load_rules(path):
             if not nxt.strip():
                 break
             para.append(nxt)
-        m = re.match(r"^\*\*(.+?)\*\*", " ".join(para), re.S)
-        if m:
+        m = re.match(r"^\*\*(.+?)\*\*", " ".join(para))
+        # A `**` after a space opens inline bold rather than closing the lead.
+        if m and not m.group(1)[-1].isspace():
             heads.append((i, section, m.group(1)))
     rules = []
     for n, (i, section, lead) in enumerate(heads):

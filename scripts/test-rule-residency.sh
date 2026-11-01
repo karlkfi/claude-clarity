@@ -57,9 +57,9 @@ description: fixture
 **A backup tape rewinds before the audit.** The reel spools to its magnetic origin.
 EOF
 
-# A lead too long for one line closes its bold span on the next. The opening
-# paragraph that never closes is not a rule, and must not borrow the `**` of
-# the paragraph after it.
+# A lead too long for one line closes its bold span on the next. An opening
+# that never closes is not a rule, whether it would borrow the `**` of the
+# paragraph after it or of inline bold later in its own.
 mkdir -p "$tmp/wrapped"
 cat > "$tmp/wrapped/SKILL.md" <<'EOF'
 ---
@@ -75,6 +75,9 @@ description: fixture
 
 **Stray markup opens this paragraph and
 never closes it.
+
+**Unclosed markup opens this one, and
+later **inline bold** sits in the same paragraph.
 
 **Blue herons nest downstream of the weir, and the count from the
 towpath runs low.** Counting nests undercounts the colony by roughly a third.
