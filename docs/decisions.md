@@ -349,11 +349,50 @@ model does not already act on is the instruction to survey first and sweep
 after, which is 28.1% of it. Both are held rather than checked, and the second
 is a claim about training data that nothing here can settle.
 
-Both readings are measured before the rewrite rather than after, which is
-[Q1023](queue/Q1023.md) and why Q1022 is blocked. A cut that rests on the
-second reading and never tests it would be unfalsifiable after the fact, since
-nothing afterwards distinguishes a layer the model never needed from one the
-rewrite removed.
+Both readings were to be measured before the rewrite rather than after, which
+was Q1023, because a cut that rests on the second reading and never tests it
+would be unfalsifiable after the fact: nothing afterwards distinguishes a layer
+the model never needed from one the rewrite removed.
+
+### Measured: the sweep was not the difference, terminology was
+
+Run on 2026-11-01 against `claude-pr-sentinel` at `a7ba8ea`, whose `CLAUDE.md`
+names no skill but does carry a short documentation-conventions section and a
+change-to-docs mapping. The task was one prompt, typed the same in both arms:
+rename "overlap check" to "overlap guard", and move `docs/ROADMAP.md` to
+`docs/development/roadmap.md`. A scorer fired at a bare `git mv` first showed
+the task could tell: 28 term hits (12 in living docs, 15 in release notes, 1 in
+code) and 11 links broken by the move, 9 of them outbound from the moved page.
+
+Each arm was a fresh `claude -p` on Claude Code 2.1.290 with Opus 5.5 at effort
+high and identical tool grants. The skilled arm opened with
+`/tech-docs-layers`, and its own transcript holds the expanded body. The
+control ran with `--disallowedTools "Skill(tech-docs-layers)"`, which a probe
+showed refusing the call, and its transcript holds no `Skill` call at all.
+Karl's global `CLAUDE.md` and hooks loaded in both.
+
+**Both arms swept completely.** Each left the old term only in release notes,
+and both left those for the same reason, published history. Each added no
+broken link, rewrote all nine outbound links, split the rename and the move
+into two commits, and ran `make check`. The control did the link sweep with
+nothing in the prompt asking for one.
+
+**Where the skilled arm did more, it was terminology.** In `README.md` and
+`docs/DESIGN.md` there is a sentence describing the feature without naming it.
+The skilled arm added the name there, and the control left both sentences
+unnamed. It also caught two more bare "the check" back-references in
+`PRIVACY.md`. In the other direction, the control rewrote two plain-text
+mentions of the old path in `docs/plan/` files, which the skilled arm left as
+history. The skilled arm also cost more: 64 turns against 24, and $1.60
+against $0.97 as the CLI reported them.
+
+So the held reading did not survive this task. The model swept without the
+body, and the skilled arm's extra work all fell under layer 1's subject. One
+run cannot say the body caused it. Layers 3 to 6 were
+not exercised, because the repo has no framework; the skilled arm surveyed
+sibling page headers and changed nothing. One run per arm cannot separate a
+two-site difference from sampling, and "rename" already asks for the
+terminology sweep, so this informs Q1022's cut rather than settling it.
 
 **What would reverse it:** a rewrite shipping against the framework-less case
 and still measuring zero over a comparable window, which would say the subject
