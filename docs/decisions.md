@@ -667,3 +667,37 @@ wrong on 12 of the 21 skills in the collection this repo was extracted from. It
 does not reproduce here: folding each of the ten descriptions by hand agrees
 with the gate on all ten. Ask the enforcer because the fold is reimplemented,
 not because it is observably failing.
+
+## The style and `deslop` target the tells the current model writes
+
+Opus 5.5 replaced Opus 5 on this workstation on 2026-09-25, and the tells moved.
+Measured 2026-11-01 over local session transcripts (1,821 Opus 5 sessions, 419
+Opus 5.5), counting the main conversation only, all under the Clarity style
+except one Opus 5 baseline taken before 2026-09-13:
+
+| Per 1k words | Opus 5 | Opus 5.5 |
+|---|---|---|
+| `**Label:**` lines, chat replies | 0.55 | 5.95 |
+| Bullet lines, chat replies | 1.5 | 10.8 |
+| `**Label:**` lines, Markdown written | 0.32 | 1.75 |
+| Semicolons, Markdown written | 4.0 | 6.6 |
+| Em dashes, Markdown written | 9.1 | 1.0 |
+| `deslop` hard vocabulary, Markdown written | 0.03 | 0.06 |
+
+A bold sentence opening a paragraph (`**Do this.** Because…`) stayed flat at
+about 3 per 1k in both, so the defect is the colon label, not bold leads.
+Opening narration ("let me…") fell from 15% of first messages to 1.4%, and
+hedges sat near 0.2 per 1k under every model and style. So Clarity dropped its
+hedging and narration rules and gained rules against bullets and labelled lines,
+and `deslop` moved its word, phrase and em-dash lists to
+`references/tell-catalog.md`. The linter still checks them, and now flags
+labelled lines too.
+
+There is no Opus 5.5 run without the style, so a rule that dropped out may have
+been holding 5.5 down rather than going unused. The workload mix also differs:
+more Opus 5.5 sessions were dispatched workers, and only the reply figures
+exclude them.
+
+**What would reverse it:** an A/B over a fixed prompt set showing Opus 5.5
+narrates or hedges again once the removed rules are gone, or a model whose tell
+profile moves back toward the word lists.

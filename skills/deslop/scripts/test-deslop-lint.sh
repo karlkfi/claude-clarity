@@ -44,7 +44,8 @@ if ! awk -v s="$slop_score" 'BEGIN { exit !(s > 10) }'; then
 fi
 
 for detector in vague_attribution unearned_significance negative_parallelism \
-    no_x_no_y_just_z false_range tacked_on_analysis summary_opener slop_phrase; do
+    no_x_no_y_just_z false_range tacked_on_analysis summary_opener slop_phrase \
+    labelled_line; do
     grep -q "^  $detector " <<<"$slop" || fail "slop.md did not trip $detector"
 done
 

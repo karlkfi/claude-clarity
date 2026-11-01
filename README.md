@@ -152,7 +152,7 @@ chat message to a linter before sending it.
 Two halves:
 
 - **How much to write.** Open with the answer. Report outcomes, not the route.
-  A short question takes a short answer. Error output, security findings and
+  Write in sentences, not bullets and `**Label:**` lines. Error output, security findings and
   destructive-action confirmations are exempt and go out whole. So are the four
   things a short reply drops quietly: a step you skipped, a check you did not
   run, a number you did not verify, a result that came back partial.

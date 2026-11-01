@@ -3,8 +3,8 @@
 # test-catalog-sync.sh — every tell the skill documents must be one the
 # linter can catch.
 #
-# SKILL.md's Step 4 catalog and deslop-lint.py's word lists are the same
-# knowledge written twice, so they drift: a term gets added to the prose and
+# The lists in references/tell-catalog.md and deslop-lint.py's word lists are
+# the same knowledge written twice, so they drift: a term gets added to the prose and
 # the linter silently stops covering the catalog it claims to check.
 #
 # Comparing the two as string sets does not work. The script deliberately
@@ -28,7 +28,7 @@ set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 LINT="$HERE/deslop-lint.py"
-SKILL="$HERE/../SKILL.md"
+SKILL="$HERE/../references/tell-catalog.md"
 
 probe="$(mktemp)"
 trap 'rm -f "$probe"' EXIT
@@ -58,7 +58,7 @@ PY
 )
 
 if [[ ${#probes[@]} -lt 20 ]]; then
-    printf 'test-catalog-sync: FAIL: parsed only %d catalog entries; the Step 4 lists moved\n' \
+    printf 'test-catalog-sync: FAIL: parsed only %d catalog entries; the tell-catalog lists moved\n' \
         "${#probes[@]}" >&2
     exit 1
 fi

@@ -58,9 +58,13 @@ These are the expensive ones, because they survive any amount of line editing.
 
 Run this as the final pass over any prose, in every mode. Quote each hit, name the pattern, fix it.
 
-Vocabulary (replace on sight, all modes): delve, tapestry, landscape (metaphorical), realm, beacon, journey (metaphorical), symphony, intricate, pivotal, crucial, vital, seamless, robust, leverage, foster, empower, unlock, unleash, elevate, streamline, supercharge, game-changing, cutting-edge, state-of-the-art, best-in-class, battle-tested, enterprise-grade, transformative, revolutionary, comprehensive, multifaceted, myriad, plethora, ever-evolving, fast-paced, synergy, paradigm shift, demystify, holistic, groundbreaking.
+The tells current Claude models produce are structural, so start here:
 
-Phrases (delete or rewrite): "it's important to note", "it should be noted", "it's worth noting", "in today's digital age", "in the ever-evolving world of", "let's dive in", "at its core", "at the end of the day", "in conclusion", "in summary", "in essence", "ultimately" as a paragraph opener, "no discussion would be complete without", "but here's the kicker", "that's only half the story", "here's the truth", "I hope this helps", "let me know if", "great question".
+- **Labelled lines.** A line opening `**Term:**`, bulleted or not, outside a real glossary or key-value record. It is a heading that skipped the work of a topic sentence. Rewrite the line as a sentence whose subject is the term, or promote the group to a section.
+- **Bullets carrying prose.** A list whose items are findings, reasons, or a recommendation rather than parallel, separable things. The list drops the "because" and "so" that connected them; restore the paragraph.
+- **Semicolons** joining clauses in technical prose: write two sentences.
+
+The word and phrase lists ("delve", "it's worth noting", em-dash density) mark earlier model generations and are in [references/tell-catalog.md](references/tell-catalog.md). The linter still checks all of them. Read that file when the draft came from an unknown or older source.
 
 Structure:
 - **Negative parallelism.** "It's not just X, it's Y." / "This isn't about X. It's about Y." One per document is a device; two is a tic; the default is zero.
@@ -71,9 +75,7 @@ Structure:
 - **Every section the same shape.** Header, two-sentence intro, bullet list, one-line wrap-up, repeat. Structure should follow the content, and content varies.
 
 Punctuation and formatting:
-- Em dash density. One or two per page is punctuation; several per paragraph is a signature. Replace with commas, periods, colons, or parentheses. (STE itself only bans the semicolon; the em-dash rule is the 2020s addendum.)
-- Semicolons in technical prose: write two sentences instead.
-- Bold overuse, especially the "**Term:** definition" pattern outside an actual glossary.
+- Bold overuse beyond the labelled line above: bold on every other phrase stops marking anything.
 - Title Case Headings where the house style is sentence case; emoji in headers; horizontal rules between every section.
 - Curly quotes and other word-processor artifacts in markdown.
 
