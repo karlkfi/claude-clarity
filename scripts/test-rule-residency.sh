@@ -32,8 +32,8 @@ description: fixture
 
 ## One
 
-**A backup tape rewinds before the audit.** The reel spools to its magnetic
-origin, and **the operator** reading a mid-paragraph emphasis is not a rule.
+**A backup tape rewinds before the audit.** The reel spools to its magnetic origin, and
+**the operator** reading a mid-paragraph emphasis is not a rule.
 
 **Blue herons nest downstream of the weir.** Counting nests from the towpath
 undercounts the colony by roughly a third.
