@@ -229,12 +229,25 @@ skill that went on to read the file whole. That is the reading the split's
 reversal condition in [decisions.md](decisions.md) asks for.
 
 **Measured 2026-11-01, the read rate is 0 of 98 for all eleven files.** Only one
-of those 98 sessions postdates the split, so it cannot yet test the pointers
-the split added. The reader arm holds one session for
-`shell-traps.md` and `timing-and-concurrency.md`, from August, and none for the
-other nine, which exit 2. So no per-rule table over a reference file is
-quotable yet: with one reader session and a two-block `PRE` window, 12 of
-`timing-and-concurrency.md`'s 15 rules read `RAN`. Q1030 files a guard for that.
+of those 98 sessions postdates the split, and the denominator counts every
+invoking session, including those from before a file existed. So the rate
+cannot yet test the pointers the split added. The reader arm holds one session
+for `shell-traps.md` and `timing-and-concurrency.md`, from August. It holds none
+for the other nine. Seven of those exit 2. `status-pages.md` and
+`further-rules.md` each have one authoring session that read them, so they exit
+0 and print verdicts over zero reader sessions: `FLAT=2` for the first, and
+`FLAT=6 BLIND=14` for the second.
+
+So no per-rule table over a reference file is quotable yet. With one reader
+session and a two-block `PRE` window, 12 of `timing-and-concurrency.md`'s 15
+rules read `RAN`. Q1030 files a guard for verdicts over one reader session or
+none.
+
+**The window is keyed on the file's path, not its content**, so a reader is
+measured against the rules the file holds today. The `timing-and-concurrency.md`
+reader saw the same blob as today's. The `shell-traps.md` reader read a 15-lead
+version in `claude-skills` (`363250a`), and the file now holds 45 leads, so 30
+of its rules get a `POST` window that reader never saw.
 
 ## What would reverse this
 

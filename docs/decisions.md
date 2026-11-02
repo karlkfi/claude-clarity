@@ -814,12 +814,14 @@ Read of that file, so pointed at one the probe now opens the window there
 instead, and measures only the sessions that made such a Read.
 
 **Readers are the sessions that read the file, not the sessions that invoked
-the skill.** The two sets barely overlap. Measured 2026-11-01 over local
+the skill.** On this machine the two sets do not overlap at all. Measured 2026-11-01 over local
 transcripts, none of the 98 reader sessions invoking `verify-claims` had read
 any of its eleven reference files whole, and every reader-arm whole Read on
-record came from a session that never invoked the skill. Reusing the Skill-call split would
-have measured 98 sessions that never saw the rules and missed the ones that
-did.
+record came from a session that never invoked the skill. Reusing the
+Skill-call split would have counted all 98 invoking sessions as readers of
+every file, and missed both sessions that did read one. Of those 98, 97 predate
+the split and had the six carved-out files' rules loaded from `SKILL.md`, but
+none of them read the file the reading is about.
 
 **Only a whole-file Read is a load.** A Read with an offset or a limit, a grep
 or an Edit shows the session part of the file or none of it. Of the reader-arm
@@ -837,8 +839,18 @@ reference reading and a body reading stay comparable.
 
 **The run prints the file's read rate** among reader sessions invoking the
 skill, because that is the measurement named by the reversal condition of
-*`verify-claims` reaches its ceiling by moment, not by uptake*. On 2026-11-01 it was 0 of 98 for every file, with one of the 98 after
-the split, so the condition has not been tested.
+*`verify-claims` reaches its ceiling by moment, not by uptake*. On 2026-11-01
+it was 0 of 98 for every file, with one of the 98 after the split, so the
+condition has not been tested. The denominator counts every invoking session,
+including those from before a file existed, which is why a rate taken this
+early says little.
+
+**The window is keyed on the file's path, not its content.** A reader is
+measured against the rules the file holds today. The one `shell-traps.md`
+reader read a 15-lead version in `claude-skills` (`363250a`), and the file now
+holds 45, so 30 rules get a `POST` window that reader never saw. Nothing in
+the probe detects this, so a reading of a file that changed under its readers
+needs saying so wherever it is quoted.
 
 **What would reverse it:** enough readers per file to run both controls side by
 side and find that they disagree, which would mean topic onset is what the
