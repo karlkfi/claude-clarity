@@ -257,7 +257,7 @@ def blocks(rec, load):
             yield "prose", b.get("thinking") or ""
         elif kind == "tool_use":
             if load.invokes(b) or load.loads(b):
-                continue   # the invocation itself is not evidence of use
+                continue   # the invocation or load itself is not evidence of use
             yield "action", json.dumps(b.get("input") or {})
 
 
