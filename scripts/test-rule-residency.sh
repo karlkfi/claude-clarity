@@ -180,8 +180,13 @@ description: fixture
 
 **Blue herons nest below weirs.** Counting nests from the towpath runs low.
 EOF
+# The same body under the same skill name with one word changed, so its run
+# finds the same transcripts and differs only in the blob it measured.
+mkdir -p "$tmp/alt/residencyfixture"
+sed 's/runs low/runs short/' "$tmp/residencyfixture/SKILL.md" > "$tmp/alt/residencyfixture/SKILL.md"
+blob=$(git hash-object "$tmp/residencyfixture/SKILL.md")
 out=$(python3 - "$tmp" <<'EOF'
-import contextlib, importlib.util, io, json, sys
+import contextlib, datetime, importlib.util, io, json, sys
 tmp = sys.argv[1]
 spec = importlib.util.spec_from_file_location("rr", "scripts/rule-residency.py")
 rr = importlib.util.module_from_spec(spec); spec.loader.exec_module(rr)
@@ -195,13 +200,19 @@ for proj, before, after in (("aardvarkrepo", heron, tape), ("zebrarepo", tape, h
     with open(f"{tmp}/projects/-work-{proj}/s.jsonl", "w") as f:
         f.write("\n".join(json.dumps(r) for r in recs) + "\n")
 rr.PROJECTS = rr.pathlib.Path(f"{tmp}/projects")
-for repo, other in (("zebrarepo", "aardvarkrepo"), ("aardvarkrepo", "zebrarepo")):
-    sys.argv = ["rule-residency.py", f"{tmp}/residencyfixture/SKILL.md",
+today = datetime.date.today().isoformat()
+for repo, other, body in (("zebrarepo", "aardvarkrepo", "residencyfixture"),
+                          ("aardvarkrepo", "zebrarepo", "residencyfixture"),
+                          ("altbody", "zebrarepo", "alt/residencyfixture")):
+    sys.argv = ["rule-residency.py", f"{tmp}/{body}/SKILL.md",
                 "--repo", repo, "--json", f"{tmp}/{repo}.json"]
     err = io.StringIO()
     with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
         status = rr.main()
-    first = (err.getvalue().splitlines() or [""])[0]
+    lines = err.getvalue().splitlines()
+    first = (lines or [""])[0]
+    stamp = next((l for l in lines if l.startswith("# stamp:")), "")
+    union = next((l for l in lines if l.startswith("# union:")), None)
     try:
         doc = json.load(open(f"{tmp}/{repo}.json"))
     except (OSError, ValueError):
@@ -210,6 +221,12 @@ for repo, other in (("zebrarepo", "aardvarkrepo"), ("aardvarkrepo", "zebrarepo")
     print(f"{repo} names-own {repo in first and other not in first}")
     print(f"{repo} repos {doc.get('repos')}")
     print(f"{repo} verdicts {[r.get('verdict') for r in doc.get('rules', [])]}")
+    print(f"{repo} blob {stamp.split()[3] if len(stamp.split()) > 3 else None}")
+    print(f"{repo} json-blob {doc.get('blob')}")
+    print(f"{repo} records {stamp.split()[5] if len(stamp.split()) > 5 else None}")
+    print(f"{repo} dated-today {stamp.endswith('date ' + today)}")
+    print(f"{repo} union {union}")
+    print(f"{repo} json-union {doc.get('union')}")
 EOF
 )
 # Every line but the last argument must appear in the output whole.
@@ -229,6 +246,27 @@ claim "zebrarepo repos ['zebrarepo']" "aardvarkrepo repos ['aardvarkrepo']" \
     "each reading's --json records its own repos"
 claim "zebrarepo verdicts ['RAN', 'FLAT']" "aardvarkrepo verdicts ['FLAT', 'RAN']" \
     "the two readings of one corpus give the verdicts their segregation builds"
+# The stamp is what tells a reading of one tree from a reading of another, so
+# the blob is git's own id for the file, and the same corpus read twice names
+# the same one. Each session is four records, and both sessions load the file.
+claim "zebrarepo blob $blob" "aardvarkrepo blob $blob" \
+    "zebrarepo json-blob $blob" "aardvarkrepo json-blob $blob" \
+    "two readings of one body stamp the blob git hash-object gives it"
+claim "zebrarepo records 8" "zebrarepo dated-today True" \
+    "the stamp carries the corpus record count and the date"
+case $out in
+    *"altbody blob $blob"*|*"altbody blob None"*)
+        bad "a reading of a different body stamps a different blob"$'\n'"$out" ;;
+    *"altbody blob "[0-9a-f]*) ok "a reading of a different body stamps a different blob" ;;
+    *)  bad "a reading of a different body stamps a different blob"$'\n'"$out" ;;
+esac
+# The union is the figure a decision quotes, in exact bytes. Each fixture rule
+# is its one line and the newline after it, 79 and 76 bytes, and the run that
+# reads a rule FLAT puts that rule alone in the union.
+claim "zebrarepo union # union: BLIND+FLAT = 1 rules, 76 bytes" \
+    "aardvarkrepo union # union: BLIND+FLAT = 1 rules, 79 bytes" \
+    "zebrarepo json-union {'rules': 1, 'bytes': 76}" \
+    "the union of BLIND and FLAT is printed and recorded in exact bytes"
 
 # A reference file is loaded by a Read of it, not by the Skill call. Four
 # sessions, each built so one wrong reading of that changes a named figure:

@@ -612,14 +612,32 @@ every arm including the authoring one — so the `--repo` flags that keep
 authoring sessions out of the reader arm cannot protect this boundary at all,
 and measurably do not: all six rules that left `BLIND` between two readings had
 their entire count in the authoring arm and zero in the reader arm. It is also
-a ratchet rather than a fluctuation, since corpus counts are cumulative, so a
-rule leaves and does not come back and re-taking the reading will not average
-it out. That instability is an argument for relocation and against deletion:
-whether a given rule is *unseen by the probe* or *seen and flat* is not a
+a ratchet rather than a fluctuation while the transcript store keeps every
+session, since corpus counts are cumulative, so a rule leaves and does not come
+back and re-taking the reading will not average it out. The store does not keep
+every session: Claude Code deletes transcripts older than `cleanupPeriodDays`,
+365 days on this machine since 2026-08-26 and a 30-day default before that,
+with Desktop sessions exempt by default. The oldest transcript here on
+2026-11-01 was modified 2026-07-28, which is consistent with one prune and does
+not prove it. From around 2027-07-28 a rule can return to `BLIND` as the
+sessions carrying its firings age out. That instability is an argument for
+relocation and against deletion: whether a given rule is *unseen by the probe* or *seen and flat* is not a
 property anyone can hold still. Relocation is reversible and ships the rule
 either way, so a ranking is enough to decide what leaves the hot path. Deletion
 is not on the table at any ranking, because the reading cannot see a rule
 applied in the reader's own words.
+
+**Every reading is stamped, since Q1016.** Beside `# verdicts:` the run prints
+`# stamp:`, with the measured file's blob, the corpus record count and the date,
+and `# union:`, with the union in rules and exact bytes; `--json` carries `blob`
+and `union`. A reading in Q1016's history was taken with the worktree on another
+branch's body, returned five verdict figures as plausible as a real reading's,
+named no blob, and reached a filed row through one review. The alternative was
+to exclude the sessions deciding a relocation from `corpus`. It was rejected:
+it holds still a split nothing reads, and it needs a rule for which sessions
+count as deciding, which has no clean answer, since a session reviewing a rule
+may also apply it. Revisit it if something comes to consume the `BLIND`/`FLAT`
+split itself.
 
 The move is Q1014, and it carries the three parked clauses in its own branch
 rather than promising them room afterwards. It was filed rather than made

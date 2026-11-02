@@ -48,6 +48,13 @@ and reports 26 rules and 26.0 kB where the table below says 21 and 20.6 kB. The
 run prints the names it segregated on as its first line; read that before the
 numbers.
 
+**Since 2026-11-01 every run stamps itself.** Beside `# verdicts:` it prints
+`# stamp:`, the blob it measured, the corpus record count and the date, and
+`# union:`, the union of `BLIND` and `FLAT` in rules and exact bytes. Quote the
+stamp with any figure, and quote the union rather than either half of it, for
+the reason below. The readings in this file predate the stamp and name the tree
+they were taken on instead.
+
 Measured 2026-09-18 against `1858849`, over the 94 sessions under
 `~/.claude/projects/` carrying a `Skill(verify-claims)` call: 85 reader
 sessions and 9 authoring ones. 88 rules, 98.6 kB of the 110,854-byte file.
@@ -92,10 +99,14 @@ count in the authoring arm and **zero** in the reader arm. The flags protect
 `RAN`, `SAID` and `FLAT` from authoring contamination and leave `BLIND` fully
 exposed.
 
-**And it is a ratchet, not a fluctuation.** Transcripts accumulate and corpus
-counts are cumulative, so on a fixed base tree a rule leaves `BLIND` and never
-returns: 14/7 → 10/11 → 8/13 is one-way. Re-taking it will not average out, and
-a later reading is not a better estimate of the same quantity.
+**And it ratchets while the transcript store grows.** Corpus counts are
+cumulative, so on a fixed base tree a rule leaves `BLIND` and does not return
+while every transcript is kept: 14/7 → 10/11 → 8/13 is one-way. Re-taking it
+will not average out, and a later reading is not a better estimate of the same
+quantity. Claude Code deletes transcripts after `cleanupPeriodDays`, 365 days on
+this machine since 2026-08-26 and with Desktop sessions exempt by default, so
+from around 2027-07-28 a rule can return to `BLIND` as the sessions carrying its
+firings are pruned. [decisions.md](decisions.md) has the retention reading.
 
 This is the skill's own *a measurement of recent activity, taken while your own
 work is changing that system, samples your own work*, and it is not abstract
