@@ -420,11 +420,15 @@ exists because of this entry's own finding: `github-actions-gateway`'s
 
 Three things were deliberately not done. **The cut to survey-and-sweep was
 refused**, on the measurement above: the sweep made no difference in that run
-and the extra work fell under layer 1. **Layers 3 to 6 are unchanged.** One
-sentence now says to skip a layer whose mechanism the survey did not find
-rather than introducing it unasked, which is what the old body already implied
-with "if the repo uses". It is not an argument from the probe, which did not
-exercise them. **The description is unchanged**, because the skill still fires
+and the extra work fell under layer 1. Two lines that only stressed the sweep
+("most repo docs work fails at sweep-time" and "this is where most doc PRs fall
+short") went with that measurement; the sweep step itself is intact. **Layers 3
+to 6 are unchanged.** One sentence now says to skip the part of a layer that
+depends on a mechanism the survey did not find — versioned docs, a navigation
+manifest, an include mechanism — and keeps the sibling-matching parts of layers
+4 and 5 in every repo. For layers 3 and 6 that is what the old body already
+implied with "if the repo uses"; for 4 and 5 it narrows nothing. It is not an
+argument from the probe, which did not exercise them. **The description is unchanged**, because the skill still fires
 at the moment it fired before and the description was never shown to be the
 lever, so the figures in the description-cap entry below still describe it.
 
@@ -436,7 +440,7 @@ back-reference. The sentence says a moved page's own outbound links break, which
 was 9 of the 11 broken links the probe's scorer counted. Both rest on one run and
 on mechanism rather than on a measured effect.
 
-The body went from 10,855 to 14,663 bytes against the 16 KiB `warm` ceiling,
+The body went from 10,855 to 14,823 bytes against the 16 KiB `warm` ceiling,
 almost all of it the bootstrap step and the conventions check.
 
 **What would reverse it:** the reversal condition above, unchanged. A

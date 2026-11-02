@@ -44,7 +44,7 @@ This survey is the work. Skipping it is why doc PRs ship with broken links and i
 
 ### Step 3 — Write with the six layers in mind
 
-Apply each layer as you draft. Each layer has a *what to do* and a *why it matters* — the why is what tells you how to handle the edge cases. A layer whose mechanism the survey did not find (no framework, no versions, no partials) has nothing to maintain; skip it rather than introducing the mechanism unasked.
+Apply each layer as you draft. Each layer has a *what to do* and a *why it matters* — the why is what tells you how to handle the edge cases. Where part of a layer depends on a mechanism the survey did not find — versioned docs, a navigation manifest, an include mechanism — skip that part rather than introducing the mechanism unasked. The parts that match sibling pages (front matter, heading depth and case, where a page goes) apply in any repo, framework or not.
 
 #### Layer 1 — Terminology consistency
 
