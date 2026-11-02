@@ -230,5 +230,66 @@ claim "zebrarepo repos ['zebrarepo']" "aardvarkrepo repos ['aardvarkrepo']" \
 claim "zebrarepo verdicts ['RAN', 'FLAT']" "aardvarkrepo verdicts ['FLAT', 'RAN']" \
     "the two readings of one corpus give the verdicts their segregation builds"
 
+# A reference file is loaded by a Read of it, not by the Skill call. Four
+# sessions, each built so one wrong reading of that changes a named figure:
+#   A  invokes, says the tape rule, reads the file whole, says the heron rule
+#   B  invokes and says the tape rule, never reads the file
+#   C  reads the file whole through another path, never invokes the skill
+#   D  invokes, reads three lines of the file, edits it, says the tape rule
+# Readers are A and C, so the reader count is 2 and the read rate 1 of 3;
+# counting B, or D's partial Read or its Edit, raises one or both. Opening the
+# window at the Skill call puts A's tape rule after the load and reads it RAN.
+mkdir -p "$tmp/refskill/references" "$tmp/refprojects/-work-userrepo"
+cp "$tmp/residencyfixture/SKILL.md" "$tmp/refskill/SKILL.md"
+cp "$tmp/residencyfixture/SKILL.md" "$tmp/refskill/references/notes.md"
+out=$(python3 - "$tmp" <<'EOF'
+import contextlib, importlib.util, io, json, sys
+tmp = sys.argv[1]
+spec = importlib.util.spec_from_file_location("rr", "scripts/rule-residency.py")
+rr = importlib.util.module_from_spec(spec); spec.loader.exec_module(rr)
+tape, heron = "backup tapes rewind before audits", "blue herons nest below weirs"
+def use(name, inp):
+    return {"message": {"role": "assistant",
+                        "content": [{"type": "tool_use", "name": name, "input": inp}]}}
+def act(text):
+    return use("Bash", {"command": text})
+skill = use("Skill", {"skill": "refskill"})
+notes = "/home/u/.claude/skills/refskill/references/notes.md"
+sessions = {
+    "a": [skill, act(tape), use("Read", {"file_path": notes}), act(heron)],
+    "b": [skill, act(tape)],
+    "c": [act("ls"), use("Read", {"file_path": "/src/skills/refskill/references/notes.md"}),
+          act(heron)],
+    "d": [skill, use("Read", {"file_path": notes, "limit": 3}),
+          use("Edit", {"file_path": notes, "old_string": "x", "new_string": "y"}), act(tape)],
+}
+for name, recs in sessions.items():
+    with open(f"{tmp}/refprojects/-work-userrepo/{name}.jsonl", "w") as f:
+        f.write("\n".join(json.dumps(r) for r in recs) + "\n")
+rr.PROJECTS = rr.pathlib.Path(f"{tmp}/refprojects")
+sys.argv = ["rule-residency.py", f"{tmp}/refskill/references/notes.md",
+            "--repo", "nosuchrepo", "--json", f"{tmp}/ref.json"]
+err = io.StringIO()
+with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+    status = rr.main()
+try:
+    doc = json.load(open(f"{tmp}/ref.json"))
+except (OSError, ValueError):
+    doc = {}
+rate = [l for l in err.getvalue().splitlines() if l.startswith("# read rate")]
+print(f"ref status {status}")
+print(f"ref rate {rate[0] if rate else None}")
+print(f"ref readers {doc.get('reach', {}).get('use:sessions')}")
+print(f"ref verdicts {[r.get('verdict') for r in doc.get('rules', [])]}")
+EOF
+)
+claim "ref status 0" \
+    "ref rate # read rate: 1 of 3 reader sessions invoking 'refskill' read 'refskill/references/notes.md'" \
+    "a reference file is named for the skill above it, and its read rate counts whole reads"
+claim "ref readers 2" \
+    "a reference file's readers are the sessions that read it whole, with or without the skill"
+claim "ref verdicts ['FLAT', 'RAN']" \
+    "a reference file's window opens at its first whole Read, not at the Skill call"
+
 [ "$rc" -eq 0 ] && echo "test-rule-residency: all checks passed"
 exit "$rc"
