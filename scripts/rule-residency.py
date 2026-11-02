@@ -48,6 +48,12 @@ separate arm. A session editing SKILL.md quotes every rule in it, which is text
 describing a rule rather than a rule being used, and it scales with how much
 work went into the file rather than with anything about the reader.
 
+Every reading is stamped with the blob it measured, the records it read and
+the date. A reading of the wrong tree prints figures as plausible as a real
+one, and the BLIND/FLAT split moves as the corpus grows, so the stamp is what
+says which reading a figure came from. The union of BLIND and FLAT is printed
+on its own because it is the figure a decision quotes; the split is not.
+
     scripts/rule-residency.py skills/verify-claims/SKILL.md
     scripts/rule-residency.py skills/verify-claims/SKILL.md --self-test
     scripts/rule-residency.py skills/verify-claims/SKILL.md --json out.json
@@ -56,6 +62,8 @@ work went into the file rather than with anything about the reader.
 
 import argparse
 import collections
+import datetime
+import hashlib
 import json
 import pathlib
 import re
@@ -306,6 +314,7 @@ def scan(rules, load, repo_names):
         if first is None:
             continue
         reach[f"{arm}:sessions"] += 1
+        reach["records"] += len(recs)
         for n, rec in enumerate(recs):
             window = "pre" if n < first else "post"
             for locus, text in blocks(rec, load):
@@ -346,6 +355,12 @@ def default_repo():
         return pathlib.Path(top).parent.name
     except (OSError, subprocess.CalledProcessError):
         return pathlib.Path.cwd().name
+
+
+def blob_id(path):
+    """The id `git hash-object` gives the file, computed without git."""
+    data = pathlib.Path(path).read_bytes()
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
 
 
 def verdict(row, reach=None):
@@ -471,8 +486,17 @@ def main():
 
     for k in sorted(reach):
         print(f"# {k}: {reach[k]}", file=sys.stderr)
-    counts = collections.Counter(verdict(r, reach) for r in rows)
+    for r in rows:
+        r["verdict"] = verdict(r, reach)
+    blob = blob_id(path)
+    union = [r for r in rows if r["verdict"] in ("BLIND", "FLAT")]
+    union = {"rules": len(union), "bytes": sum(r["bytes"] for r in union)}
+    print(f"# stamp: blob {blob}  records {reach['records']}  "
+          f"date {datetime.date.today().isoformat()}", file=sys.stderr)
+    counts = collections.Counter(r["verdict"] for r in rows)
     print("# verdicts: " + "  ".join(f"{k}={counts[k]}" for k in ("RAN", "SAID", "FLAT", "BLIND")),
+          file=sys.stderr)
+    print(f"# union: BLIND+FLAT = {union['rules']} rules, {union['bytes']} bytes",
           file=sys.stderr)
 
     print(f"{'ln':>5} {'kB':>5} {'sess':>4} {'post':>5} {'pre':>4} "
@@ -481,13 +505,11 @@ def main():
         print(f"{r['line']:>5} {r['bytes']/1024:>5.1f} {r['post_sessions']:>4} "
               f"{r['post_prose'] + r['post_action']:>5} "
               f"{r['pre_prose'] + r['pre_action']:>4} {r['auth']:>5} "
-              f"{verdict(r, reach):<7} {r['section'][:22]:<22} {r['lead'][:52]}")
+              f"{r['verdict']:<7} {r['section'][:22]:<22} {r['lead'][:52]}")
     if args.json:
-        for r in rows:
-            r["verdict"] = verdict(r, reach)
         pathlib.Path(args.json).write_text(
-            json.dumps({"reach": dict(reach), "repos": repo_names,
-                        "rules": rows}, indent=1))
+            json.dumps({"reach": dict(reach), "repos": repo_names, "blob": blob,
+                        "union": union, "rules": rows}, indent=1))
     return 0
 
 
