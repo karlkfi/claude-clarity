@@ -805,3 +805,42 @@ the line.
 attribute breaks that seam, and the arm has to move with it rather than be
 dropped. A suite with no corpus at all is right again only if the selection
 outputs stop existing.
+
+## A reference file's window opens at its first whole Read
+
+`scripts/rule-residency.py` split each session at its first `Skill` call, which
+is when a `SKILL.md` enters context. A file under `references/` enters at a
+Read of that file, so pointed at one the probe now opens the window there
+instead, and measures only the sessions that made such a Read.
+
+**Readers are the sessions that read the file, not the sessions that invoked
+the skill.** The two sets barely overlap. Measured 2026-11-01 over local
+transcripts, none of the 98 reader sessions invoking `verify-claims` had read
+any of its eleven reference files whole, and every reader-arm whole Read on
+record came from a session that never invoked the skill. Reusing the Skill-call split would
+have measured 98 sessions that never saw the rules and missed the ones that
+did.
+
+**Only a whole-file Read is a load.** A Read with an offset or a limit, a grep
+or an Edit shows the session part of the file or none of it. Of the reader-arm
+accesses on record, most were greps from sessions checking whether a trap was
+already documented and three were three-line Reads. Counting those would have
+made the authoring-like traffic of filing a row look like reading.
+
+**The control stays the same session before the load.** Its weakness is that
+a pointer sends a session to the file at the moment the file's subject comes
+up, so vocabulary can rise after the Read for reasons the file did not cause.
+The alternative, comparing readers against invoking sessions that never read
+the file, had no data to choose on: one reader session per file at most. The
+in-session control matches what the `SKILL.md` reading already does, so a
+reference reading and a body reading stay comparable.
+
+**The run prints the file's read rate** among reader sessions invoking the
+skill, because that is the measurement named by the reversal condition of
+*`verify-claims` reaches its ceiling by moment, not by uptake*. On 2026-11-01 it was 0 of 98 for every file, with one of the 98 after
+the split, so the condition has not been tested.
+
+**What would reverse it:** enough readers per file to run both controls side by
+side and find that they disagree, which would mean topic onset is what the
+in-session control measures. Or Claude Code recording a reference file's load
+as something other than a Read, which moves the boundary.
