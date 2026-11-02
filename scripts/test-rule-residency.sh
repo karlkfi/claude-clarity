@@ -203,6 +203,9 @@ for proj, before, after in (("aardvarkrepo", heron, tape), ("zebrarepo", tape, h
     with open(f"{tmp}/projects/-work-{proj}/s.jsonl", "w") as f:
         f.write("\n".join(json.dumps(r) for r in recs) + "\n")
 rr.PROJECTS = rr.pathlib.Path(f"{tmp}/projects")
+# One reader session per run, so the floor is lowered to let verdicts through;
+# the floor's own fixture is at the end of this file.
+rr.MIN_READERS = 1
 today = datetime.date.today().isoformat()
 for repo, other, body in (("zebrarepo", "aardvarkrepo", "residencyfixture"),
                           ("aardvarkrepo", "zebrarepo", "residencyfixture"),
@@ -309,6 +312,7 @@ for name, recs in sessions.items():
     with open(f"{tmp}/refprojects/-work-userrepo/{name}.jsonl", "w") as f:
         f.write("\n".join(json.dumps(r) for r in recs) + "\n")
 rr.PROJECTS = rr.pathlib.Path(f"{tmp}/refprojects")
+rr.MIN_READERS = 1   # two reader sessions, below the default floor
 sys.argv = ["rule-residency.py", f"{tmp}/refskill/references/notes.md",
             "--repo", "nosuchrepo", "--json", f"{tmp}/ref.json"]
 err = io.StringIO()
@@ -337,6 +341,57 @@ claim "ref verdicts ['FLAT', 'RAN', 'BLIND']" \
 # like every other count here: A's four records and C's three, not B's or D's.
 claim "ref records 7" \
     "the record count covers only the sessions that read the file whole"
+
+# Below the floor on reader sessions the table prints and the verdicts do not.
+# Two readings at the default floor: one reader session, and one session that
+# only an authoring repo holds, which the exit-2 check lets through because it
+# counts both arms. Without the floor they read [FLAT, RAN, BLIND] and
+# [FLAT, FLAT, BLIND].
+floor=10
+mkdir -p "$tmp/thin/one/-work-userrepo" "$tmp/thin/auth/-work-authrepo"
+out=$(python3 - "$tmp" <<'EOF'
+import contextlib, importlib.util, io, json, sys
+tmp = sys.argv[1]
+spec = importlib.util.spec_from_file_location("rr", "scripts/rule-residency.py")
+rr = importlib.util.module_from_spec(spec); spec.loader.exec_module(rr)
+tape, heron = "backup tapes rewind before audits", "blue herons nest below weirs"
+def act(text):
+    return {"message": {"role": "assistant",
+                        "content": [{"type": "tool_use", "input": {"command": text}}]}}
+load = act(""); load["message"]["content"][0]["input"] = {"skill": "residencyfixture"}
+recs = [act(tape), load, act(heron), act(tape)]
+for case, proj in (("one", "userrepo"), ("auth", "authrepo")):
+    with open(f"{tmp}/thin/{case}/-work-{proj}/s.jsonl", "w") as f:
+        f.write("\n".join(json.dumps(r) for r in recs) + "\n")
+    rr.PROJECTS = rr.pathlib.Path(f"{tmp}/thin/{case}")
+    sys.argv = ["rule-residency.py", f"{tmp}/residencyfixture/SKILL.md",
+                "--repo", "authrepo", "--json", f"{tmp}/{case}.json"]
+    err, std = io.StringIO(), io.StringIO()
+    with contextlib.redirect_stderr(err), contextlib.redirect_stdout(std):
+        status = rr.main()
+    lines = err.getvalue().splitlines()
+    try:
+        doc = json.load(open(f"{tmp}/{case}.json"))
+    except (OSError, ValueError):
+        doc = {}
+    print(f"{case} status {status}")
+    print(f"{case} {next((l for l in lines if l.startswith('# verdicts:')), None)}")
+    print(f"{case} {next((l for l in lines if l.startswith('# union:')), None)}")
+    print(f"{case} json-verdicts {[r.get('verdict') for r in doc.get('rules', [])]}")
+    print(f"{case} json-union {doc.get('union', 'absent')}")
+    print(f"{case} table {'Backup tapes rewind' in std.getvalue()}")
+EOF
+)
+claim "one status 0" "one table True" \
+    "one # verdicts: withheld -- reader sessions 1, floor $floor" \
+    "one json-verdicts [None, None, None]" \
+    "one # union: withheld -- reader sessions 1, floor $floor" "one json-union None" \
+    "one reader session prints the table and withholds the verdicts"
+claim "auth status 0" "auth table True" \
+    "auth # verdicts: withheld -- reader sessions 0, floor $floor" \
+    "auth json-verdicts [None, None, None]" \
+    "auth # union: withheld -- reader sessions 0, floor $floor" "auth json-union None" \
+    "a file only an authoring session read prints no verdicts"
 
 [ "$rc" -eq 0 ] && echo "test-rule-residency: all checks passed"
 exit "$rc"

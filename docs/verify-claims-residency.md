@@ -246,13 +246,16 @@ cannot yet test the pointers the split added. The reader arm holds one session
 for `shell-traps.md` and `timing-and-concurrency.md`, from August. It holds none
 for the other nine. Seven of those exit 2. `status-pages.md` and
 `further-rules.md` each have one authoring session that read them, so they exit
-0 and print verdicts over zero reader sessions: `FLAT=2` for the first, and
-`FLAT=6 BLIND=14` for the second.
+0, and before the floor below they printed verdicts over zero reader sessions:
+`FLAT=2` for the first, and `FLAT=6 BLIND=14` for the second.
 
 So no per-rule table over a reference file is quotable yet. With one reader
 session and a two-block `PRE` window, 12 of `timing-and-concurrency.md`'s 15
-rules read `RAN`. Q1030 files a guard for verdicts over one reader session or
-none.
+rules read `RAN`. **Below 10 reader sessions the run now prints the table and
+withholds the verdicts**, saying so on the `# verdicts:` and `# union:` lines,
+as `withheld -- reader sessions 1, floor 10`. Ten was chosen rather than
+measured: it refuses the one session or none every reference file held on
+2026-11-01 and accepts the 85 or more behind every published reading.
 
 **The window is keyed on the file's path, not its content**, so a reader is
 measured against the rules the file holds today. The `timing-and-concurrency.md`
