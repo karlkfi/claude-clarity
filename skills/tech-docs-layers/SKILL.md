@@ -11,11 +11,26 @@ A technical document's visible text rests on six invisible layers that the write
 
 ## How to use this skill
 
-Before editing or creating a doc, scan the repo to understand what already exists at each layer. While writing, apply the six checks below. After writing, sweep the layers for collateral damage. Most repo docs work fails at sweep-time, not draft-time — so do not skip step 3.
+Every docs edit starts at the same question: **does this repo already have docs conventions of its own?** If it does, defer to them and sweep. If it does not, make the edit, sweep, and then write the repo its conventions (Step 5). Both modes run Steps 2 to 4.
 
-### Step 1 — Survey the docs system
+### Step 1 — Find the repo's own conventions
 
-Spend a few tool calls building a map before changing anything:
+Look where a session would actually be sent, not only where a page might sit:
+
+- The loaded `CLAUDE.md`, `AGENTS.md`, or `CONTRIBUTING.md`: does it route docs work anywhere — "update docs after a change", "when editing docs, read X"?
+- A standards or style page under the docs tree: `documentation-standards.md`, `style-guide.md`, `writing-docs.md`, a `docs/development/` or `docs/contributing/` directory.
+- A change-to-docs mapping: a table or list saying which pages a given kind of code change has to update.
+- Docs gates: a link checker, TOC check, or strict docs build in the `Makefile`, `package.json` scripts, or CI workflows.
+
+A routing line in a loaded file, a standards page, or a mapping counts as conventions. Gates alone do not: they enforce a rule without saying what the rule is for, so a session still has the choices to make.
+
+**With conventions, read them in full before editing.** They were written for this repo by someone who knew it, so follow them where they speak, including where they disagree with a layer below; where they are silent, apply the layer. Run every docs gate they name before committing. A rule you think the local page has wrong is a finding to raise with the user, not one to override in the diff.
+
+**With none, do the edit the user asked for first**, through Steps 2 to 4. The conventions come after, in Step 5, so a small request is never held hostage to a large one. Without them, every docs edit re-derives the same choices, and the next session derives them differently.
+
+### Step 2 — Survey the docs system
+
+Spend a few tool calls building a map before changing anything. Where Step 1 found conventions, they may already answer most of this; survey what they leave out.
 
 - Locate the docs root (`docs/`, `doc/`, `website/`, `site/`, `content/`, top-level `*.md`).
 - Identify the doc framework if any: MkDocs (`mkdocs.yml`), Sphinx (`conf.py`), Docusaurus (`docusaurus.config.*`), Hugo (`config.*` + `content/`), Jekyll (`_config.yml`), Antora, Starlight, VitePress, plain Markdown, or RST.
@@ -27,19 +42,21 @@ Spend a few tool calls building a map before changing anything:
 
 This survey is the work. Skipping it is why doc PRs ship with broken links and inconsistent vocabulary.
 
-### Step 2 — Write with the six layers in mind
+### Step 3 — Write with the six layers in mind
 
-Apply each layer as you draft. Each layer has a *what to do* and a *why it matters* — the why is what tells you how to handle the edge cases.
+Apply each layer as you draft. Each layer has a *what to do* and a *why it matters* — the why is what tells you how to handle the edge cases. Where part of a layer depends on a mechanism the survey did not find — versioned docs, a navigation manifest, an include mechanism — skip that part rather than introducing the mechanism unasked. The parts that match sibling pages (front matter, heading depth and case, where a page goes) apply in any repo, framework or not.
 
 #### Layer 1 — Terminology consistency
 
 What to do: Use the same term for the same thing on every page. Before introducing a noun for a product concept, search the repo for existing usages (`rg -i "term"`) and the glossary. If a glossary exists, defer to it; if not, pick the term used most consistently in user-facing docs and stick with it. If you are renaming a term, do it across the doc set in one change, not just on the page you happen to be editing — a per-page sed without checking inflections and plurals will leave inconsistencies behind.
 
+A search for the old term finds only the sentences that name it. Read the pages it hits for two more kinds: a sentence that describes the concept without naming it ("the step that blocks a second merge"), which should usually gain the name, and a bare back-reference ("the check", "this mode") whose antecedent the rename moved. Neither contains the term, so no grep reaches them.
+
 Why it matters: Mixed terms ("workspace" on one page, "project" on the next, "tenant" in the API ref) make readers think they are three different things. The glossary is the contract that prevents that, but only if every page honors it.
 
 #### Layer 2 — Cross-reference architecture
 
-What to do: When a procedure has prerequisites or downstream steps that live on other pages, link to them. Prefer the framework's first-class cross-reference syntax (`{doc}` in MyST, `:ref:` in Sphinx, relative `.md` links in MkDocs/Docusaurus, `ref` shortcodes in Hugo) over hand-written URLs, because the framework can then warn on broken refs. When you move or rename a page, search the repo for inbound links and update them — `rg "old-page-name"` and `rg "old/path"` both matter.
+What to do: When a procedure has prerequisites or downstream steps that live on other pages, link to them. Prefer the framework's first-class cross-reference syntax (`{doc}` in MyST, `:ref:` in Sphinx, relative `.md` links in MkDocs/Docusaurus, `ref` shortcodes in Hugo) over hand-written URLs, because the framework can then warn on broken refs. When you move or rename a page, search the repo for inbound links and update them — `rg "old-page-name"` and `rg "old/path"` both matter. A moved page's own relative links break too, so rewrite its outbound links as well.
 
 Why it matters: A doc set is a graph, not a list of pages. Broken cross-references are usually invisible in the prose — the page still renders — but the reader's path breaks. Most doc CI is too permissive about this; assume the link checker is not catching everything and verify manually for any page you move.
 
@@ -67,28 +84,34 @@ What to do: Before writing a warning, a prerequisite list, an install snippet, o
 
 Why it matters: Copy-paste warnings and install snippets drift apart over time. Within six months, three versions of "Prerequisites" disagree about whether Node 18 is required. The reusable block is the source of truth that prevents drift, but only if writers actually reach for it instead of pasting.
 
-### Step 3 — Sweep for collateral damage
+### Step 4 — Sweep for collateral damage, and commit
 
-After the draft is in place, do a sweep. This is where most doc PRs fall short.
+After the draft is in place, sweep. Where the repo has docs gates, run them; the bullets cover what a gate cannot reach.
 
-- **Terminology sweep:** `rg -i "any-new-or-renamed-term"` and confirm every hit is consistent with the chosen term and the glossary.
-- **Link sweep:** for every page you renamed or moved, `rg "old-slug"` and `rg "old/path"` and fix inbound links. Then run the framework's link checker if available (`mkdocs build --strict`, `sphinx-build -n -W`, `docusaurus build`, `hugo --printPathWarnings`).
-- **Version sweep:** if the change applies to multiple versions, confirm it landed in each. If versioned docs use snapshots, the snapshot for the current version often needs to be updated separately from the next-version source.
-- **Metadata sweep:** open the page in the rendered site or use the framework's build output to confirm the description, tags, and sidebar position behave as intended.
-- **Navigation sweep:** look at the rendered sidebar — is the page where you expected? Are heading levels producing a sensible in-page TOC?
-- **Partial sweep:** if you updated a reusable block, list every page that includes it (`rg "include.*snippet-name"` or framework-specific) and skim the rendered output of at least one to confirm the substitution did what you wanted.
+- **Terminology:** `rg -i "any-new-or-renamed-term"` and confirm every hit matches the chosen term and the glossary, then do Layer 1's read for unnamed descriptions and back-references.
+- **Links:** for every page you renamed or moved, `rg "old-slug"` and `rg "old/path"`, fix inbound links, and check the moved page's outbound ones. Then run the framework's link checker if available (`mkdocs build --strict`, `sphinx-build -n -W`, `docusaurus build`, `hugo --printPathWarnings`).
+- **Versions:** if the change applies to multiple versions, confirm it landed in each. A versioned snapshot often needs updating separately from the next-version source.
+- **Metadata and navigation:** check the rendered site or build output — description, tags, sidebar position, and an in-page TOC that matches the heading levels.
+- **Partials:** if you updated a reusable block, list every page that includes it (`rg "include.*snippet-name"`) and check the rendered output of at least one.
 
-### Step 4 — Commit hygiene
+Commit so a reviewer can follow the layers. Keep a terminology rename in its own commit, separate from prose edits. Keep a navigation change in the same commit as the page move that requires it. Name the layers in the message when more than one is touched: "Move install guide under Getting Started; updates sidebars.js and 4 inbound links."
 
-Doc PRs are reviewed differently from code PRs. To make review possible:
+### Step 5 — Write the repo its conventions (only where Step 1 found none)
 
-- Keep terminology renames in their own commit, separate from prose edits, so the reviewer can see the rename in one diff.
-- Keep navigation changes (`mkdocs.yml`, `sidebars.js`) in the same commit as the page move that requires them — never split them.
-- In the commit message, name which layers the change touches if more than one. "Move install guide under Getting Started; updates sidebars.js and 4 inbound links." tells the reviewer where to look.
-- If the framework's build is part of CI, run it locally before committing. A broken doc build is a wasted CI cycle and a slow review.
+Once the requested edit is committed, write what the next docs edit should have found. This step is usually larger than the edit that triggered it, so ask the user before starting when the request was small. Write three things, each from what the survey and the edit just showed you rather than from general advice:
+
+- **A change-to-docs mapping.** A table from kinds of change in this repo (a new flag, a new config key, a renamed command, a new failure mode) to the pages each one has to update. Derive the rows from the docs tree and from the edit you just made, because a row naming a page that does not exist is the first thing a reader stops trusting.
+- **A standards page.** Record the choices pages already make: the term chosen for each product concept, the link style, heading case, front matter keys, where new pages go. A page recording what the docs already do is checkable against them; a page of aspirations nobody follows gets ignored, and then everything on it does.
+- **Gate proposals.** List the sweep checks that must hold on every change — inbound links resolve, a retired term stays retired — with the command that would enforce each, and propose them in the PR body or a backlog item rather than wiring them into CI unasked. A rule that must hold every time cannot hold in prose, and adding CI is a decision for the maintainer.
+
+Put the pages where the repo keeps contributor docs, conventionally `docs/development/`, and **add a line to the repo's `CLAUDE.md` (or `AGENTS.md`) naming them at the moment they apply** — "before editing anything under `docs/`, read `docs/development/documentation-standards.md`". A page nothing loads is never read, however good it is. Once the line lands, the next docs edit meets Step 1's first mode.
 
 ## A note on scope
 
 The six-layer model applies to repo-resident user-facing documentation: tutorials, how-tos, references, conceptual guides, READMEs that the public reads. It is less relevant to in-code comments, ADRs about internal architecture decisions, or marketing copy that lives outside the docs tree. When the user asks for those, follow the request without forcing the six-layer frame on it.
 
 A doc page is the surface of a system. Edit the surface, but maintain the system.
+
+## Sources
+
+Why the skill branches on local conventions, and what measured the layer 1 guidance, is in this repo's `docs/decisions.md`, under the `tech-docs-layers` entry.
