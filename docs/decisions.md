@@ -330,7 +330,8 @@ Under the reading above, neither clause is the defect.
 Retirement is still not the entry to write, because the skill has never been
 scoped to the case it could win: a repo with a `docs/` tree and no docs
 conventions of its own, which is four of the six checkouts here and 221 of the
-654 occasion sessions. The rewrite is [Q1022](queue/Q1022.md), and its shape
+654 occasion sessions. The rewrite was Q1022, whose row was deleted when it
+shipped (see the last section of this entry), and its shape
 was settled on 2026-09-24: **two modes off one moment** — where the repo has no
 docs conventions of its own, write it one and propose the gates that carry the
 sweep; where it has one, defer to it and sweep. The bootstrap half is what
@@ -403,6 +404,44 @@ terminology sweep, so this informs Q1022's cut rather than settling it.
 **What would reverse it:** a rewrite shipping against the framework-less case
 and still measuring zero over a comparable window, which would say the subject
 rather than the scoping is what nobody reaches for.
+
+### Shipped: two modes, with layer 1 kept and widened
+
+Q1022 rewrote the body on 2026-11-01 to the settled shape. A new first step
+asks whether the repo has docs conventions of its own: a routing line in a
+loaded `CLAUDE.md`, `AGENTS.md` or `CONTRIBUTING.md`, a standards page, or a
+change-to-docs mapping. Docs gates alone do not count, because they enforce a
+rule without saying what it is for. With conventions, the body defers to them
+and the six layers fill only what they leave silent. Without, the session makes
+the requested edit first and then writes the repo a mapping, a standards page
+and gate proposals, plus a line in its `CLAUDE.md` naming them. That last line
+exists because of this entry's own finding: `github-actions-gateway`'s
+`skills.md` named this skill and nothing loaded it.
+
+Three things were deliberately not done. **The cut to survey-and-sweep was
+refused**, on the measurement above: the sweep made no difference in that run
+and the extra work fell under layer 1. **Layers 3 to 6 are unchanged.** One
+sentence now says to skip a layer whose mechanism the survey did not find
+rather than introducing it unasked, which is what the old body already implied
+with "if the repo uses". It is not an argument from the probe, which did not
+exercise them. **The description is unchanged**, because the skill still fires
+at the moment it fired before and the description was never shown to be the
+lever, so the figures in the description-cap entry below still describe it.
+
+Layer 1 gained one paragraph and layer 2 one sentence, both from what the
+probe's skilled arm did that a grep cannot. A rename search finds only the
+sentences naming the old term, so the paragraph tells the session to read the
+hit pages for a sentence describing the concept unnamed and for a bare
+back-reference. The sentence says a moved page's own outbound links break, which
+was 9 of the 11 broken links the probe's scorer counted. Both rest on one run and
+on mechanism rather than on a measured effect.
+
+The body went from 10,855 to 14,663 bytes against the 16 KiB `warm` ceiling,
+almost all of it the bootstrap step and the conventions check.
+
+**What would reverse it:** the reversal condition above, unchanged. A
+framework-less repo bootstrapped by this step and still showing no later call
+would also say the bootstrap half is not the case the skill can win.
 
 ## The hook ships from here, not from the guard repo
 
