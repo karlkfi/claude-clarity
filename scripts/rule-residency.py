@@ -82,6 +82,15 @@ NGRAM_HI = 5
 # can be distinctive where two words of body prose never are.
 LEAD_LO = 2
 
+# Reader sessions below which the run prints the table and withholds the
+# verdicts. A verdict compares two rates, and over one session a single firing
+# after the load reads RAN. This number was chosen, not measured: no reading on
+# record settles where a ranking becomes trustworthy. The readings this script
+# has published held 85 or more reader sessions, and every reference file on
+# 2026-11-01 held one or none, so any floor between those refuses the second and
+# accepts the first. Ten is a start, to be moved by a reading that shows it wrong.
+MIN_READERS = 10
+
 # Markers per rule. A rule with more distinctive phrases than this contributes
 # only its longest, so a long rule does not out-fire a short one by volume.
 MARKERS_PER_RULE = 30
@@ -486,18 +495,27 @@ def main():
 
     for k in sorted(reach):
         print(f"# {k}: {reach[k]}", file=sys.stderr)
+    readers = reach["use:sessions"]
+    thin = readers < MIN_READERS
     for r in rows:
-        r["verdict"] = verdict(r, reach)
+        r["verdict"] = None if thin else verdict(r, reach)
     blob = blob_id(path)
-    union = [r for r in rows if r["verdict"] in ("BLIND", "FLAT")]
-    union = {"rules": len(union), "bytes": sum(r["bytes"] for r in union)}
     print(f"# stamp: blob {blob}  records {reach['records']}  "
           f"date {datetime.date.today().isoformat()}", file=sys.stderr)
-    counts = collections.Counter(r["verdict"] for r in rows)
-    print("# verdicts: " + "  ".join(f"{k}={counts[k]}" for k in ("RAN", "SAID", "FLAT", "BLIND")),
-          file=sys.stderr)
-    print(f"# union: BLIND+FLAT = {union['rules']} rules, {union['bytes']} bytes",
-          file=sys.stderr)
+    if thin:
+        # The sample size is on the line a reader quotes, not among the counters.
+        union = None
+        why = f"withheld -- reader sessions {readers}, floor {MIN_READERS}"
+        print(f"# verdicts: {why}", file=sys.stderr)
+        print(f"# union: {why}", file=sys.stderr)
+    else:
+        union = [r for r in rows if r["verdict"] in ("BLIND", "FLAT")]
+        union = {"rules": len(union), "bytes": sum(r["bytes"] for r in union)}
+        counts = collections.Counter(r["verdict"] for r in rows)
+        print("# verdicts: " + "  ".join(f"{k}={counts[k]}" for k in ("RAN", "SAID", "FLAT", "BLIND")),
+              file=sys.stderr)
+        print(f"# union: BLIND+FLAT = {union['rules']} rules, {union['bytes']} bytes",
+              file=sys.stderr)
 
     print(f"{'ln':>5} {'kB':>5} {'sess':>4} {'post':>5} {'pre':>4} "
           f"{'auth':>5} {'verdict':<7} section / rule")
@@ -505,7 +523,7 @@ def main():
         print(f"{r['line']:>5} {r['bytes']/1024:>5.1f} {r['post_sessions']:>4} "
               f"{r['post_prose'] + r['post_action']:>5} "
               f"{r['pre_prose'] + r['pre_action']:>4} {r['auth']:>5} "
-              f"{r['verdict']:<7} {r['section'][:22]:<22} {r['lead'][:52]}")
+              f"{r['verdict'] or '-':<7} {r['section'][:22]:<22} {r['lead'][:52]}")
     if args.json:
         pathlib.Path(args.json).write_text(
             json.dumps({"reach": dict(reach), "repos": repo_names, "blob": blob,

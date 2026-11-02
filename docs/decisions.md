@@ -639,6 +639,16 @@ count as deciding, which has no clean answer, since a session reviewing a rule
 may also apply it. Revisit it if something comes to consume the `BLIND`/`FLAT`
 split itself.
 
+**Below ten reader sessions the verdicts are withheld, since Q1030.** A verdict
+compares a rule's rate after the load with its rate before, and over one session
+a single firing after the load reads `RAN`, printed in the same form as a
+reading over eighty. The run now prints the table and puts `withheld` and the
+reader count on the `# verdicts:` and `# union:` lines. Ten was chosen, not
+measured: every reference file held one reader session or none on 2026-11-01,
+and every published reading held 85 or more, so any floor between refuses the
+first and accepts the second. Move it when a reading shows a ranking settling,
+or failing to, at some other sample size.
+
 The move is Q1014, and it carries the three parked clauses in its own branch
 rather than promising them room afterwards. It was filed rather than made
 because a concurrent lane was editing the same body and repointing the same
