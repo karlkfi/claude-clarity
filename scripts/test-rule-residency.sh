@@ -163,7 +163,8 @@ check talked SAID  "a rule firing only in prose reads SAID"
 # taken. So one fabricated tree is read twice, each run marking the other's
 # project as authoring. The sessions mirror each other: the same block counts,
 # so the runs' stderr differs only in that line, and opposite rules firing
-# after the load, so the verdicts read [RAN, FLAT] against [FLAT, RAN].
+# after the load, so the verdicts read [RAN, FLAT] against [FLAT, RAN]. A
+# third rule nobody types reads BLIND in both.
 # Keys are read with .get so a missing one fails an assertion by name.
 mkdir -p "$tmp/residencyfixture" "$tmp/projects/-work-aardvarkrepo" "$tmp/projects/-work-zebrarepo"
 cat > "$tmp/residencyfixture/SKILL.md" <<'EOF'
@@ -179,6 +180,8 @@ description: fixture
 **Backup tapes rewind before audits.** The reel spools to its magnetic origin.
 
 **Blue herons nest below weirs.** Counting nests from the towpath runs low.
+
+**Ochre lichens favour north faces.** Granite outcrops hold them longest.
 EOF
 # The same body under the same skill name with one word changed, so its run
 # finds the same transcripts and differs only in the blob it measured.
@@ -244,7 +247,7 @@ claim "zebrarepo names-own True" "aardvarkrepo names-own True" \
     "each reading's first line names its own authoring repo"
 claim "zebrarepo repos ['zebrarepo']" "aardvarkrepo repos ['aardvarkrepo']" \
     "each reading's --json records its own repos"
-claim "zebrarepo verdicts ['RAN', 'FLAT']" "aardvarkrepo verdicts ['FLAT', 'RAN']" \
+claim "zebrarepo verdicts ['RAN', 'FLAT', 'BLIND']" "aardvarkrepo verdicts ['FLAT', 'RAN', 'BLIND']" \
     "the two readings of one corpus give the verdicts their segregation builds"
 # The stamp is what tells a reading of one tree from a reading of another, so
 # the blob is git's own id for the file, and the same corpus read twice names
@@ -261,11 +264,12 @@ case $out in
     *)  bad "a reading of a different body stamps a different blob"$'\n'"$out" ;;
 esac
 # The union is the figure a decision quotes, in exact bytes. Each fixture rule
-# is its one line and the newline after it, 79 and 76 bytes, and the run that
-# reads a rule FLAT puts that rule alone in the union.
-claim "zebrarepo union # union: BLIND+FLAT = 1 rules, 76 bytes" \
-    "aardvarkrepo union # union: BLIND+FLAT = 1 rules, 79 bytes" \
-    "zebrarepo json-union {'rules': 1, 'bytes': 76}" \
+# is its one line and the newline after it, 79, 76 and 74 bytes, and each run
+# puts its FLAT rule and the BLIND one in the union, so dropping either half of
+# the union changes both figures.
+claim "zebrarepo union # union: BLIND+FLAT = 2 rules, 150 bytes" \
+    "aardvarkrepo union # union: BLIND+FLAT = 2 rules, 153 bytes" \
+    "zebrarepo json-union {'rules': 2, 'bytes': 150}" \
     "the union of BLIND and FLAT is printed and recorded in exact bytes"
 
 # A reference file is loaded by a Read of it, not by the Skill call. Four
@@ -318,6 +322,7 @@ rate = [l for l in err.getvalue().splitlines() if l.startswith("# read rate")]
 print(f"ref status {status}")
 print(f"ref rate {rate[0] if rate else None}")
 print(f"ref readers {doc.get('reach', {}).get('use:sessions')}")
+print(f"ref records {doc.get('reach', {}).get('records')}")
 print(f"ref verdicts {[r.get('verdict') for r in doc.get('rules', [])]}")
 EOF
 )
@@ -326,8 +331,12 @@ claim "ref status 0" \
     "a reference file is named for the skill above it, and its read rate counts whole reads"
 claim "ref readers 2" \
     "a reference file's readers are the sessions that read it whole, with or without the skill"
-claim "ref verdicts ['FLAT', 'RAN']" \
+claim "ref verdicts ['FLAT', 'RAN', 'BLIND']" \
     "a reference file's window opens at its first whole Read, not at the Skill call"
+# The stamp's record count is drawn from the sessions that loaded the file,
+# like every other count here: A's four records and C's three, not B's or D's.
+claim "ref records 7" \
+    "the record count covers only the sessions that read the file whole"
 
 [ "$rc" -eq 0 ] && echo "test-rule-residency: all checks passed"
 exit "$rc"
