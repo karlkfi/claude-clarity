@@ -206,6 +206,49 @@ the least. [decisions.md](decisions.md) has the argument. The command above now
 reads the body alone, so the tables here are not comparable to a reading taken
 after the split until the reference files are counted too.
 
+## Reading a reference file
+
+Since 2026-11-01 the probe takes a file under `references/` as well as a body:
+
+```bash
+scripts/rule-residency.py skills/verify-claims/references/counts.md \
+    --repo claude-clarity --repo claude-skills
+```
+
+**A reference file is loaded by a Read, so its window opens at the first one.**
+The sessions measured are those that read the file whole, whether or not they
+invoked the skill, and `PRE` is what they did before that Read. A session that
+invoked the skill and never read the file is not a reader of its rules and is
+not counted. A Read with an offset or a limit, a grep, or an Edit of the file
+is not a load either: the reader-arm accesses on record were mostly greps from
+sessions checking whether a trap was already written down, plus three
+three-line Reads.
+
+The run also prints a read rate, the share of reader sessions invoking the
+skill that went on to read the file whole. That is the reading the split's
+reversal condition in [decisions.md](decisions.md) asks for.
+
+**Measured 2026-11-01, the read rate is 0 of 98 for all eleven files.** Only one
+of those 98 sessions postdates the split, and the denominator counts every
+invoking session, including those from before a file existed. So the rate
+cannot yet test the pointers the split added. The reader arm holds one session
+for `shell-traps.md` and `timing-and-concurrency.md`, from August. It holds none
+for the other nine. Seven of those exit 2. `status-pages.md` and
+`further-rules.md` each have one authoring session that read them, so they exit
+0 and print verdicts over zero reader sessions: `FLAT=2` for the first, and
+`FLAT=6 BLIND=14` for the second.
+
+So no per-rule table over a reference file is quotable yet. With one reader
+session and a two-block `PRE` window, 12 of `timing-and-concurrency.md`'s 15
+rules read `RAN`. Q1030 files a guard for verdicts over one reader session or
+none.
+
+**The window is keyed on the file's path, not its content**, so a reader is
+measured against the rules the file holds today. The `timing-and-concurrency.md`
+reader saw the same blob as today's. The `shell-traps.md` reader read a 15-lead
+version in `claude-skills` (`363250a`), and the file now holds 45 leads, so 30
+of its rules get a `POST` window that reader never saw.
+
 ## What would reverse this
 
 A rule reaching zero sessions here has not been shown to be unused — the probe

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure which rules in a SKILL.md leave a trace in the sessions that load it.
+"""Measure which rules in a skill file leave a trace in the sessions that load it.
 
 A skill body is loaded whole, so nothing in Claude Code reports which parts of
 it a session used. This reconstructs that from the session transcripts under
@@ -23,15 +23,25 @@ name "residency" is about the body's resident cost, not about attention.
 
 Three arms make the count falsifiable rather than merely small:
 
-    POST    records from the Skill(verify-claims) call onward
+    POST    records from the load onward
     PRE     records before it, in the same sessions -- the control. Same work,
-            same vocabulary, body not yet loaded. A rule firing as often in PRE
+            same vocabulary, file not yet loaded. A rule firing as often in PRE
             as in POST has no trace attributable to the load.
     corpus  every firing anywhere, PRE and POST and authoring sessions alike.
             A rule at zero here is BLIND, not unused: its markers are phrases
             nobody ever types, so the probe could not have found it either way.
             Reporting a blind rule as unused is the failure this column exists
             to prevent.
+
+The load is what puts the file in context, so it depends on the file. A
+SKILL.md is loaded by a Skill call. A file under the skill's references/ is
+loaded by a Read of that file, so its window opens at the first whole-file Read
+and its sessions are the ones that made one, whether or not they invoked the
+skill: a session that never read the file is not a reader of its rules, and one
+that read it without the skill still is. A Read with an offset or limit, a grep
+or an Edit shows the session part of the file or none of it, so none of them is
+a load. For a reference file the run also reports how many of the sessions
+invoking the skill went on to read it, which is the file's read rate.
 
 Sessions whose project path names the skill's own repository are counted in a
 separate arm. A session editing SKILL.md quotes every rule in it, which is text
@@ -41,6 +51,7 @@ work went into the file rather than with anything about the reader.
     scripts/rule-residency.py skills/verify-claims/SKILL.md
     scripts/rule-residency.py skills/verify-claims/SKILL.md --self-test
     scripts/rule-residency.py skills/verify-claims/SKILL.md --json out.json
+    scripts/rule-residency.py skills/verify-claims/references/counts.md
 """
 
 import argparse
@@ -192,7 +203,43 @@ class Matcher:
         return out
 
 
-def blocks(rec, skill):
+class Load:
+    """What puts one file in a session's context: a Skill call for a SKILL.md,
+    a whole-file Read for anything else in the skill's directory."""
+
+    def __init__(self, path):
+        path = pathlib.Path(path).absolute()
+        home = next((d for d in path.parents if (d / "SKILL.md").is_file()), path.parent)
+        self.skill = home.name
+        # A reference is matched by its path below the skill's own directory,
+        # which is what every copy of it shares -- the installed symlink, a
+        # checkout, a worktree, a plugin cache.
+        self.ref = None if path.name == "SKILL.md" else \
+            f"{self.skill}/{path.relative_to(home).as_posix()}"
+        self.invoke = (f'"skill":"{self.skill}"'.encode(),
+                       f'"skill": "{self.skill}"'.encode())
+        self.needles = self.invoke if self.ref is None else (self.ref.encode(),)
+
+    def invokes(self, b):
+        inp = b.get("input")
+        return (b.get("type") == "tool_use" and isinstance(inp, dict)
+                and inp.get("skill") == self.skill)
+
+    def loads(self, b):
+        if self.ref is None:
+            return self.invokes(b)
+        inp = b.get("input") or {}
+        return (b.get("type") == "tool_use" and b.get("name") == "Read"
+                and isinstance(inp, dict)
+                and str(inp.get("file_path", "")).endswith("/" + self.ref)
+                and inp.get("offset") is None and inp.get("limit") is None)
+
+    def name(self):
+        return f"a Skill call for {self.skill!r}" if self.ref is None else \
+            f"a whole-file Read of {self.ref!r}"
+
+
+def blocks(rec, load):
     """Assistant-authored text, by locus. Tool results are excluded: they carry
     the body itself, which matches every rule in it."""
     msg = rec.get("message") or {}
@@ -209,24 +256,23 @@ def blocks(rec, skill):
         elif kind == "thinking":
             yield "prose", b.get("thinking") or ""
         elif kind == "tool_use":
-            inp = b.get("input") or {}
-            if isinstance(inp, dict) and inp.get("skill") == skill:
-                continue   # the invocation itself is not evidence of use
-            yield "action", json.dumps(inp)
+            if load.invokes(b) or load.loads(b):
+                continue   # the invocation or load itself is not evidence of use
+            yield "action", json.dumps(b.get("input") or {})
 
 
-def transcripts(skill):
-    """Every session file holding a Skill call for this skill, with the record
-    index of the first such call."""
-    needles = (f'"skill":"{skill}"'.encode(), f'"skill": "{skill}"'.encode())
+def transcripts(load):
+    """Every session file that loads the file or invokes its skill, with the
+    record index of the first load (None if it never loads it) and whether the
+    skill was invoked."""
     for path in sorted(PROJECTS.rglob("*.jsonl")):
         try:
             raw = path.read_bytes()
         except OSError:
             continue
-        if not any(n in raw for n in needles):
+        if not any(n in raw for n in load.needles + load.invoke):
             continue
-        recs, first = [], None
+        recs, first, invoked = [], None, False
         for line in raw.decode("utf-8", "replace").split("\n"):
             if not line.strip():
                 continue
@@ -235,29 +281,34 @@ def transcripts(skill):
             except ValueError:
                 continue
             recs.append(rec)
-            if first is not None:
-                continue
             content = (rec.get("message") or {}).get("content")
             if isinstance(content, list):
                 for b in content:
-                    if (isinstance(b, dict) and b.get("type") == "tool_use"
-                            and (b.get("input") or {}).get("skill") == skill):
+                    if not isinstance(b, dict):
+                        continue
+                    invoked = invoked or load.invokes(b)
+                    if first is None and load.loads(b):
                         first = len(recs) - 1
-        if first is not None:
-            yield path, recs, first
+        if first is not None or invoked:
+            yield path, recs, first, invoked
 
 
-def scan(rules, skill, repo_names):
+def scan(rules, load, repo_names):
     matcher = Matcher(rules)
     fired = collections.defaultdict(collections.Counter)
     sessions = collections.defaultdict(lambda: collections.defaultdict(set))
     reach = collections.Counter()
-    for path, recs, first in transcripts(skill):
+    for path, recs, first, invoked in transcripts(load):
         arm = "auth" if any(n in str(path) for n in repo_names) else "use"
+        if load.ref is not None and invoked:
+            reach[f"{arm}:invoked"] += 1
+            reach[f"{arm}:invoked+read"] += first is not None
+        if first is None:
+            continue
         reach[f"{arm}:sessions"] += 1
         for n, rec in enumerate(recs):
             window = "pre" if n < first else "post"
-            for locus, text in blocks(rec, skill):
+            for locus, text in blocks(rec, load):
                 if not text:
                     continue
                 reach[f"{arm}:{window}:{locus}:blocks"] += 1
@@ -382,7 +433,7 @@ def self_test(rules):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("skill_md")
+    ap.add_argument("skill_md", help="a SKILL.md, or a file in its skill's references/")
     ap.add_argument("--self-test", action="store_true",
                     help="check the matcher against text the markers are known present in")
     ap.add_argument("--json", metavar="PATH", help="write the full table here")
@@ -399,19 +450,25 @@ def main():
     if args.self_test:
         return self_test(rules)
 
-    skill = path.parent.name
+    load = Load(path)
     # A worktree is named for its branch, so cwd is the wrong source: it would
     # mark this session as authoring and every other session in the same
     # repository as a reader. Ask git for the main checkout instead.
     repo_names = args.repo or [default_repo()]
-    rows, reach = scan(rules, skill, repo_names)
+    rows, reach = scan(rules, load, repo_names)
 
-    if not reach:
-        print(f"no transcripts under {PROJECTS} carry a Skill call for "
-              f"{skill!r} -- nothing to measure", file=sys.stderr)
+    # Which sessions are readers decides the read rate too, so the line naming
+    # them comes first even on a run with nothing else to say.
+    print(f"# authoring repos: {' '.join(repo_names)}", file=sys.stderr)
+    if load.ref is not None:
+        print(f"# read rate: {reach['use:invoked+read']} of {reach['use:invoked']} "
+              f"reader sessions invoking {load.skill!r} read {load.ref!r}",
+              file=sys.stderr)
+    if not reach["use:sessions"] + reach["auth:sessions"]:
+        print(f"no transcripts under {PROJECTS} carry {load.name()} "
+              f"-- nothing to measure", file=sys.stderr)
         return 2
 
-    print(f"# authoring repos: {' '.join(repo_names)}", file=sys.stderr)
     for k in sorted(reach):
         print(f"# {k}: {reach[k]}", file=sys.stderr)
     counts = collections.Counter(verdict(r, reach) for r in rows)
