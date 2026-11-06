@@ -22,7 +22,7 @@ Shortening a draft by compressing its sentences keeps every idea and hands the r
 
 The move that works is to remove whole units the reader does not need, at full sentence length, and to leave what remains as loose as it was. Deleting extraneous material is the best-evidenced intervention in this whole area — Mayer's coherence principle held in 23 of 23 experiments with a median effect size of 0.86. Packing more ideas into the same words is the opposite trade: holding word count constant and raising the number of propositions produces longer reading times and lower recall (Harrag et al. 2025).
 
-**Effectiveness outranks brevity**, and that ordering is not a tie-break to reach for when the two are close. A document that came out shorter and no longer does its job has failed at the only thing it was for, so a cut that costs the reader the decision, the step, or the caveat is a loss however much length it bought. The floor tests below are how the ordering gets enforced rather than merely asserted.
+**Effectiveness outranks brevity**, and that ordering is not a tie-break to reach for when the two are close. A document that came out shorter and no longer does its job has failed at the only thing it was for, so a cut that costs the reader the decision, the step, or the caveat is a loss however much length it bought.
 
 The exception is worth knowing because it is where shortening earns real effort instead of a tidy-up: a document read many times rather than once **pays twice**. The attention goes on every read, and for anything a model loads — a skill body, a `CLAUDE.md`, a prompt, a tool description — so do the tokens. Two currencies, both charged per reading.
 
@@ -63,15 +63,17 @@ Work top-down and stop when the draft fits. Every step below the one that fixes 
 
 **Across many documents, run the ladder breadth-first, not depth-first.** The order above is written for one draft, and applied to a corpus it is ambiguous: "largest first" can mean the largest document or the largest cuttable class, and those give opposite plans. Take one step across every document before descending to the next in any of them. A defect class is usually repo-wide — the same habit produced it everywhere — so step 3 over twenty files finds more than steps 3 through 7 over the biggest one.
 
-Picking the largest document instead is the trap, because it is also the one with the strongest case for attention. Measured 2026-09-03 over a 24-skill collection: a pass opened the file holding 48% of all context cost, worked down to sentence-level trimming inside it for several rounds, and recovered 1.8 KB. One step-3 sweep across all 24 then found two small files spending a quarter to a third of their body on provenance, and moving it recovered 7 KB in two edits. The cost measurement was correct and answered a different question than the one being asked: where the bytes are is not where the defects are.
+Picking the largest document instead is the trap, because it is also the one with the strongest case for attention. Measured 2026-09-03 over a 24-skill collection: a pass opened the file holding 48% of all context cost, worked down to sentence-level trimming inside it for several rounds, and recovered 1.8 KB. One step-3 sweep across all 24 then found two small files spending a quarter to a third of their body on provenance, and moving it recovered 7 KB in two edits.
 
 ## Move it, don't delete it
 
-Cutting and deleting are different operations, and the good version of "too long" is usually relocation. Detail that a minority of readers need goes where they can reach it: a linked doc, a collapsed block, an appendix, a footnote, the reference page. The main path gets shorter and nothing is lost.
+Cutting and deleting are different operations, and the good version of "too long" is usually relocation. Detail that a minority of readers need goes where they can reach it: a linked doc, a collapsed block, an appendix, a footnote, the reference page.
 
-Three cuts are almost always moves. Long-form background behind a warning or a release note ("detail for the docs that the release can link to"). Provenance leaving a rule (step 3 above — it goes into a companion doc, a commit message, or a PR body). And the second worked example, which becomes a link.
+Three cuts are almost always moves. Long-form background behind a warning or a release note. Provenance leaving a rule (step 3 above — it goes into a companion doc, a commit message, or a PR body). And the second worked example, which becomes a link.
 
 Say where it went. A cut that silently vanishes a fact and a cut that relocates it look identical in the diff and are opposite acts.
+
+Before a link replaces a fact, read what the destination says and compare the two sentences. A search for the topic shows presence, not strength, and what a move loses is the word that limits the claim: "CI re-checks only the pinned version" did not move to a page saying "CI re-checks the pinned version". Where the destination is weaker, strengthen it or keep the sentence.
 
 ## Five floor tests
 
@@ -88,7 +90,7 @@ Run these over the *result*, against the named reader. A failure means the cut w
 1. Name the reader and the one thing the document has to let them do.
 2. Decide which quantity is wrong — length, density, or load. If it is density, stop and hand it to `readability` — detail in layers and one idea per paragraph are its rules, and unpacking is its work, not this skill's.
 3. Mark each unit with the question it answers. Cut the unasked ones, largest first, per the order above.
-4. Run the five floor tests. Restore anything they catch.
+4. Run the five floor tests, and compare each moved fact with its destination. Restore anything they catch.
 5. Hand the survivors to `deslop` for the sentence level.
 6. Report the delta as a ledger: what was cut, what moved and where, and the before/after size. Not a summary of the document — that is the restatement defect arriving in the report.
 
