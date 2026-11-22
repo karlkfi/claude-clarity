@@ -36,6 +36,10 @@ ones are invoked by path too: the README tells a reader to run
 directory and never the root one. The mode is read from the index rather than
 the filesystem, since that is what other people clone.
 
+  5. No body line carries `$<digit>`. Claude Code substitutes `$0`, `$1`, ...
+     in a body when the skill is invoked with arguments, so an awk field
+     arrives as an unrelated word.
+
 Separately it reports two things as warnings, leaving the exit status alone.
 A description within `DESC_WARN_MARGIN` of the cap is named with its measured
 length, because the cap is otherwise a cliff — nothing tells a session it is
@@ -105,6 +109,11 @@ BLOCK_OPENERS = ("", ">", "|", ">-", "|-")
 PLAIN_COLON = re.compile(r":(?=\s)|:$")
 
 CLOSE = re.compile(r"---\s*")
+
+# Claude Code replaces each $0, $1, ... in a SKILL.md body with the argument
+# word at that position when the skill is invoked with arguments, before the
+# model reads it, so an awk field arrives as an unrelated word.
+POSITIONAL = re.compile(r"\$\d")
 
 DATE = re.compile(r"\b20\d\d-\d\d-\d\d\b")
 
@@ -271,6 +280,18 @@ def dated_claims(text):
     if cut:
         body = body[: cut.start()]
     return [line.strip() for line in body.splitlines() if DATE.search(line)]
+
+
+def positional_args(text):
+    """Body lines carrying `$<digit>`, which argument substitution rewrites.
+
+    Unlike a date, nothing here is a judgement call: the text the model reads
+    differs from the text written, so the check fails. Move the code under
+    scripts/ or references/, where nothing substitutes, or drop the `$` from
+    prose that only names a figure.
+    """
+    body = text.split("\n---\n", 1)[-1]
+    return [line.strip() for line in body.splitlines() if POSITIONAL.search(line)]
 
 
 def bulky_sources(text):
@@ -583,6 +604,15 @@ def main():
         for problem in problems:
             print(f"validate-skills: {file}: {problem}", file=sys.stderr)
         fail = fail or bool(problems)
+        for line in positional_args(text):
+            print(
+                f"validate-skills: {file}: body line has $<digit>, which "
+                "argument substitution rewrites when the skill is invoked "
+                "with arguments; move the code to scripts/ or references/, "
+                f"or drop the $ from prose: {line[:80]}",
+                file=sys.stderr,
+            )
+            fail = True
         if length is not None and 0 <= DESC_MAX - length <= DESC_WARN_MARGIN:
             near_cap[file] = length
         hits = dated_claims(text)

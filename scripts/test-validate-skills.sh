@@ -197,6 +197,26 @@ description: A ratio of 3:1 and a scheme like https://example.com parse fine.
 ---
 EOF
 
+# Argument substitution rewrites $0, $1, ... in a body, so one fails the gate.
+expect_reject positional-body 'argument substitution' <<'EOF'
+---
+name: positional-body
+description: A skill whose body has an awk field.
+---
+
+Run `awk '{print $1}' file`.
+EOF
+
+# A bare dollar sign or a $name is not a positional argument.
+expect_ok dollar-no-digit <<'EOF'
+---
+name: dollar-no-digit
+description: A skill whose body has dollars but no positional argument.
+---
+
+Costs $ per run; set $HOME and ${VAR}.
+EOF
+
 # The dated-claim check warns without failing, so expect_ok cannot see it and
 # expect_reject would report the wrong verdict. These two assert exit 0 plus the
 # presence or absence of the warning, which is the only thing that distinguishes
