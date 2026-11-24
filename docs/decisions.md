@@ -1,795 +1,464 @@
 # Decisions
 
-Why this repo is shaped the way it is. One entry per decision, each naming what
-would reverse it — a decision nobody can retire is indistinguishable from a
-rule, and the next maintainer should not have to re-derive the argument from
-scratch.
+Why this repo is shaped the way it is.
+One entry per decision, each naming what would reverse it — a decision nobody can retire is indistinguishable from a rule, and the next maintainer should not have to re-derive the argument from scratch.
 
-Figures here were measured on 2026-09-13 against this tree unless the sentence
-says otherwise. Two are inherited from the extraction record and say so; they
-were taken over one person's local session transcripts and are not a general
-result.
+Figures here were measured on 2026-09-13 against this tree unless the sentence says otherwise.
+Two are inherited from the extraction record and say so; they were taken over one person's local session transcripts and are not a general result.
 
-Settled elsewhere and not repeated here: why a body has a ceiling and why that
-check fails rather than warns ([skill-body-ceilings.md](skill-body-ceilings.md)),
-which parts of `verify-claims` sessions actually use
-([verify-claims-residency.md](verify-claims-residency.md)),
-why the backlog has two ID blocks ([queue/README.md](queue/README.md)), why
-`semantic-remediation` is shaped as it is
-([semantic-remediation-decisions.md](semantic-remediation-decisions.md)), and why
-gates live in the Makefile ([CLAUDE.md](../CLAUDE.md)). One explanation in one
-place; a second copy is a thing that drifts.
+Settled elsewhere and not repeated here: why a body has a ceiling and why that check fails rather than warns ([skill-body-ceilings.md](skill-body-ceilings.md)), which parts of `verify-claims` sessions actually use ([verify-claims-residency.md](verify-claims-residency.md)), why the backlog has two ID blocks ([queue/README.md](queue/README.md)), why `semantic-remediation` is shaped as it is ([semantic-remediation-decisions.md](semantic-remediation-decisions.md)), and why gates live in the Makefile ([CLAUDE.md](../CLAUDE.md)).
+One explanation in one place; a second copy is a thing that drifts.
 
 ## The repo is named for the output style, not for the skills
 
-The name comes from the style the repo ships, which takes its own from the line
-Anderton gives a dealer in *Minority Report*. [The style's
-README](../output-styles/README.md) has that story; this entry is about the
-choice.
+The name comes from the style the repo ships, which takes its own from the line Anderton gives a dealer in *Minority Report*.
+[The style's README](../output-styles/README.md) has that story; this entry is about the choice.
 
-An earlier name was the name of a skill *inside* the bundle, so "run
-substantiate" was ambiguous about whether you meant the repo or the front door.
-The criterion that replaced it was *survive the weighted reading*. Measured
-2026-09-13 over the ten skills, their `references/` files and the output style:
-`verify-claims` alone is 64% by lines and 57% by bytes, and the three evidence
-skills — `verify-claims`, `claim-provenance`, `semantic-remediation` — are 73%
-and 66%. By skill count they are 3 of 10, which is the reading that makes this
-look like a prose collection. Both readings are honest and they point opposite
-ways, so quote the method with the figure.
+An earlier name was the name of a skill *inside* the bundle, so "run substantiate" was ambiguous about whether you meant the repo or the front door.
+The criterion that replaced it was *survive the weighted reading*.
+Measured 2026-09-13 over the ten skills, their `references/` files and the output style: `verify-claims` alone is 64% by lines and 57% by bytes, and the three evidence skills — `verify-claims`, `claim-provenance`, `semantic-remediation` — are 73% and 66%.
+By skill count they are 3 of 10, which is the reading that makes this look like a prose collection.
+Both readings are honest and they point opposite ways, so quote the method with the figure.
 
-A name on the craft rung therefore misdescribes most of the artifact. `clarity`
-names an **outcome** rather than an activity, and the evidence skills serve it:
-a reader who cannot tell a measurement from a guess cannot see what they are
-reading, however well-built the sentence.
+A name on the craft rung therefore misdescribes most of the artifact.
+`clarity` names an **outcome** rather than an activity, and the evidence skills serve it: a reader who cannot tell a measurement from a guess cannot see what they are reading, however well-built the sentence.
 
-**What would reverse it:** a reading under which verification stops serving
-clarity and starts competing with it — an evidence half that grows into an audit
-tool nobody invokes for a reader's sake. At that point the outcome the name
-promises is no longer the one the majority of the artifact delivers.
+**What would reverse it:** a reading under which verification stops serving clarity and starts competing with it — an evidence half that grows into an audit tool nobody invokes for a reader's sake.
+At that point the outcome the name promises is no longer the one the majority of the artifact delivers.
 
 ## `verify-claims` ships here rather than standing alone
 
-The entry above settles why the evidence half is the largest half: the name is
-an outcome and verification serves it. This entry is the narrower question of
-why the skill lives in *this* repo rather than one of its own, and the answer is
-packaging, not theme.
+The entry above settles why the evidence half is the largest half: the name is an outcome and verification serves it.
+This entry is the narrower question of why the skill lives in *this* repo rather than one of its own, and the answer is packaging, not theme.
 
-Two alternatives were considered and both are worse. Vendoring a copy into each
-consumer guarantees drift, and nothing on either side reports it. Declaring a
-dependency on it needs it published somewhere first, which is the problem
-restated. Putting it in the bundle that ships first satisfies both.
+Two alternatives were considered and both are worse.
+Vendoring a copy into each consumer guarantees drift, and nothing on either side reports it.
+Declaring a dependency on it needs it published somewhere first, which is the problem restated.
+Putting it in the bundle that ships first satisfies both.
 
-The cost is real and lands on someone else: a reader who wants one verification
-skill installs the whole bundle to get it. `install-skills.sh` takes skill
-names, so the single-skill install works, and the README says so under
-[Installing](../README.md#installing).
+The cost is real and lands on someone else: a reader who wants one verification skill installs the whole bundle to get it.
+`install-skills.sh` takes skill names, so the single-skill install works, and the README says so under [Installing](../README.md#installing).
 
-**What would reverse it:** a second consumer needing `verify-claims` for reasons
-unrelated to a draft anyone reads. At that point it is infrastructure shared by
-three parties and belongs in a repo of its own.
+**What would reverse it:** a second consumer needing `verify-claims` for reasons unrelated to a draft anyone reads.
+At that point it is infrastructure shared by three parties and belongs in a repo of its own.
 
 ## The repo starts at one commit and carries no history
 
 The skills have years of argument behind them and none of it is in `git log`.
-That was measured rather than chosen: of the 97 commits touching these paths in
-the collection they came from, **96** had a private skill or repository name in
-their *file contents* — 353 sightings of one withheld skill across 69 distinct
-blobs — alongside 59 commit messages naming one.
+That was measured rather than chosen: of the 97 commits touching these paths in the collection they came from, **96** had a private skill or repository name in their *file contents* — 353 sightings of one withheld skill across 69 distinct blobs — alongside 59 commit messages naming one.
 
-Filtered history and *names nothing private* could not both hold. Rewriting the
-blobs to satisfy the second would have made the log disagree with its own diffs:
-the commit that says it inverted eight citations would show a diff that does
-nothing. A log you cannot trust is worse than no log.
+Filtered history and *names nothing private* could not both hold.
+Rewriting the blobs to satisfy the second would have made the log disagree with its own diffs: the commit that says it inverted eight citations would show a diff that does nothing.
+A log you cannot trust is worse than no log.
 
-The dated claims inside each skill are their own provenance, and they say how
-each number was taken, which is the part that transfers.
+The dated claims inside each skill are their own provenance, and they say how each number was taken, which is the part that transfers.
 
-**What would reverse it:** the origin collection becoming public, after which a
-filtered import costs nothing and can be grafted under the initial commit.
+**What would reverse it:** the origin collection becoming public, after which a filtered import costs nothing and can be grafted under the initial commit.
 
 ## Skills live under `skills/`
 
-Not tidiness. It is the layout a Claude Code plugin needs, confirmed by reading
-the plugins installed on this machine rather than assumed — each keeps its
-skills at `<plugin>/<version>/skills/<name>/SKILL.md`. Moving after publishing
-would cost the same rewrite plus everyone's links.
+Not tidiness.
+It is the layout a Claude Code plugin needs, confirmed by reading the plugins installed on this machine rather than assumed — each keeps its skills at `<plugin>/<version>/skills/<name>/SKILL.md`.
+Moving after publishing would cost the same rewrite plus everyone's links.
 
-`install-skills.sh` prefers `skills/` and falls back to the repo root, so a
-clone laid out the older way still installs. Both arms are asserted in
-`scripts/test-install-skills.sh`; removing the preference fails them.
+`install-skills.sh` prefers `skills/` and falls back to the repo root, so a clone laid out the older way still installs.
+Both arms are asserted in `scripts/test-install-skills.sh`; removing the preference fails them.
 
-**What would reverse it:** deciding the repo will never ship as a plugin, at
-which point the fallback makes moving back a rename.
+**What would reverse it:** deciding the repo will never ship as a plugin, at which point the fallback makes moving back a rename.
 
 ## The voice slot is declared and never filled
 
-Five skills hand voice to "a personal voice skill, if one is loaded" without
-naming one — nine declarations between them, measured 2026-09-13 — and nothing
-here ships a holder. That reads like an omission and is a constraint.
+Five skills hand voice to "a personal voice skill, if one is loaded" without naming one — nine declarations between them, measured 2026-09-13 — and nothing here ships a holder.
+That reads like an omission and is a constraint.
 
-The skill that used to fill it models one identifiable person's voice closely
-enough that publishing it would hand strangers a tool for impersonating them.
-That is a reason to withhold permanently, not to defer, and no relabelling
-changes what the artifact does. Repointing the citations at a replacement would
-have made building that replacement a prerequisite of the whole bundle; naming
-the role instead costs nothing and leaves the bundle citing no skill it cannot
-ship.
+The skill that used to fill it models one identifiable person's voice closely enough that publishing it would hand strangers a tool for impersonating them.
+That is a reason to withhold permanently, not to defer, and no relabelling changes what the artifact does.
+Repointing the citations at a replacement would have made building that replacement a prerequisite of the whole bundle; naming the role instead costs nothing and leaves the bundle citing no skill it cannot ship.
 
-So: a future skill reaching for a voice pointer **declares the slot** rather
-than naming a holder.
+So: a future skill reaching for a voice pointer **declares the slot** rather than naming a holder.
 
-**What would reverse it:** a skill that *derives* a style guide from a corpus
-the user supplies — the generalisation of how the withheld one was built. Each
-user would end up with their own voice layer and nobody with someone else's, and
-the slot would have a default holder worth naming.
+**What would reverse it:** a skill that *derives* a style guide from a corpus the user supplies — the generalisation of how the withheld one was built.
+Each user would end up with their own voice layer and nobody with someone else's, and the slot would have a default holder worth naming.
 
 ## Two passes have a linter; three were refused
 
-`deslop` and `readability` ship one. `semantic-remediation`, `claim-provenance`
-and `tech-docs-layers` were considered and refused, because each would emit
-warnings a human has to adjudicate — a tier measured going unread in the
-collection this came from, at three bodies sitting past their ceilings across
-six commits and six gate runs with the number raised zero times.
+`deslop` and `readability` ship one.
+`semantic-remediation`, `claim-provenance` and `tech-docs-layers` were considered and refused, because each would emit warnings a human has to adjudicate — a tier measured going unread in the collection this came from, at three bodies sitting past their ceilings across six commits and six gate runs with the number raised zero times.
 
-The pair that makes a linter worth building is *certain* **and** *mechanically
-repairable*. `readability`'s covers the one rule its own body calls checkable
-and refuses the other two, which need to know what the reader already has.
+The pair that makes a linter worth building is *certain* **and** *mechanically repairable*.
+`readability`'s covers the one rule its own body calls checkable and refuses the other two, which need to know what the reader already has.
 
-A bundled script is also not a second way into the bundle. Taken from the
-extraction record rather than re-run here: over 1,922 transcripts the `deslop`
-linter ran 39 times outside its home repo, and 35 of those were sessions where
-the skill had fired. It makes a pass that already fired better; it does not
-reach past the naming problem.
+A bundled script is also not a second way into the bundle.
+Taken from the extraction record rather than re-run here: over 1,922 transcripts the `deslop` linter ran 39 times outside its home repo, and 35 of those were sessions where the skill had fired.
+It makes a pass that already fired better; it does not reach past the naming problem.
 
-**Re-tested 2026-09-18 against all three bodies; the ruling stands.** The
-reasons differ enough to keep separately, and they are stronger than the
-original refusal.
+**Re-tested 2026-09-18 against all three bodies; the ruling stands.** The reasons differ enough to keep separately, and they are stronger than the original refusal.
 
-`claim-provenance` cannot be linted at all. Its finding is defined as the gap
-between a sentence's register and its provenance. The register signals are
-surface forms a script can read; the five provenance classes are facts about how
-the author got the sentence, and the body's own test for telling inherited from
-constructed — try to name where it came from — is an act only the author can
-perform. A script computes one term of that subtraction and never the other, so
-every candidate rule reduces to flagging register alone, which marks a measured
-number and an invented one identically.
+`claim-provenance` cannot be linted at all.
+Its finding is defined as the gap between a sentence's register and its provenance.
+The register signals are surface forms a script can read; the five provenance classes are facts about how the author got the sentence, and the body's own test for telling inherited from constructed — try to name where it came from — is an act only the author can perform.
+A script computes one term of that subtraction and never the other, so every candidate rule reduces to flagging register alone, which marks a measured number and an invented one identically.
 
-`semantic-remediation` is certified by its own body: two of its twelve entries
-carry "No repair at this level" and name what they lack, and Phase 2 exists
-because the level with enough context to repair a finding is "frequently
-different" from the level it was found at. The nearest miss is circular
-definition, detectable as a definiens reusing its definiendum; the repair is
-supplying the real definition, which needs the subject matter.
+`semantic-remediation` is certified by its own body: two of its twelve entries carry "No repair at this level" and name what they lack, and Phase 2 exists because the level with enough context to repair a finding is "frequently different" from the level it was found at.
+The nearest miss is circular definition, detectable as a definiens reusing its definiendum; the repair is supplying the real definition, which needs the subject matter.
 
-`tech-docs-layers` holds the tempting candidate, worth naming because it looks
-mechanical. Flagging a page missing a front-matter key its siblings all carry is
-certain about the difference and silent about whether the difference is wrong —
-an index page or a draft legitimately differs, so a local majority is a norm
-rather than a rule, and the check is a warning in a fail's clothes. Its repair
-is authoring a description, not typing a fact the document already determines.
-The layer's other probes — a broken cross-reference, a page in no nav manifest —
-are certain and mechanically repairable, and already owned upstream by
-`mkdocs build --strict` and its equivalents.
+`tech-docs-layers` holds the tempting candidate, worth naming because it looks mechanical.
+Flagging a page missing a front-matter key its siblings all carry is certain about the difference and silent about whether the difference is wrong — an index page or a draft legitimately differs, so a local majority is a norm rather than a rule, and the check is a warning in a fail's clothes.
+Its repair is authoring a description, not typing a fact the document already determines.
+The layer's other probes — a broken cross-reference, a page in no nav manifest — are certain and mechanically repairable, and already owned upstream by `mkdocs build --strict` and its equivalents.
 
-**Control for the null:** the same test over `readability`'s three shorthand
-kinds reproduces that skill's own split — the invented-shorthand kind passes,
-the other two fail on needing to know what the reader already has. The pass
-could have returned a positive.
+**Control for the null:** the same test over `readability`'s three shorthand kinds reproduces that skill's own split — the invented-shorthand kind passes, the other two fail on needing to know what the reader already has.
+The pass could have returned a positive.
 
-**Every reading above scores a checker as a gate, and a second job has since
-turned up.** The pass handed here on 2026-09-24 used the two shipped linters
-for something a gate is not for: scoring a corpus of text those sessions
-actually authored, to ask whether a skill *should* have fired. `deslop-lint.py`
-puts **20 of 224** unfired README units at or above 7.0 hits per 100 words, the
-top of the observed house register. `readability-lint.py` finds **32 of 190**
-carrying a term used and never expanded. Those are the only figures in the
-whole pass bearing on that question; the other eight skills can be scored only
-against a predicate paraphrasing their own description, which measures the
-paraphrase.
+**Every reading above scores a checker as a gate, and a second job has since turned up.** The pass handed here on 2026-09-24 used the two shipped linters for something a gate is not for: scoring a corpus of text those sessions actually authored, to ask whether a skill *should* have fired.
+`deslop-lint.py` puts **20 of 224** unfired README units at or above 7.0 hits per 100 words, the top of the observed house register.
+`readability-lint.py` finds **32 of 190** carrying a term used and never expanded.
+Those are the only figures in the whole pass bearing on that question; the other eight skills can be scored only against a predicate paraphrasing their own description, which measures the paraphrase.
 
-A warning nobody reads kills a gate and costs an instrument nothing, because an
-instrument reports an aggregate and has no actor to interrupt. So the
-acceptance criteria are not the same pair, and the refusals above were argued
-against one of them. That does not reopen the three: `claim-provenance`'s
-obstacle is that a script computes one term of the subtraction and never the
-other, which is as fatal to a count as to a warning. It does mean the question
-was asked narrowly, and which of the five skills with no ruling could carry an
-instrument is [Q1021](queue/Q1021.md).
+A warning nobody reads kills a gate and costs an instrument nothing, because an instrument reports an aggregate and has no actor to interrupt.
+So the acceptance criteria are not the same pair, and the refusals above were argued against one of them.
+That does not reopen the three: `claim-provenance`'s obstacle is that a script computes one term of the subtraction and never the other, which is as fatal to a count as to a warning.
+It does mean the question was asked narrowly, and which of the five skills with no ruling could carry an instrument is [Q1021](queue/Q1021.md).
 
-Carry both floors with those figures. The linters see vocabulary and sentence
-mechanics and cannot see a claim with no source, so each is a floor rather than
-a rate. And `readability-lint.py` covers one of that skill's rules rather than
-its subject, which is the split its own entry above describes.
+Carry both floors with those figures.
+The linters see vocabulary and sentence mechanics and cannot see a claim with no source, so each is a floor rather than a rate.
+And `readability-lint.py` covers one of that skill's rules rather than its subject, which is the split its own entry above describes.
 
-**What would reverse it:** one of the three finding a rule that is certain and
-has a mechanical repair — unchanged, and the three readings above are the prior
-a future pass argues with. Or a reading in which an instrument's aggregate pays
-for a checker that no gate would justify, which is the second condition and did
-not exist when this entry was first written.
+**What would reverse it:** one of the three finding a rule that is certain and has a mechanical repair — unchanged, and the three readings above are the prior a future pass argues with.
+Or a reading in which an instrument's aggregate pays for a checker that no gate would justify, which is the second condition and did not exist when this entry was first written.
 
 ## Naming a skill is what moves its trigger count
 
-Two of the ten were measured dead in the collection this came from. On
-2026-08-17, over 678 local transcripts, `readability` had one lifetime
-invocation and none since its description was rewritten from transcript
-vocabulary the day before; `rendered-page-review` had none ever. Both are live
-now. Re-counted 2026-09-14 over 2,117 transcripts — one workstation's
-`~/.claude/projects/`, not this tree — `readability` has 12 lifetime and 11
-since 2026-08-16, and `rendered-page-review` has 11, all since 2026-08-18.
-Sessions in this repo and in the collection account for one call each, so
-neither count is a skill being exercised by the people building it.
+Two of the ten were measured dead in the collection this came from.
+On 2026-08-17, over 678 local transcripts, `readability` had one lifetime invocation and none since its description was rewritten from transcript vocabulary the day before; `rendered-page-review` had none ever.
+Both are live now.
+Re-counted 2026-09-14 over 2,117 transcripts — one workstation's `~/.claude/projects/`, not this tree — `readability` has 12 lifetime and 11 since 2026-08-16, and `rendered-page-review` has 11, all since 2026-08-18.
+Sessions in this repo and in the collection account for one call each, so neither count is a skill being exercised by the people building it.
 
-The second skill is the readable case, because its two levers were never
-confounded. Broadening its description on 2026-08-16 produced nothing for two
-days. Ten of its eleven calls then came from `github-actions-gateway`
-worktrees, and that repo's `CLAUDE.md` names the skill at a moment: a change
-under `docs/` is a change to a live web page, so review it with
-`rendered-page-review`. The global `CLAUDE.md` still mentions the skill exactly
-once, as the subject of the original measurement, which is a citation and fires
-nothing.
+The second skill is the readable case, because its two levers were never confounded.
+Broadening its description on 2026-08-16 produced nothing for two days.
+Ten of its eleven calls then came from `github-actions-gateway` worktrees, and that repo's `CLAUDE.md` names the skill at a moment: a change under `docs/` is a change to a live web page, so review it with `rendered-page-review`.
+The global `CLAUDE.md` still mentions the skill exactly once, as the subject of the original measurement, which is a citation and fires nothing.
 
-So the README's claim survives its cleanest available test, though not by the
-mechanism that line states. A description decides whether a skill fires once
-its subject is in the context; naming it in a loaded `CLAUDE.md` is what puts
-the subject there. What the naming did was put the skill's name within reach
-of a session whose purpose was already a review — see the occasion counts
-below, where the stated condition fires nothing. Broadening a description is
-still not the fix.
+So the README's claim survives its cleanest available test, though not by the mechanism that line states.
+A description decides whether a skill fires once its subject is in the context; naming it in a loaded `CLAUDE.md` is what puts the subject there.
+What the naming did was put the skill's name within reach of a session whose purpose was already a review — see the occasion counts below, where the stated condition fires nothing.
+Broadening a description is still not the fix.
 
-The count above is of invocations. Counting the *occasions* instead, the same
-day and corpus, says the shape of the naming line is what carries it. In
-`github-actions-gateway`, 162 sessions edited a page that repo publishes and
-none fired `rendered-page-review`, though its `CLAUDE.md` names the skill for
-exactly that condition; all 11 of the skill's calls come from sessions that
-edited no Markdown at all. `tech-docs-layers`, named in no `CLAUDE.md` on that
-machine, fired in 2 of the 65 sessions that rewrote eight or more
-documentation pages. So a line naming a skill at a moment somebody notices
-fires, and a line naming it as a standing property of a file path does not —
-nothing re-reads a `CLAUDE.md` when its condition becomes true.
-The README's install guidance says so, and its sample line was rewritten into
-the first shape (Q1007).
+The count above is of invocations.
+Counting the *occasions* instead, the same day and corpus, says the shape of the naming line is what carries it.
+In `github-actions-gateway`, 162 sessions edited a page that repo publishes and none fired `rendered-page-review`, though its `CLAUDE.md` names the skill for exactly that condition; all 11 of the skill's calls come from sessions that edited no Markdown at all.
+`tech-docs-layers`, named in no `CLAUDE.md` on that machine, fired in 2 of the 65 sessions that rewrote eight or more documentation pages.
+So a line naming a skill at a moment somebody notices fires, and a line naming it as a standing property of a file path does not — nothing re-reads a `CLAUDE.md` when its condition becomes true.
+The README's install guidance says so, and its sample line was rewritten into the first shape (Q1007).
 
-The join there is session-level, so an occasion is "edited a published page"
-rather than "needed a viewport review", and a typo fix counts. Only
-`Edit`/`Write`/`MultiEdit` were counted, so a page changed through `sed` is
-invisible and the denominators understate, which puts the true rates below the
-ones quoted.
+The join there is session-level, so an occasion is "edited a published page" rather than "needed a viewport review", and a typo fix counts.
+Only `Edit`/`Write`/`MultiEdit` were counted, so a page changed through `sed` is invisible and the denominators understate, which puts the true rates below the ones quoted.
 
-**What would reverse it:** a re-count in which a skill named at a moment in a
-loaded `CLAUDE.md` stays at zero, or one in which a skill named nowhere climbs
-on a description rewrite alone.
+**What would reverse it:** a re-count in which a skill named at a moment in a loaded `CLAUDE.md` stays at zero, or one in which a skill named nowhere climbs on a description rewrite alone.
 
 ## `tech-docs-layers` lost a competition rather than never entering one
 
-The entry above says naming is the lever. This one is the case that looked like
-its cleanest confirmation and is not: the skill with the widest reach here has
-the lowest use of the ten, and the reason is not that nobody named it.
+The entry above says naming is the lever.
+This one is the case that looked like its cleanest confirmation and is not: the skill with the widest reach here has the lowest use of the ten, and the reason is not that nobody named it.
 
-Handed over on 2026-09-24 from a pass over one workstation's transcripts
-bounded 2026-09-18: listed in **1,552 of 1,574 measured sessions**, more than
-any other skill here, **5 calls lifetime, none since 2026-08-16**, largest
-occasion set of the ten at 856 sessions, lowest rate at 0.58%. Age and
-availability are ruled out — it has been listed since 2026-07-26.
+Handed over on 2026-09-24 from a pass over one workstation's transcripts bounded 2026-09-18: listed in **1,552 of 1,574 measured sessions**, more than any other skill here, **5 calls lifetime, none since 2026-08-16**, largest occasion set of the ten at 856 sessions, lowest rate at 0.58%.
+Age and availability are ruled out — it has been listed since 2026-07-26.
 
-**A local re-derivation on 2026-09-24, unbounded in time over 2,079
-transcripts, reproduces the numerator exactly and the rest closely**: 1,609
-measured after excluding 470 authoring sessions, 1,587 offered, 5 fired, 654
-sessions writing a docs-shaped path. The occasion predicate here is narrower
-than the pass's, which is why 654 sits below 856. The probe is
-`Edit`/`Write`/`MultiEdit` targets matching a docs tree, a `README.md`, or a
-top-level `CAPS.md`, so a page changed through `sed` is invisible.
+**A local re-derivation on 2026-09-24, unbounded in time over 2,079 transcripts, reproduces the numerator exactly and the rest closely**: 1,609 measured after excluding 470 authoring sessions, 1,587 offered, 5 fired, 654 sessions writing a docs-shaped path.
+The occasion predicate here is narrower than the pass's, which is why 654 sits below 856.
+The probe is `Edit`/`Write`/`MultiEdit` targets matching a docs tree, a `README.md`, or a top-level `CAPS.md`, so a page changed through `sed` is invisible.
 
 ### The naming lever was applied, in the one repo that has the occasion
 
-**433 of the 654 occasion sessions are in `github-actions-gateway`**, which is
-also the only checkout here carrying a docs framework — `mkdocs.yml` over 428
-pages. Five sibling repos have a `docs/` tree and no framework at all.
+**433 of the 654 occasion sessions are in `github-actions-gateway`**, which is also the only checkout here carrying a docs framework — `mkdocs.yml` over 428 pages.
+Five sibling repos have a `docs/` tree and no framework at all.
 
-That repo's `docs/development/skills.md` names this skill, at a moment and in
-this skill's own words: applied when adding, restructuring, or updating a page
-under `docs/`. Nothing loads that page. Its `CLAUDE.md` does load, and it
-reaches this skill's moment three times — update docs after a change, and
-*writing, editing, or restructuring any doc*, which is the skill's subject
-verbatim — and routes all three to two local pages,
-`docs/development/doc-update-matrix.md` and
-`docs/development/documentation-standards.md`. The same file gives
-moment-shaped **skill** lines to `rendered-page-review`, `verify-claims` and
-`session-retro`.
+That repo's `docs/development/skills.md` names this skill, at a moment and in this skill's own words: applied when adding, restructuring, or updating a page under `docs/`.
+Nothing loads that page.
+Its `CLAUDE.md` does load, and it reaches this skill's moment three times — update docs after a change, and *writing, editing, or restructuring any doc*, which is the skill's subject verbatim — and routes all three to two local pages, `docs/development/doc-update-matrix.md` and `docs/development/documentation-standards.md`.
+The same file gives moment-shaped **skill** lines to `rendered-page-review`, `verify-claims` and `session-retro`.
 
-**So the author reached this skill's moment, at the keyboard, and chose a local
-doc each time.** That is a competition lost, not a lever untried, and it
-disposes of the obvious remedy: a naming line in that `CLAUDE.md` would have to
-displace a page written for that repo by someone who had already considered the
-alternative.
+**So the author reached this skill's moment, at the keyboard, and chose a local doc each time.** That is a competition lost, not a lever untried, and it disposes of the obvious remedy: a naming line in that `CLAUDE.md` would have to displace a page written for that repo by someone who had already considered the alternative.
 
 ### What the sweep became there
 
-Step 3 is the part of this skill that tells a model to do something it does not
-do by default. In the repo with the occasions it was promoted past prose
-entirely, into gates: `doc-links`, `doc-toc-check`, `roadmap-check`,
-`script-docs-check`, `release-links-check` and `verify-published-docs`, with
-`documentation-standards.md` carrying the residue a gate cannot reach. A rule
-that must hold every time cannot hold in prose, and that repo acted on it.
+Step 3 is the part of this skill that tells a model to do something it does not do by default.
+In the repo with the occasions it was promoted past prose entirely, into gates: `doc-links`, `doc-toc-check`, `roadmap-check`, `script-docs-check`, `release-links-check` and `verify-published-docs`, with `documentation-standards.md` carrying the residue a gate cannot reach.
+A rule that must hold every time cannot hold in prose, and that repo acted on it.
 
 ### The one call that was the skill's own subject wrote its description
 
-Of the five calls, one is a release-notes format fix, one a `gh` issue link,
-one a bare "new release", one a dispatched worker brief. The fifth opens *the
-roadmap web page is a mess … it's a giant wall of text … it doesn't link to
-docs pages enough … it keeps getting stale*, which is this skill's description
-clause word for word. The description was written backwards out of its own
-single success, which is the harvesting failure `decisions.md` warns about
-elsewhere, arriving from the inside.
+Of the five calls, one is a release-notes format fix, one a `gh` issue link, one a bare "new release", one a dispatched worker brief.
+The fifth opens *the roadmap web page is a mess … it's a giant wall of text … it doesn't link to docs pages enough … it keeps getting stale*, which is this skill's description clause word for word.
+The description was written backwards out of its own single success, which is the harvesting failure `decisions.md` warns about elsewhere, arriving from the inside.
 
-`readme` fires the skill 0 times in 235 sessions while the description names
-writing a README as a trigger, and an earlier pass recorded that zero at 83.
+`readme` fires the skill 0 times in 235 sessions while the description names writing a README as a trigger, and an earlier pass recorded that zero at 83.
 Under the reading above, neither clause is the defect.
 
 ### It stays, and a rewrite is the open question
 
-Retirement is still not the entry to write, because the skill has never been
-scoped to the case it could win: a repo with a `docs/` tree and no docs
-conventions of its own, which is four of the six checkouts here and 221 of the
-654 occasion sessions. The rewrite was Q1022, whose row was deleted when it
-shipped (see the last section of this entry), and its shape
-was settled on 2026-09-24: **two modes off one moment** — where the repo has no
-docs conventions of its own, write it one and propose the gates that carry the
-sweep; where it has one, defer to it and sweep. The bootstrap half is what
-`github-actions-gateway` did for itself, so the skill produces the local page
-that beat it rather than competing with one. Three alternatives were declined
-and are recorded on the row, because the reasons transfer: narrowing to
-survey-and-sweep answers the same question with less, bootstrap alone has a
-ceiling of four firings across these checkouts, and retiring now forecloses the
-framework-less case before it has been tried once.
+Retirement is still not the entry to write, because the skill has never been scoped to the case it could win: a repo with a `docs/` tree and no docs conventions of its own, which is four of the six checkouts here and 221 of the 654 occasion sessions.
+The rewrite was Q1022, whose row was deleted when it shipped (see the last section of this entry), and its shape was settled on 2026-09-24: **two modes off one moment** — where the repo has no docs conventions of its own, write it one and propose the gates that carry the sweep; where it has one, defer to it and sweep.
+The bootstrap half is what `github-actions-gateway` did for itself, so the skill produces the local page that beat it rather than competing with one.
+Three alternatives were declined and are recorded on the row, because the reasons transfer: narrowing to survey-and-sweep answers the same question with less, bootstrap alone has a ceiling of four firings across these checkouts, and retiring now forecloses the framework-less case before it has been tried once.
 
-Two readings bear on it and neither is measured. Layers 3 to 6 — version,
-metadata, navigation, partials — are 28.6% of the body and every one
-presupposes a framework those four repos do not have. And the six layers'
-content is ordinary technical-writing knowledge; what the body supplies that a
-model does not already act on is the instruction to survey first and sweep
-after, which is 28.1% of it. Both are held rather than checked, and the second
-is a claim about training data that nothing here can settle.
+Two readings bear on it and neither is measured.
+Layers 3 to 6 — version, metadata, navigation, partials — are 28.6% of the body and every one presupposes a framework those four repos do not have.
+And the six layers' content is ordinary technical-writing knowledge; what the body supplies that a model does not already act on is the instruction to survey first and sweep after, which is 28.1% of it.
+Both are held rather than checked, and the second is a claim about training data that nothing here can settle.
 
-Both readings were to be measured before the rewrite rather than after, which
-was Q1023, because a cut that rests on the second reading and never tests it
-would be unfalsifiable after the fact: nothing afterwards distinguishes a layer
-the model never needed from one the rewrite removed.
+Both readings were to be measured before the rewrite rather than after, which was Q1023, because a cut that rests on the second reading and never tests it would be unfalsifiable after the fact: nothing afterwards distinguishes a layer the model never needed from one the rewrite removed.
 
 ### Measured: the sweep was not the difference, terminology was
 
-Run on 2026-11-01 against `claude-pr-sentinel` at `a7ba8ea`, whose `CLAUDE.md`
-names no skill but does carry a short documentation-conventions section and a
-change-to-docs mapping. The task was one prompt, typed the same in both arms:
-rename "overlap check" to "overlap guard", and move `docs/ROADMAP.md` to
-`docs/development/roadmap.md`. A scorer fired at a bare `git mv` first showed
-the task could tell: 28 term hits (12 in living docs, 15 in release notes, 1 in
-code) and 11 links broken by the move, 9 of them outbound from the moved page.
+Run on 2026-11-01 against `claude-pr-sentinel` at `a7ba8ea`, whose `CLAUDE.md` names no skill but does carry a short documentation-conventions section and a change-to-docs mapping.
+The task was one prompt, typed the same in both arms: rename "overlap check" to "overlap guard", and move `docs/ROADMAP.md` to `docs/development/roadmap.md`.
+A scorer fired at a bare `git mv` first showed the task could tell: 28 term hits (12 in living docs, 15 in release notes, 1 in code) and 11 links broken by the move, 9 of them outbound from the moved page.
 
-Each arm was a fresh `claude -p` on Claude Code 2.1.290 with Opus 5.5 at effort
-high and identical tool grants. The skilled arm opened with
-`/tech-docs-layers`, and its own transcript holds the expanded body. The
-control ran with `--disallowedTools "Skill(tech-docs-layers)"`, which a probe
-showed refusing the call, and its transcript holds no `Skill` call at all.
-The flag blocks only the body: the control's skill listing still carried this
-skill's description, which says an edit "still touches terminology,
-cross-references, …". So the arms compare description alone against
-description plus body, not no skill against skill. Karl's global `CLAUDE.md`
-and hooks loaded in both.
+Each arm was a fresh `claude -p` on Claude Code 2.1.290 with Opus 5.5 at effort high and identical tool grants.
+The skilled arm opened with `/tech-docs-layers`, and its own transcript holds the expanded body.
+The control ran with `--disallowedTools "Skill(tech-docs-layers)"`, which a probe showed refusing the call, and its transcript holds no `Skill` call at all.
+The flag blocks only the body: the control's skill listing still carried this skill's description, which says an edit "still touches terminology, cross-references, …".
+So the arms compare description alone against description plus body, not no skill against skill.
+Karl's global `CLAUDE.md` and hooks loaded in both.
 
-**Both arms swept completely.** Each left the old term only in release notes,
-and both left those for the same reason, published history. Each added no
-broken link, rewrote all nine outbound links, split the rename and the move
-into two commits, and ran `make check`. The control did the link sweep with
-nothing in the prompt asking for one, though not with nothing in context: the
-description names cross-references. Whether a model with no trace of the skill
-sweeps was not measured.
+**Both arms swept completely.** Each left the old term only in release notes, and both left those for the same reason, published history.
+Each added no broken link, rewrote all nine outbound links, split the rename and the move into two commits, and ran `make check`.
+The control did the link sweep with nothing in the prompt asking for one, though not with nothing in context: the description names cross-references.
+Whether a model with no trace of the skill sweeps was not measured.
 
-**Where the skilled arm did more, it was terminology.** In `README.md` and
-`docs/DESIGN.md` there is a sentence describing the feature without naming it.
-The skilled arm added the name there, and the control left both sentences
-unnamed. It also caught two more bare "the check" back-references in
-`PRIVACY.md`. In the other direction, the control rewrote two plain-text
-mentions of the old path in `docs/plan/` files, which the skilled arm left as
-history. The skilled arm also cost more: 64 turns against 24, and $1.60
-against $0.97 as the CLI reported them.
+**Where the skilled arm did more, it was terminology.** In `README.md` and `docs/DESIGN.md` there is a sentence describing the feature without naming it.
+The skilled arm added the name there, and the control left both sentences unnamed.
+It also caught two more bare "the check" back-references in `PRIVACY.md`.
+In the other direction, the control rewrote two plain-text mentions of the old path in `docs/plan/` files, which the skilled arm left as history.
+The skilled arm also cost more: 64 turns against 24, and $1.60 against $0.97 as the CLI reported them.
 
-So the held reading did not survive this task. The model swept without the
-body, and the skilled arm's extra work all fell under layer 1's subject. One
-run cannot say the body caused it. Layers 3 to 6 were
-not exercised, because the repo has no framework; the skilled arm surveyed
-sibling page headers and changed nothing. One run per arm cannot separate a
-two-site difference from sampling, and "rename" already asks for the
-terminology sweep, so this informs Q1022's cut rather than settling it.
+So the held reading did not survive this task.
+The model swept without the body, and the skilled arm's extra work all fell under layer 1's subject.
+One run cannot say the body caused it.
+Layers 3 to 6 were not exercised, because the repo has no framework; the skilled arm surveyed sibling page headers and changed nothing.
+One run per arm cannot separate a two-site difference from sampling, and "rename" already asks for the terminology sweep, so this informs Q1022's cut rather than settling it.
 
-**What would reverse it:** a rewrite shipping against the framework-less case
-and still measuring zero over a comparable window, which would say the subject
-rather than the scoping is what nobody reaches for.
+**What would reverse it:** a rewrite shipping against the framework-less case and still measuring zero over a comparable window, which would say the subject rather than the scoping is what nobody reaches for.
 
 ### Shipped: two modes, with layer 1 kept and widened
 
-Q1022 rewrote the body on 2026-11-01 to the settled shape. A new first step
-asks whether the repo has docs conventions of its own: a routing line in a
-loaded `CLAUDE.md`, `AGENTS.md` or `CONTRIBUTING.md`, a standards page, or a
-change-to-docs mapping. Docs gates alone do not count, because they enforce a
-rule without saying what it is for. With conventions, the body defers to them
-and the six layers fill only what they leave silent. Without, the session makes
-the requested edit first and then writes the repo a mapping, a standards page
-and gate proposals, plus a line in its `CLAUDE.md` naming them. That last line
-exists because of this entry's own finding: `github-actions-gateway`'s
-`skills.md` named this skill and nothing loaded it.
+Q1022 rewrote the body on 2026-11-01 to the settled shape.
+A new first step asks whether the repo has docs conventions of its own: a routing line in a loaded `CLAUDE.md`, `AGENTS.md` or `CONTRIBUTING.md`, a standards page, or a change-to-docs mapping.
+Docs gates alone do not count, because they enforce a rule without saying what it is for.
+With conventions, the body defers to them and the six layers fill only what they leave silent.
+Without, the session makes the requested edit first and then writes the repo a mapping, a standards page and gate proposals, plus a line in its `CLAUDE.md` naming them.
+That last line exists because of this entry's own finding: `github-actions-gateway`'s `skills.md` named this skill and nothing loaded it.
 
-Three things were deliberately not done. **The cut to survey-and-sweep was
-refused**, on the measurement above: the sweep made no difference in that run
-and the extra work fell under layer 1. Two lines that only stressed the sweep
-("most repo docs work fails at sweep-time" and "this is where most doc PRs fall
-short") went with that measurement; the sweep step itself is intact. **Layers 3
-to 6 are unchanged.** One sentence now says to skip the part of a layer that
-depends on a mechanism the survey did not find — versioned docs, a navigation
-manifest, an include mechanism — and keeps the sibling-matching parts of layers
-4 and 5 in every repo. For layers 3 and 6 that is what the old body already
-implied with "if the repo uses"; for 4 and 5 it narrows nothing. It is not an
-argument from the probe, which did not exercise them. **The description is unchanged**, because the skill still fires
-at the moment it fired before and the description was never shown to be the
-lever, so the figures in the description-cap entry below still describe it.
+Three things were deliberately not done.
+**The cut to survey-and-sweep was refused**, on the measurement above: the sweep made no difference in that run and the extra work fell under layer 1.
+Two lines that only stressed the sweep ("most repo docs work fails at sweep-time" and "this is where most doc PRs fall short") went with that measurement; the sweep step itself is intact.
+**Layers 3 to 6 are unchanged.** One sentence now says to skip the part of a layer that depends on a mechanism the survey did not find — versioned docs, a navigation manifest, an include mechanism — and keeps the sibling-matching parts of layers 4 and 5 in every repo.
+For layers 3 and 6 that is what the old body already implied with "if the repo uses"; for 4 and 5 it narrows nothing.
+It is not an argument from the probe, which did not exercise them.
+**The description is unchanged**, because the skill still fires at the moment it fired before and the description was never shown to be the lever, so the figures in the description-cap entry below still describe it.
 
-Layer 1 gained one paragraph and layer 2 one sentence, both from what the
-probe's skilled arm did that a grep cannot. A rename search finds only the
-sentences naming the old term, so the paragraph tells the session to read the
-hit pages for a sentence describing the concept unnamed and for a bare
-back-reference. The sentence says a moved page's own outbound links break, which
-was 9 of the 11 broken links the probe's scorer counted. Both rest on one run and
-on mechanism rather than on a measured effect.
+Layer 1 gained one paragraph and layer 2 one sentence, both from what the probe's skilled arm did that a grep cannot.
+A rename search finds only the sentences naming the old term, so the paragraph tells the session to read the hit pages for a sentence describing the concept unnamed and for a bare back-reference.
+The sentence says a moved page's own outbound links break, which was 9 of the 11 broken links the probe's scorer counted.
+Both rest on one run and on mechanism rather than on a measured effect.
 
-The body went from 10,855 to 14,823 bytes against the 16 KiB `warm` ceiling,
-almost all of it the bootstrap step and the conventions check.
+The body went from 10,855 to 14,823 bytes against the 16 KiB `warm` ceiling, almost all of it the bootstrap step and the conventions check.
 
-**What would reverse it:** the reversal condition above, unchanged. A
-framework-less repo bootstrapped by this step and still showing no later call
-would also say the bootstrap half is not the case the skill can win.
+**What would reverse it:** the reversal condition above, unchanged.
+A framework-less repo bootstrapped by this step and still showing no later call would also say the bootstrap half is not the case the skill can win.
 
 ## The hook ships from here, not from the guard repo
 
-`clarity-reminder` is a `PreToolUse` hook and so is every guard in
-`claude-bouncer`, which makes the mechanism a bad way to route it. The goals
-differ: a guard denies an action that is wrong on its own terms, and this one
-raises how often a pass runs when it applies. It ships with the skills it
-serves.
+`clarity-reminder` is a `PreToolUse` hook and so is every guard in `claude-bouncer`, which makes the mechanism a bad way to route it.
+The goals differ: a guard denies an action that is wrong on its own terms, and this one raises how often a pass runs when it applies.
+It ships with the skills it serves.
 
 The naming entry above says the lever saturates; the occasion counts say where.
-`code-restraint` ran in 13 of the 531 sessions that edited a source file and
-committed, and in 2 of the 138 that edited five or more — the rate falls as the
-diff grows, which inverts what you would want. A `CLAUDE.md` reaches a session
-at startup and nothing re-reads it when its subject arrives, so the hook is the
-rung that fires on the occasion rather than on recall.
+`code-restraint` ran in 13 of the 531 sessions that edited a source file and committed, and in 2 of the 138 that edited five or more — the rate falls as the diff grows, which inverts what you would want.
+A `CLAUDE.md` reaches a session at startup and nothing re-reads it when its subject arrives, so the hook is the rung that fires on the occasion rather than on recall.
 
-**It denies rather than asks**, per `hook-verdict`'s routing test: the fix can
-be written into the reason, and the model is the actor who has to run the pass.
-A deny's reason arrives as the tool error, so it reaches the model; an approved
-ask returns as an ordinary tool result and teaches the session nothing. The
-`supervise` posture turns denies into prompts for anyone who wants to watch, and
-it is opt-in because the default spends model tokens where the alternative
-spends a person's attention.
+**It denies rather than asks**, per `hook-verdict`'s routing test: the fix can be written into the reason, and the model is the actor who has to run the pass.
+A deny's reason arrives as the tool error, so it reaches the model; an approved ask returns as an ordinary tool result and teaches the session nothing.
+The `supervise` posture turns denies into prompts for anyone who wants to watch, and it is opt-in because the default spends model tokens where the alternative spends a person's attention.
 
-**The plugin manifest sits beside `install.sh` rather than replacing it.** A
-hook cannot reach a machine any other way without hand-editing a settings file,
-and the entry below on the installer writing no settings survives intact because
-nothing about that path changes. A directory serves as a marketplace — measured
-2026-09-14 by adding one with no remote, installing a plugin whose source was a
-relative path, and removing both — so neither the hook nor the skills wait on a
-publishing decision (Q1001, Q1008).
+**The plugin manifest sits beside `install.sh` rather than replacing it.** A hook cannot reach a machine any other way without hand-editing a settings file, and the entry below on the installer writing no settings survives intact because nothing about that path changes.
+A directory serves as a marketplace — measured 2026-09-14 by adding one with no remote, installing a plugin whose source was a relative path, and removing both — so neither the hook nor the skills wait on a publishing decision (Q1001, Q1008).
 
-**What would reverse it:** a repo where the hook fires on occasions that did not
-want the pass, often enough that the deny reads as a tax rather than a
-reminder. The per-repo rule file is the first response to that and a retirement
-is the second.
+**What would reverse it:** a repo where the hook fires on occasions that did not want the pass, often enough that the deny reads as a tax rather than a reminder.
+The per-repo rule file is the first response to that and a retirement is the second.
 
 ## An exhibit may dangle; an instruction may not
 
-The rule that decided several edits during the extraction, and it binds every
-future one.
+The rule that decided several edits during the extraction, and it binds every future one.
 
-A **measurement** names its subject, and the subject is fixed. Re-pointing a
-path inside a recorded run misreports what was run, so two paths in
-`verify-claims` were deliberately left naming files this repo does not hold — a
-`gh pr diff` pathspec and a 180-ref brace sweep. Provenance that dangles costs a
-reader only a lookup they were never going to make.
+A **measurement** names its subject, and the subject is fixed.
+Re-pointing a path inside a recorded run misreports what was run, so two paths in `verify-claims` were deliberately left naming files this repo does not hold — a `gh pr diff` pathspec and a 180-ref brace sweep.
+Provenance that dangles costs a reader only a lookup they were never going to make.
 
-An **instruction** is the opposite: a dangling path there costs them the
-command. Those get fixed.
+An **instruction** is the opposite: a dangling path there costs them the command.
+Those get fixed.
 
-The split is not always obvious, and [Q1005](queue/Q1005.md) is the case that
-sits on the line — a runnable fence whose prose frames it as the author's own
-gate and whose next sentence tells the reader to run it.
+The split is not always obvious, and [Q1005](queue/Q1005.md) is the case that sits on the line — a runnable fence whose prose frames it as the author's own gate and whose next sentence tells the reader to run it.
 
-One more distinction inside the first: a measurement of a *historical event*
-cannot be re-run, so attribution is the only honest move. A measurement of a
-*reproducible law* is pinned to nothing but its own conditions and should be
-re-taken against something generic.
+One more distinction inside the first: a measurement of a *historical event* cannot be re-run, so attribution is the only honest move.
+A measurement of a *reproducible law* is pinned to nothing but its own conditions and should be re-taken against something generic.
 
-**What would reverse it:** nothing about the rule. What changes case by case is
-which kind a given passage is, which is why each one is argued rather than
-pattern-matched.
+**What would reverse it:** nothing about the rule.
+What changes case by case is which kind a given passage is, which is why each one is argued rather than pattern-matched.
 
 ## The install is one entry point, and it does not write settings
 
-`scripts/install.sh` links the skills and the output styles;
-`scripts/install-skills.sh` is still the skills half on its own, and is what the
-umbrella calls.
+`scripts/install.sh` links the skills and the output styles; `scripts/install-skills.sh` is still the skills half on its own, and is what the umbrella calls.
 
-The alternative was leaving the style to a documented `ln -s`. That is one file
-and no conflict cases, so a script for it looked like ceremony — and the
-one-liner in the README assumed `~/.claude/output-styles/` already existed,
-which on a machine that has never set a style it does not. The argument that
-settled it is the other direction: with two published commands, anybody who
-already knows `install-skills.sh` installs half the repo and gets a success
-message for it. The umbrella suppresses that script's pointer back to itself
-when it is the caller, because the note is addressed to someone who ran it
-directly.
+The alternative was leaving the style to a documented `ln -s`.
+That is one file and no conflict cases, so a script for it looked like ceremony — and the one-liner in the README assumed `~/.claude/output-styles/` already existed, which on a machine that has never set a style it does not.
+The argument that settled it is the other direction: with two published commands, anybody who already knows `install-skills.sh` installs half the repo and gets a success message for it.
+The umbrella suppresses that script's pointer back to itself when it is the caller, because the note is addressed to someone who ran it directly.
 
-It writes no settings file. Linking a style makes it available, not active, and
-the line that activates it — `{"outputStyle": "Clarity"}` — replaces whichever
-style the machine runs today, since only one is ever active and a style replaces
-the defaults rather than layering on them. That is the machine's call, not a
-clone's, so the run prints the line and stops.
+It writes no settings file.
+Linking a style makes it available, not active, and the line that activates it — `{"outputStyle": "Clarity"}` — replaces whichever style the machine runs today, since only one is ever active and a style replaces the defaults rather than layering on them.
+That is the machine's call, not a clone's, so the run prints the line and stops.
 
-It also refuses skill names, so `install.sh verify-claims` is an error naming
-`install-skills.sh`. The passthrough worked, and it meant a command asking for
-one skill also installed a style, which is a second spelling of a partial
-install.
+It also refuses skill names, so `install.sh verify-claims` is an error naming `install-skills.sh`.
+The passthrough worked, and it meant a command asking for one skill also installed a style, which is a second spelling of a partial install.
 
-One case is exempt from `--force`: a link whose target no longer exists. That
-guard is there to stop the install destroying somebody's only copy of a skill or
-a style, and a dangling link is not one. Found by running the installer for real
-— `~/.claude/output-styles/clarity.md` pointed into a repo that had been renamed,
-and `settings.json` had selected `Clarity` all along, so the style was both
-active and unreadable. Refusing there would have spent a decision on a file that
-could not be read either way.
+One case is exempt from `--force`: a link whose target no longer exists.
+That guard is there to stop the install destroying somebody's only copy of a skill or a style, and a dangling link is not one.
+Found by running the installer for real — `~/.claude/output-styles/clarity.md` pointed into a repo that had been renamed, and `settings.json` had selected `Clarity` all along, so the style was both active and unreadable.
+Refusing there would have spent a decision on a file that could not be read either way.
 
-**What would reverse it:** a second output style arriving with a real reason to
-install one and not the other, or Claude Code growing a way to activate a style
-that is not a mutually exclusive settings key.
+**What would reverse it:** a second output style arriving with a real reason to install one and not the other, or Claude Code growing a way to activate a style that is not a mutually exclusive settings key.
 
 ## Room in `verify-claims` is made and spent in one branch
 
-Its body is 110,854 bytes against a 24 KiB `hot` ceiling, and the gate
-grandfathers it shrink-only at whatever it measured on the merge base. So an
-addition has to name what it displaces, and three rows — Q274, Q1010 and Q1012
-— park measured clauses that were written and reverted for want of the space.
+Its body is 110,854 bytes against a 24 KiB `hot` ceiling, and the gate grandfathers it shrink-only at whatever it measured on the merge base.
+So an addition has to name what it displaces, and three rows — Q274, Q1010 and Q1012 — park measured clauses that were written and reverted for want of the space.
 Q1003 asked which of two routes supplies it.
 
-**Reassigning the tier is not a route, because it is inert.** `oversize()` holds
-a body to `max(ceiling, baseline)` and the baseline here is 110,854, so the
-ceiling is not the binding constraint under any tier: driven through
-`validate-skills.py`'s own function, `hot`, `warm` and `cold` all return *pass*
-for this body, and moving it to `cold` changes nothing. An earlier draft of this
-entry said reassignment makes the ceiling *tighter*; that is wrong, and the
-conclusion it was supporting holds harder without it. A band **above** `hot`
-would have to set its ceiling above what its one member measures before it
-granted a single byte — at which point it is the per-skill byte budget the tier
-ladder was built to replace.
-`scripts/validate-skills.py:143:# costs. A number is negotiable in one line and was negotiated 49 times; a tier`
-counts the raises, and [skill-body-ceilings.md](skill-body-ceilings.md) records
-that the review behind them passed every time. So the reversal condition that
-file states for the grandfather — a growth that is genuinely a new tier — cannot
-fire for the one body it was written about. That file now says so.
+**Reassigning the tier is not a route, because it is inert.** `oversize()` holds a body to `max(ceiling, baseline)` and the baseline here is 110,854, so the ceiling is not the binding constraint under any tier: driven through `validate-skills.py`'s own function, `hot`, `warm` and `cold` all return *pass* for this body, and moving it to `cold` changes nothing.
+An earlier draft of this entry said reassignment makes the ceiling *tighter*; that is wrong, and the conclusion it was supporting holds harder without it.
+A band **above** `hot` would have to set its ceiling above what its one member measures before it granted a single byte — at which point it is the per-skill byte budget the tier ladder was built to replace.
+`scripts/validate-skills.py:143:# costs. A number is negotiable in one line and was negotiated 49 times; a tier` counts the raises, and [skill-body-ceilings.md](skill-body-ceilings.md) records that the review behind them passed every time.
+So the reversal condition that file states for the grandfather — a growth that is genuinely a new tier — cannot fire for the one body it was written about.
+That file now says so.
 
-**Relocation is the route, and it does not have to reach the ceiling.** Moving
-everything with no measurable uptake recovers 21,120 bytes and leaves about
-90 kB against 24 KiB, which is why
-[verify-claims-residency.md](verify-claims-residency.md) said the ceiling is not
-reachable this way. That reading is correct and answers a question nobody needed
-answered: what an addition needs is room, and the ceiling is not the frame.
+**Relocation is the route, and it does not have to reach the ceiling.** Moving everything with no measurable uptake recovers 21,120 bytes and leaves about 90 kB against 24 KiB, which is why [verify-claims-residency.md](verify-claims-residency.md) said the ceiling is not reachable this way.
+That reading is correct and answers a question nobody needed answered: what an addition needs is room, and the ceiling is not the frame.
 
-**But a relocation merged on its own banks nothing, which is the part that
-decides how the work is shaped.** The baseline is `git merge-base origin/main
-HEAD`, re-read per branch, so the moment a shrink merges, main's smaller size
-*becomes* the new limit. Driven through `oversize()`: a branch relocating the
-21 rules passes at 89,734 against a limit of 110,854; a branch then adding one
-1,024-byte clause off that new main fails at 90,758 against a limit of 89,734 —
-the identical failure it has today; all three clauses fail by 3,072. Only a
-branch that relocates **and** adds passes, at 92,806 against 110,854. The gate's
-docstring says exactly this and it is easy to read past: no body grew past its
-ceiling *on this branch*.
+**But a relocation merged on its own banks nothing, which is the part that decides how the work is shaped.** The baseline is `git merge-base origin/main HEAD`, re-read per branch, so the moment a shrink merges, main's smaller size *becomes* the new limit.
+Driven through `oversize()`: a branch relocating the 21 rules passes at 89,734 against a limit of 110,854; a branch then adding one 1,024-byte clause off that new main fails at 90,758 against a limit of 89,734 — the identical failure it has today; all three clauses fail by 3,072.
+Only a branch that relocates **and** adds passes, at 92,806 against 110,854.
+The gate's docstring says exactly this and it is easy to read past: no body grew past its ceiling *on this branch*.
 
-So the room is not a balance that a relocation deposits for later rows to draw
-on. It exists only inside the branch that makes it, and it is gone the moment
-that branch merges. A relocation filed as its own item unsticks nothing.
+So the room is not a balance that a relocation deposits for later rows to draw on.
+It exists only inside the branch that makes it, and it is gone the moment that branch merges.
+A relocation filed as its own item unsticks nothing.
 
-**And there is no second source to fall back on.** The lane working the small
-rows measured it while paying its own displacement: every unit in the file that
-can be cut without losing a claim is measured low-uptake, which is the
-relocation candidate set. Its first four sentence-compression passes over
-high-uptake prose returned 100, 22, 48 and 60 bytes. So a displacement may not
-be paid out of a relocation candidate — that spends the move's own room early
-and at a worse exchange rate than moving the rule wholesale.
+**And there is no second source to fall back on.** The lane working the small rows measured it while paying its own displacement: every unit in the file that can be cut without losing a claim is measured low-uptake, which is the relocation candidate set.
+Its first four sentence-compression passes over high-uptake prose returned 100, 22, 48 and 60 bytes.
+So a displacement may not be paid out of a relocation candidate — that spends the move's own room early and at a worse exchange rate than moving the rule wholesale.
 
-**What the residency reading licenses is a ranking, not a verdict.** Quote the
-union of `BLIND` and `FLAT` — 21 rules, 21,120 bytes — and never the split
-between them: re-taken three times on one base tree inside an hour it went 14/7,
-10/11, 8/13 while the union stayed byte-identical at a symmetric difference of
-zero. `BLIND` means *no firing anywhere in the corpus*, and `corpus` is summed across
-every arm including the authoring one — so the `--repo` flags that keep
-authoring sessions out of the reader arm cannot protect this boundary at all,
-and measurably do not: all six rules that left `BLIND` between two readings had
-their entire count in the authoring arm and zero in the reader arm. It is also
-a ratchet rather than a fluctuation while the transcript store keeps every
-session, since corpus counts are cumulative, so a rule leaves and does not come
-back and re-taking the reading will not average it out. The store does not keep
-every session: Claude Code deletes transcripts older than `cleanupPeriodDays`,
-365 days on this machine since 2026-08-26 and a 30-day default before that,
-with Desktop sessions exempt by default. The oldest transcript here on
-2026-11-01 was modified 2026-07-28, which is consistent with one prune and does
-not prove it. From around 2027-07-28 a rule can return to `BLIND` as the
-sessions carrying its firings age out. That instability is an argument for
-relocation and against deletion: whether a given rule is *unseen by the probe* or *seen and flat* is not a
-property anyone can hold still. Relocation is reversible and ships the rule
-either way, so a ranking is enough to decide what leaves the hot path. Deletion
-is not on the table at any ranking, because the reading cannot see a rule
-applied in the reader's own words.
+**What the residency reading licenses is a ranking, not a verdict.** Quote the union of `BLIND` and `FLAT` — 21 rules, 21,120 bytes — and never the split between them: re-taken three times on one base tree inside an hour it went 14/7, 10/11, 8/13 while the union stayed byte-identical at a symmetric difference of zero.
+`BLIND` means *no firing anywhere in the corpus*, and `corpus` is summed across every arm including the authoring one — so the `--repo` flags that keep authoring sessions out of the reader arm cannot protect this boundary at all, and measurably do not: all six rules that left `BLIND` between two readings had their entire count in the authoring arm and zero in the reader arm.
+It is also a ratchet rather than a fluctuation while the transcript store keeps every session, since corpus counts are cumulative, so a rule leaves and does not come back and re-taking the reading will not average it out.
+The store does not keep every session: Claude Code deletes transcripts older than `cleanupPeriodDays`, 365 days on this machine since 2026-08-26 and a 30-day default before that, with Desktop sessions exempt by default.
+The oldest transcript here on 2026-11-01 was modified 2026-07-28, which is consistent with one prune and does not prove it.
+From around 2027-07-28 a rule can return to `BLIND` as the sessions carrying its firings age out.
+That instability is an argument for relocation and against deletion: whether a given rule is *unseen by the probe* or *seen and flat* is not a property anyone can hold still.
+Relocation is reversible and ships the rule either way, so a ranking is enough to decide what leaves the hot path.
+Deletion is not on the table at any ranking, because the reading cannot see a rule applied in the reader's own words.
 
-**Every reading is stamped, since Q1016.** Beside `# verdicts:` the run prints
-`# stamp:`, with the measured file's blob, the corpus record count and the date,
-and `# union:`, with the union in rules and exact bytes; `--json` carries `blob`
-and `union`. A reading in Q1016's history was taken with the worktree on another
-branch's body, returned five verdict figures as plausible as a real reading's,
-named no blob, and reached a filed row through one review. The alternative was
-to exclude the sessions deciding a relocation from `corpus`. It was rejected:
-it holds still a split nothing reads, and it needs a rule for which sessions
-count as deciding, which has no clean answer, since a session reviewing a rule
-may also apply it. Revisit it if something comes to consume the `BLIND`/`FLAT`
-split itself.
+**Every reading is stamped, since Q1016.** Beside `# verdicts:` the run prints `# stamp:`, with the measured file's blob, the corpus record count and the date, and `# union:`, with the union in rules and exact bytes; `--json` carries `blob` and `union`.
+A reading in Q1016's history was taken with the worktree on another branch's body, returned five verdict figures as plausible as a real reading's, named no blob, and reached a filed row through one review.
+The alternative was to exclude the sessions deciding a relocation from `corpus`.
+It was rejected: it holds still a split nothing reads, and it needs a rule for which sessions count as deciding, which has no clean answer, since a session reviewing a rule may also apply it.
+Revisit it if something comes to consume the `BLIND`/`FLAT` split itself.
 
-**Below ten reader sessions the verdicts are withheld, since Q1030.** A verdict
-compares a rule's rate after the load with its rate before, and over one session
-a single firing after the load reads `RAN`, printed in the same form as a
-reading over eighty. The run now prints the table and puts `withheld` and the
-reader count on the `# verdicts:` and `# union:` lines. Ten was chosen, not
-measured: every reference file held one reader session or none on 2026-11-01,
-and every published reading held 85 or more, so any floor between refuses the
-first and accepts the second. Move it when a reading shows a ranking settling,
-or failing to, at some other sample size.
+**Below ten reader sessions the verdicts are withheld, since Q1030.** A verdict compares a rule's rate after the load with its rate before, and over one session a single firing after the load reads `RAN`, printed in the same form as a reading over eighty.
+The run now prints the table and puts `withheld` and the reader count on the `# verdicts:` and `# union:` lines.
+Ten was chosen, not measured: every reference file held one reader session or none on 2026-11-01, and every published reading held 85 or more, so any floor between refuses the first and accepts the second.
+Move it when a reading shows a ranking settling, or failing to, at some other sample size.
 
-The move is Q1014, and it carries the three parked clauses in its own branch
-rather than promising them room afterwards. It was filed rather than made
-because a concurrent lane was editing the same body and repointing the same
-citations, which is the case where neither branch can settle a citation.
+The move is Q1014, and it carries the three parked clauses in its own branch rather than promising them room afterwards.
+It was filed rather than made because a concurrent lane was editing the same body and repointing the same citations, which is the case where neither branch can settle a citation.
 
-**What landed, 2026-10-04.** The move took the 20 rules of the union re-read that
-day, 18,531 bytes ([verify-claims-residency.md](verify-claims-residency.md) has
-the reading). By then six more rows besides the three had parked clauses on the
-same branch — Q259, Q1017, Q1019, Q1024, Q1025 and Q1026 — and the maintainer
-chose to land all nine here rather than strand six, since a clause arriving after
-the merge fails the same way the three did before it. The body ended at 99,832
-bytes against the 110,836 it measured on the merge base. Two rows stayed out:
-Q1018, an open question deferred on a room trigger, and Q1005, which has a
-repair needing no room. From this merge on, an addition names what it displaces
-again, and the inventory the 2026-10-04 reading named is spent.
+**What landed, 2026-10-04.** The move took the 20 rules of the union re-read that day, 18,531 bytes ([verify-claims-residency.md](verify-claims-residency.md) has the reading).
+By then six more rows besides the three had parked clauses on the same branch — Q259, Q1017, Q1019, Q1024, Q1025 and Q1026 — and the maintainer chose to land all nine here rather than strand six, since a clause arriving after the merge fails the same way the three did before it.
+The body ended at 99,832 bytes against the 110,836 it measured on the merge base.
+Two rows stayed out: Q1018, an open question deferred on a room trigger, and Q1005, which has a repair needing no room.
+From this merge on, an addition names what it displaces again, and the inventory the 2026-10-04 reading named is spent.
 
-**A second move, the same day.** Q1027 took the incident narratives out of
-every rule rather than taking whole rules out: each rule kept its bold lead,
-its mechanism and at most a sentence of exhibit, and the date, the repository
-and the counts went to `references/exhibits.md`, keyed by lead. That left the
-body 99,832 → 93,018 bytes, and the maintainer chose to spend the room in the
-same branch on five rows rather than lose it at the merge: Q1018, which the
-maintainer's choice also routed here rather than to `gate-audit`, and the four
-ready rows Q292, Q298, Q300 and Q301. Q292 went into `further-rules.md`, the
-placement its own row named as cheapest, so it took no body bytes. The figure
-above includes the other four. The ready rows were not parked on room, so this
-is a choice about what rides in a shrinking branch, not a rule that later ones
-must.
+**A second move, the same day.** Q1027 took the incident narratives out of every rule rather than taking whole rules out: each rule kept its bold lead, its mechanism and at most a sentence of exhibit, and the date, the repository and the counts went to `references/exhibits.md`, keyed by lead.
+That left the body 99,832 → 93,018 bytes, and the maintainer chose to spend the room in the same branch on five rows rather than lose it at the merge: Q1018, which the maintainer's choice also routed here rather than to `gate-audit`, and the four ready rows Q292, Q298, Q300 and Q301.
+Q292 went into `further-rules.md`, the placement its own row named as cheapest, so it took no body bytes.
+The figure above includes the other four.
+The ready rows were not parked on room, so this is a choice about what rides in a shrinking branch, not a rule that later ones must.
 
-**What would reverse it:** a residency instrument that separates consulted from
-applied, which would turn the ranking into a verdict and put deletion back on
-the table. Or a grandfather keyed to something other than the merge base — a
-recorded high-water mark rather than a re-read of main — which would make room
-bankable and let the move and its spenders be separate items again.
+**What would reverse it:** a residency instrument that separates consulted from applied, which would turn the ranking into a verdict and put deletion back on the table.
+Or a grandfather keyed to something other than the merge base — a recorded high-water mark rather than a re-read of main — which would make room bankable and let the move and its spenders be separate items again.
 
-**Superseded 2026-10-25 by the entry below**, which takes the body under its
-ceiling. Once the limit is the ceiling rather than the merge base, room under it
-carries from one branch to the next, so the one-branch rule above stops binding.
+**Superseded 2026-10-25 by the entry below**, which takes the body under its ceiling.
+Once the limit is the ceiling rather than the merge base, room under it carries from one branch to the next, so the one-branch rule above stops binding.
 
 ## `verify-claims` reaches its ceiling by moment, not by uptake
 
-The entry above relocated by uptake and said, correctly, that uptake cannot
-reach 24 KiB. This one splits by the moment a rule applies, which can. The body
-went from 93,018 bytes to 17,769, measured with `wc -c` on 2026-10-25, and
-every rule it lost sits whole in one of six files under
-`skills/verify-claims/references/`: `reading-a-result.md`,
-`negatives-and-controls.md` and `counts.md` from §1, then
-`trusting-a-check.md`, `writing-a-check.md` and `stating-a-fact.md` from §2,
-§3 and §6.
+The entry above relocated by uptake and said, correctly, that uptake cannot reach 24 KiB.
+This one splits by the moment a rule applies, which can.
+The body went from 93,018 bytes to 17,769, measured with `wc -c` on 2026-10-25, and every rule it lost sits whole in one of six files under `skills/verify-claims/references/`: `reading-a-result.md`, `negatives-and-controls.md` and `counts.md` from §1, then `trusting-a-check.md`, `writing-a-check.md` and `stating-a-fact.md` from §2, §3 and §6.
 
-**The cut follows the pointer shape, because only one shape gets read.** Each
-section of the body now opens with a plain sentence naming the moment and the
-file: "Before a zero, an empty result … decides anything, read
-`references/negatives-and-controls.md`. You leave it holding …". This is
-inherited from `claude-skills`, not measured here. Its Q316 found a file behind
-a pointer of that form read by 54–80% of sessions, while the three pointers this
-body already had, each appended after a rule's gist, scored 0 reads in 77
-firings (claude-skills Q312, 2026-09-12). `verify-claims` has no step sequence,
-so each pointer names a moment a session reaches by acting — before a result
-becomes a verdict, before a count goes in a sentence, before writing a test,
-before writing a PR body — and the moments are the ones *Fire this when*
-already lists. The pointers are plain rather than bold so
-`scripts/rule-residency.py` does not count them as rules.
+**The cut follows the pointer shape, because only one shape gets read.** Each section of the body now opens with a plain sentence naming the moment and the file: "Before a zero, an empty result … decides anything, read `references/negatives-and-controls.md`.
+You leave it holding …".
+This is inherited from `claude-skills`, not measured here.
+Its Q316 found a file behind a pointer of that form read by 54–80% of sessions, while the three pointers this body already had, each appended after a rule's gist, scored 0 reads in 77 firings (claude-skills Q312, 2026-09-12).
+`verify-claims` has no step sequence, so each pointer names a moment a session reaches by acting — before a result becomes a verdict, before a count goes in a sentence, before writing a test, before writing a PR body — and the moments are the ones *Fire this when* already lists.
+The pointers are plain rather than bold so `scripts/rule-residency.py` does not count them as rules.
 
-**What stayed in the body** is what binds at every moment or is the procedure
-the others feed: the move, *Fire this when*, the four sources of an
-unfalsifiable check, *A negative needs a positive control* (the most-used rule
-in the reading above), *The probe is not the gate*, *Delete the mechanism* with
-its bullets, and §4 and §5 whole. §4's trailing pointer to
-`timing-and-concurrency.md` became an opening one.
+**What stayed in the body** is what binds at every moment or is the procedure the others feed: the move, *Fire this when*, the four sources of an unfalsifiable check, *A negative needs a positive control* (the most-used rule in the reading above), *The probe is not the gate*, *Delete the mechanism* with its bullets, and §4 and §5 whole. §4's trailing pointer to `timing-and-concurrency.md` became an opening one.
 
-**Two consequences to know about.** The 6,807 bytes under the ceiling are room
-that later branches can spend, which the one-branch rule above never allowed.
-And `scripts/rule-residency.py` reads one file, and of the 86 lines that opened
-with a bold rule lead in the old body, 4 remain in the new one (counted with a
-`^\*\*` match, not with the script). Re-taking the residency table needs the
-reference files counted as well.
+**Two consequences to know about.** The 6,807 bytes under the ceiling are room that later branches can spend, which the one-branch rule above never allowed.
+And `scripts/rule-residency.py` reads one file, and of the 86 lines that opened with a bold rule lead in the old body, 4 remain in the new one (counted with a `^\*\*` match, not with the script).
+Re-taking the residency table needs the reference files counted as well.
 
-**What would reverse it:** a forward reading, taken over firings after this
-merges, showing the six files read at the rate of the appended pointers rather
-than the in-step ones. That would mean a subject skill's moments are not
-reached the way a procedure's steps are, and the content would have to come
-back or move to a hook's payload.
+**What would reverse it:** a forward reading, taken over firings after this merges, showing the six files read at the rate of the appended pointers rather than the in-step ones.
+That would mean a subject skill's moments are not reached the way a procedure's steps are, and the content would have to come back or move to a hook's payload.
 
 ## A description one character under the cap is not a problem to solve
 
-`verify-claims` measures 1023 against the 1024-character cap, and three rules
-landed on it in one batch without room for a matcher clause apiece. Q234 asked
-what to do about that. The answer is nothing, and the reason is worth keeping
-so the next batch does not re-open it.
+`verify-claims` measures 1023 against the 1024-character cap, and three rules landed on it in one batch without room for a matcher clause apiece.
+Q234 asked what to do about that.
+The answer is nothing, and the reason is worth keeping so the next batch does not re-open it.
 
-**Nothing in the invocation table says winning characters back would help.**
-Over 2,048 local transcripts on 2026-09-19, counting `Skill` calls deduped per
-session and splitting authoring sessions out the way `scripts/rule-residency.py`
-does, `verify-claims` fires in 85 reader sessions — first, and 30 clear of
-second. Its description is the longest in the repo. `deslop` is second at 55 and
-its description is the *shortest*, 549 characters with 475 to spare;
-`tech-docs-layers` has 108 characters going unused and fires in 5.
+**Nothing in the invocation table says winning characters back would help.** Over 2,048 local transcripts on 2026-09-19, counting `Skill` calls deduped per session and splitting authoring sessions out the way `scripts/rule-residency.py` does, `verify-claims` fires in 85 reader sessions — first, and 30 clear of second.
+Its description is the longest in the repo.
+`deslop` is second at 55 and its description is the *shortest*, 549 characters with 475 to spare; `tech-docs-layers` has 108 characters going unused and fires in 5.
 
-**That is weaker than "length does not predict invocation", which is what this
-entry first said and could not support.** Correlating the ten lengths against
-the ten reader counts gives Pearson **−0.319** and Spearman **+0.394** — the
-signs disagree, because `deslop` is a leverage point 367 characters from its
-nearest neighbour. Drop it and the remaining nine give Spearman **+0.767**: by
-rank the data trends *opposite* to the null. Neither figure carries much, and
-that is the finding. Nine of the ten descriptions span 916–1023, about a tenth
-of the cap, while calls span 28-fold — a nearly constant predictor against a
-wildly varying outcome, so the design cannot see a length effect in either
-direction. Reverse causation fits at least as well: a skill that fires
-constantly is edited constantly, and editing accretes description text toward
-the cap.
+**That is weaker than "length does not predict invocation", which is what this entry first said and could not support.** Correlating the ten lengths against the ten reader counts gives Pearson **−0.319** and Spearman **+0.394** — the signs disagree, because `deslop` is a leverage point 367 characters from its nearest neighbour.
+Drop it and the remaining nine give Spearman **+0.767**: by rank the data trends *opposite* to the null.
+Neither figure carries much, and that is the finding.
+Nine of the ten descriptions span 916–1023, about a tenth of the cap, while calls span 28-fold — a nearly constant predictor against a wildly varying outcome, so the design cannot see a length effect in either direction.
+Reverse causation fits at least as well: a skill that fires constantly is edited constantly, and editing accretes description text toward the cap.
 
 None of that disturbs the decision, which needs only that no payoff is visible.
-It is also about length rather than breadth, so it leaves untouched the caution
-that a broader description is the failure mode.
+It is also about length rather than breadth, so it leaves untouched the caution that a broader description is the failure mode.
 
-**A rule with no dedicated clause is usually not unreachable.** Q234 named two
-subjects it read as unreachable — a population counted off a view already
-filtered by outcome, and a census returning nearly its whole population. Both
-are counts, and the description carries *when a probe, grep, scan, or count is
-about to justify a decision*. Neither `census` nor `population` appears, which
-is the correct shape: a general clause reaches them and no dedicated one names
-them. Before arguing that a rule needs its own clause, check the general ones.
+**A rule with no dedicated clause is usually not unreachable.** Q234 named two subjects it read as unreachable — a population counted off a view already filtered by outcome, and a census returning nearly its whole population.
+Both are counts, and the description carries *when a probe, grep, scan, or count is about to justify a decision*.
+Neither `census` nor `population` appears, which is the correct shape: a general clause reaches them and no dedicated one names them.
+Before arguing that a rule needs its own clause, check the general ones.
 
-**What would reverse it:** a forward-scored reading — of calls arriving after a
-wording ships, never over the turns it was harvested from — showing sessions
-that had the subject in hand and did not fire the skill. That is the measurement
-this entry does not have, and the only one that could show the cap costing
-something. `scripts/validate-skills.py --report <skill>` is where any character
-count in that argument comes from. Q234 recorded the fold that motivated Q229 as
-wrong on 12 of the 21 skills in the collection this repo was extracted from. It
-does not reproduce here: folding each of the ten descriptions by hand agrees
-with the gate on all ten. Ask the enforcer because the fold is reimplemented,
-not because it is observably failing.
+**What would reverse it:** a forward-scored reading — of calls arriving after a wording ships, never over the turns it was harvested from — showing sessions that had the subject in hand and did not fire the skill.
+That is the measurement this entry does not have, and the only one that could show the cap costing something.
+`scripts/validate-skills.py --report <skill>` is where any character count in that argument comes from.
+Q234 recorded the fold that motivated Q229 as wrong on 12 of the 21 skills in the collection this repo was extracted from.
+It does not reproduce here: folding each of the ten descriptions by hand agrees with the gate on all ten.
+Ask the enforcer because the fold is reimplemented, not because it is observably failing.
 
 ## The style and `deslop` target the tells the current model writes
 
 Opus 5.5 replaced Opus 5 on this workstation on 2026-09-25, and the tells moved.
-Measured 2026-11-01 over local session transcripts (1,821 Opus 5 sessions, 419
-Opus 5.5), counting the main conversation only, all under the Clarity style
-except one Opus 5 baseline taken before 2026-09-13:
+Measured 2026-11-01 over local session transcripts (1,821 Opus 5 sessions, 419 Opus 5.5), counting the main conversation only, all under the Clarity style except one Opus 5 baseline taken before 2026-09-13:
 
 | Per 1k words | Opus 5 | Opus 5.5 |
 |---|---|---|
@@ -800,54 +469,32 @@ except one Opus 5 baseline taken before 2026-09-13:
 | Em dashes, Markdown written | 9.1 | 1.0 |
 | `deslop` hard vocabulary, Markdown written | 0.03 | 0.06 |
 
-A bold sentence opening a paragraph (`**Do this.** Because…`) stayed flat at
-about 3 per 1k in both, so the defect is the colon label, not bold leads.
-Opening narration ("let me…") fell from 15% of first messages to 1.4%, and
-hedges sat near 0.2 per 1k under every model and style. So Clarity dropped its
-hedging and narration rules and gained rules against bullets and labelled lines,
-and `deslop` moved its word, phrase and em-dash lists to
-`references/tell-catalog.md`. The linter still checks them, and now flags
-labelled lines too.
+A bold sentence opening a paragraph (`**Do this.** Because…`) stayed flat at about 3 per 1k in both, so the defect is the colon label, not bold leads.
+Opening narration ("let me…") fell from 15% of first messages to 1.4%, and hedges sat near 0.2 per 1k under every model and style.
+So Clarity dropped its hedging and narration rules and gained rules against bullets and labelled lines, and `deslop` moved its word, phrase and em-dash lists to `references/tell-catalog.md`.
+The linter still checks them, and now flags labelled lines too.
 
-There is no Opus 5.5 run without the style, so a rule that dropped out may have
-been holding 5.5 down rather than going unused. The workload mix also differs:
-more Opus 5.5 sessions were dispatched workers, and only the reply figures
-exclude them.
+There is no Opus 5.5 run without the style, so a rule that dropped out may have been holding 5.5 down rather than going unused.
+The workload mix also differs: more Opus 5.5 sessions were dispatched workers, and only the reply figures exclude them.
 
-**What would reverse it:** an A/B over a fixed prompt set showing Opus 5.5
-narrates or hedges again once the removed rules are gone, or a model whose tell
-profile moves back toward the word lists.
+**What would reverse it:** an A/B over a fixed prompt set showing Opus 5.5 narrates or hedges again once the removed rules are gone, or a model whose tell profile moves back toward the word lists.
 
 ## A suite that avoids the corpus may fabricate one
 
-`scripts/test-rule-residency.sh` was written to stay off `~/.claude/projects`,
-because that tree is machine state and a check reading it changes answer between
-runs. That left nothing checking the two outputs that say which reading a run
-took: the `# authoring repos` line on stderr and the `repos` and `verdict` keys
-in `--json`. A reading taken on 2026-09-19 swung from 21 low-uptake rules to 26
-and back, and the repos line was the only thing in the output saying the larger
-one was the bare run, so it is the line worth gating.
+`scripts/test-rule-residency.sh` was written to stay off `~/.claude/projects`, because that tree is machine state and a check reading it changes answer between runs.
+That left nothing checking the two outputs that say which reading a run took: the `# authoring repos` line on stderr and the `repos` and `verdict` keys in `--json`.
+A reading taken on 2026-09-19 swung from 21 low-uptake rules to 26 and back, and the repos line was the only thing in the output saying the larger one was the bare run, so it is the line worth gating.
 
-The suite now builds its own transcript tree in a temp directory, two projects
-with one four-record session each, and points the module's `PROJECTS` global at
-it. Nothing on the machine is read, so the answers are fixed by construction
-like the rest of the suite's. Adding the arm took the whole suite from 0.22 s
-to 0.28 s over three warm runs on 2026-11-01, and from 0.24–0.27 s to
-0.35–0.40 s on a loaded machine in review, so the cost is a fraction of a
-second either way.
+The suite now builds its own transcript tree in a temp directory, two projects with one four-record session each, and points the module's `PROJECTS` global at it.
+Nothing on the machine is read, so the answers are fixed by construction like the rest of the suite's.
+Adding the arm took the whole suite from 0.22 s to 0.28 s over three warm runs on 2026-11-01, and from 0.24–0.27 s to 0.35–0.40 s on a loaded machine in review, so the cost is a fraction of a second either way.
 
-**It asserts the discrimination, not the wording.** One corpus is read twice,
-each run marking the other project as authoring, and the checks require each
-run's first stderr line to name its own repo and not the other's, each `--json`
-to record its own `repos`, and the verdict tables to come out `[RAN, FLAT]` and
-`[FLAT, RAN]`. None of them matches the `# authoring repos:` prefix, so renaming
-it does not redden anything; dropping it does. The script's JSON is read with
-`.get`, so a missing key fails a named assertion and the rest still run. A probe
-that indexed the keys directly died on `KeyError` before any assertion ran,
-and reported two of these mutants by exit status alone.
+**It asserts the discrimination, not the wording.** One corpus is read twice, each run marking the other project as authoring, and the checks require each run's first stderr line to name its own repo and not the other's, each `--json` to record its own `repos`, and the verdict tables to come out `[RAN, FLAT]` and `[FLAT, RAN]`.
+None of them matches the `# authoring repos:` prefix, so renaming it does not redden anything; dropping it does.
+The script's JSON is read with `.get`, so a missing key fails a named assertion and the rest still run.
+A probe that indexed the keys directly died on `KeyError` before any assertion ran, and reported two of these mutants by exit status alone.
 
-Measured 2026-11-01 against the shipped script, with each mutation confirmed by
-`cmp` before its run:
+Measured 2026-11-01 against the shipped script, with each mutation confirmed by `cmp` before its run:
 
 | mutant | assertions red | assertions run |
 |---|---|---|
@@ -857,73 +504,63 @@ Measured 2026-11-01 against the shipped script, with each mutation confirmed by
 | ignore `--repo`, always `[default_repo()]` | 3 | 13 |
 | harness: drop the `PROJECTS` reassignment | 3 | 13 |
 
-**Only a whole-stderr comparison would depend on the fixture, and none is
-asserted.** The two sessions have equal block counts, so the runs' stderr
-differs only in the repos line, and whether two runs' stderr differs at all
-turns on that symmetry. The first-line check names the repo instead. The verdict
-check does not lean on it: with one unrelated action block added to one session,
-before the load or after it, the tables still read `[RAN, FLAT]` and
-`[FLAT, RAN]`, and ignoring `--repo` still gives both readings one shared table
-(`[FLAT, FLAT]` with the block after the load, `[RAN, RAN]` with it before), so
-the check fails either way.
+**Only a whole-stderr comparison would depend on the fixture, and none is asserted.** The two sessions have equal block counts, so the runs' stderr differs only in the repos line, and whether two runs' stderr differs at all turns on that symmetry.
+The first-line check names the repo instead.
+The verdict check does not lean on it: with one unrelated action block added to one session, before the load or after it, the tables still read `[RAN, FLAT]` and `[FLAT, RAN]`, and ignoring `--repo` still gives both readings one shared table (`[FLAT, FLAT]` with the block after the load, `[RAN, RAN]` with it before), so the check fails either way.
 
-This meets the bar the linter entry above set: the check is certain and its
-repair is mechanical. A key is present or it is not, and the fix is to restore
-the line.
+This meets the bar the linter entry above set: the check is certain and its repair is mechanical.
+A key is present or it is not, and the fix is to restore the line.
 
-**What would reverse it:** the arm reaches the script through one module global,
-`PROJECTS`. A refactor that makes the projects root an argument or a class
-attribute breaks that seam, and the arm has to move with it rather than be
-dropped. A suite with no corpus at all is right again only if the selection
-outputs stop existing.
+**What would reverse it:** the arm reaches the script through one module global, `PROJECTS`.
+A refactor that makes the projects root an argument or a class attribute breaks that seam, and the arm has to move with it rather than be dropped.
+A suite with no corpus at all is right again only if the selection outputs stop existing.
 
 ## A reference file's window opens at its first whole Read
 
-`scripts/rule-residency.py` split each session at its first `Skill` call, which
-is when a `SKILL.md` enters context. A file under `references/` enters at a
-Read of that file, so pointed at one the probe now opens the window there
-instead, and measures only the sessions that made such a Read.
+`scripts/rule-residency.py` split each session at its first `Skill` call, which is when a `SKILL.md` enters context.
+A file under `references/` enters at a Read of that file, so pointed at one the probe now opens the window there instead, and measures only the sessions that made such a Read.
 
-**Readers are the sessions that read the file, not the sessions that invoked
-the skill.** On this machine the two sets do not overlap at all. Measured 2026-11-01 over local
-transcripts, none of the 98 reader sessions invoking `verify-claims` had read
-any of its eleven reference files whole, and every reader-arm whole Read on
-record came from a session that never invoked the skill. Reusing the
-Skill-call split would have counted all 98 invoking sessions as readers of
-every file, and missed both sessions that did read one. Of those 98, 97 predate
-the split and had the six carved-out files' rules loaded from `SKILL.md`, but
-none of them read the file the reading is about.
+**Readers are the sessions that read the file, not the sessions that invoked the skill.** On this machine the two sets do not overlap at all.
+Measured 2026-11-01 over local transcripts, none of the 98 reader sessions invoking `verify-claims` had read any of its eleven reference files whole, and every reader-arm whole Read on record came from a session that never invoked the skill.
+Reusing the Skill-call split would have counted all 98 invoking sessions as readers of every file, and missed both sessions that did read one.
+Of those 98, 97 predate the split and had the six carved-out files' rules loaded from `SKILL.md`, but none of them read the file the reading is about.
 
-**Only a whole-file Read is a load.** A Read with an offset or a limit, a grep
-or an Edit shows the session part of the file or none of it. Of the reader-arm
-accesses on record, most were greps from sessions checking whether a trap was
-already documented and three were three-line Reads. Counting those would have
-made the authoring-like traffic of filing a row look like reading.
+**Only a whole-file Read is a load.** A Read with an offset or a limit, a grep or an Edit shows the session part of the file or none of it.
+Of the reader-arm accesses on record, most were greps from sessions checking whether a trap was already documented and three were three-line Reads.
+Counting those would have made the authoring-like traffic of filing a row look like reading.
 
-**The control stays the same session before the load.** Its weakness is that
-a pointer sends a session to the file at the moment the file's subject comes
-up, so vocabulary can rise after the Read for reasons the file did not cause.
-The alternative, comparing readers against invoking sessions that never read
-the file, had no data to choose on: one reader session per file at most. The
-in-session control matches what the `SKILL.md` reading already does, so a
-reference reading and a body reading stay comparable.
+**The control stays the same session before the load.** Its weakness is that a pointer sends a session to the file at the moment the file's subject comes up, so vocabulary can rise after the Read for reasons the file did not cause.
+The alternative, comparing readers against invoking sessions that never read the file, had no data to choose on: one reader session per file at most.
+The in-session control matches what the `SKILL.md` reading already does, so a reference reading and a body reading stay comparable.
 
-**The run prints the file's read rate** among reader sessions invoking the
-skill, because that is the measurement named by the reversal condition of
-*`verify-claims` reaches its ceiling by moment, not by uptake*. On 2026-11-01
-it was 0 of 98 for every file, with one of the 98 after the split, so the
-condition has not been tested. The denominator counts every invoking session,
-including those from before a file existed, which is why a rate taken this
-early says little.
+**The run prints the file's read rate** among reader sessions invoking the skill, because that is the measurement named by the reversal condition of *`verify-claims` reaches its ceiling by moment, not by uptake*.
+On 2026-11-01 it was 0 of 98 for every file, with one of the 98 after the split, so the condition has not been tested.
+The denominator counts every invoking session, including those from before a file existed, which is why a rate taken this early says little.
 
-**The window is keyed on the file's path, not its content.** A reader is
-measured against the rules the file holds today. The one `shell-traps.md`
-reader read a 15-lead version in `claude-skills` (`363250a`), and the file now
-holds 45, so 30 rules get a `POST` window that reader never saw. Nothing in
-the probe detects this, so a reading of a file that changed under its readers
-needs saying so wherever it is quoted.
+**The window is keyed on the file's path, not its content.** A reader is measured against the rules the file holds today.
+The one `shell-traps.md` reader read a 15-lead version in `claude-skills` (`363250a`), and the file now holds 45, so 30 rules get a `POST` window that reader never saw.
+Nothing in the probe detects this, so a reading of a file that changed under its readers needs saying so wherever it is quoted.
 
-**What would reverse it:** enough readers per file to run both controls side by
-side and find that they disagree, which would mean topic onset is what the
-in-session control measures. Or Claude Code recording a reference file's load
-as something other than a Read, which moves the boundary.
+**What would reverse it:** enough readers per file to run both controls side by side and find that they disagree, which would mean topic onset is what the in-session control measures.
+Or Claude Code recording a reference file's load as something other than a Read, which moves the boundary.
+
+## Markdown is one sentence per line, and a formatter places the breaks
+
+A hard-wrapped paragraph moves every line after the word that changed, so a one-word edit reads as a rewritten paragraph and two branches touching different sentences of it conflict.
+With one sentence per line, the diff is the sentences that changed.
+
+mdreflow places the breaks, and `md-reflow-check` runs in `make check` and in CI.
+`tools/go.mod` pins the version, so a release cannot turn the gate red over prose nobody edited.
+
+**The check fails rather than warns** because `make md-reflow` is the whole repair and leaves nothing to decide.
+
+**A `tool` directive rather than a vendored copy.** Vendoring would put another project's Markdown and licence in a repo whose content people install, and `go.sum` already refuses a module that does not match its checksum.
+
+**The adopting commit is format-only and was checked by rendering.** Measured 2026-11-23 on mdreflow v0.3.0: 34 of 36 files changed and none declined a paragraph; the other two are linter fixtures, excluded because their line breaks are input.
+All 36 rendered to the same HTML through `markdown-it-py` before and after, with whitespace outside `<pre>` collapsed.
+
+**It costs a skill body a few bytes.** A break inside a list item adds that item's indent, which came to 402 bytes across the ten bodies, or 0.3%.
+One was already frozen at its merge-base size and grew 69, so a sentence came out of it first.
+
+**What would reverse it:** mdreflow changing what a file renders to, or a sentence it cannot break becoming common enough that the diffs stop being per-sentence.
+Today that second case is a sentence ending inside bold, a link or code, which the formatter joins to the next one; [jbeda/mdreflow#2](https://github.com/jbeda/mdreflow/issues/2) reports the link case.

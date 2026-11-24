@@ -1,0 +1,6 @@
+# Commits that moved line breaks and changed no prose. GitHub reads this file
+# on its own; a clone needs it configured once:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: reflow Markdown to one sentence per line
+a8c6b711eb5ab227795bff06047fd8659ca6078a

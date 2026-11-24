@@ -27,11 +27,11 @@ TEST_FILES := $(shell $(LS_FILES) '*/scripts/test-*.sh' 'scripts/test-*.sh')
 
 .PHONY: help
 help: ## List the available targets
-	@awk 'BEGIN { FS = ":.*##" } /^[a-zA-Z_-]+:.*##/ { printf "  \033[1m%-8s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	@awk 'BEGIN { FS = ":.*##" } /^[a-zA-Z_-]+:.*##/ { printf "  \033[1m%-17s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
 # Everything CI gates on, in the order a failure is cheapest to read.
 .PHONY: check
-check: lint-sh lint-py validate test ## Run every gate CI runs
+check: lint-sh lint-py md-reflow-check validate test ## Run every gate CI runs
 
 .PHONY: lint-sh
 lint-sh: ## Run shellcheck over every committable shell script
@@ -43,6 +43,26 @@ lint-sh: ## Run shellcheck over every committable shell script
 .PHONY: lint-py
 lint-py: ## Run ruff over every committable Python script
 	pipx run ruff check --select E4,E7,E9,F $(PY_FILES)
+
+# tools/go.mod pins the formatter and tools/go.sum its checksum. `go tool -n`
+# prints the path of a cached build keyed on that pin, so an upgrade cannot leave
+# an old binary answering. The first run downloads it.
+MDREFLOW := "$$(go -C tools tool -n mdreflow)"
+
+.PHONY: md-reflow
+md-reflow: ## Reflow Markdown prose to one sentence per line
+	$(MDREFLOW) .
+
+# Exit 1 is the only status reflowing repairs; 2 is a bad config or flag.
+.PHONY: md-reflow-check
+md-reflow-check: ## Fail on Markdown that is not one sentence per line
+	@$(MDREFLOW) --check . || { rc=$$?; \
+	    [ $$rc -ne 1 ] || echo "Run 'make md-reflow' and commit the result." >&2; \
+	    exit $$rc; }
+
+.PHONY: md-reflow-explain
+md-reflow-explain: ## Name each paragraph mdreflow declines to reflow, and why
+	$(MDREFLOW) --explain --check .
 
 # The body-ceiling check grandfathers each skill at the size it measured on the
 # merge base, so it needs one. Without a base it says so loudly and measures
