@@ -2,11 +2,11 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash",
+        "matcher": "Bash|PowerShell",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/clarity-reminder.py\"",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/scripts/run-python-hook.cmd\" clarity-reminder.py",
             "timeout": 30
           }
         ]

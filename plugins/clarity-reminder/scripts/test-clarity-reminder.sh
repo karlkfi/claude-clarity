@@ -19,6 +19,14 @@ hook="$here/clarity-reminder.py"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
+# Native Windows Python cannot open the /tmp or /c/... paths Git Bash hands out,
+# and Claude Code passes the hook Windows ones.
+if command -v cygpath >/dev/null 2>&1; then
+    tmp="$(cygpath -m "$tmp")"
+    here="$(cygpath -m "$here")"
+    hook="$here/clarity-reminder.py"
+fi
+
 fail=0
 
 # A git repo with one commit behind it, so the index has something to differ
@@ -53,11 +61,12 @@ transcript() {
 
 json() { printf '%s' "$1" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read()))'; }
 
-# $1 label, $2 expected verdict, $3 command, $4 cwd, $5 transcript.
+# $1 label, $2 expected verdict, $3 command, $4 cwd, $5 transcript. TOOL in the
+# environment names the tool making the call.
 expect() {
     local label="$1" want="$2" got
-    got="$(printf '{"tool_name":"Bash","tool_input":{"command":%s},"cwd":%s,"transcript_path":%s}' \
-        "$(json "$3")" "$(json "$4")" "$(json "$5")" | python3 "$hook" | python3 -c '
+    got="$(printf '{"tool_name":"%s","tool_input":{"command":%s},"cwd":%s,"transcript_path":%s}' \
+        "${TOOL:-Bash}" "$(json "$3")" "$(json "$4")" "$(json "$5")" | python3 "$hook" | python3 -c '
 import json,sys
 raw = sys.stdin.read().strip()
 if not raw:
@@ -73,6 +82,17 @@ else:
         printf 'FAIL %s — wanted %s, got %s\n' "$label" "$want" "$got" >&2
         fail=1
     fi
+}
+
+# $1 label, $2 the hook's raw output.
+denied() {
+    case "$2" in
+        *'"permissionDecision": "deny"'*)
+            printf 'ok   %s\n' "$1" ;;
+        *)
+            printf 'FAIL %s — printed: %s\n' "$1" "$2" >&2
+            fail=1 ;;
+    esac
 }
 
 three="$(repo three a.go b.go c.go)"
@@ -91,6 +111,19 @@ expect "commit named in an unrelated word"             silent 'grep commit a.go'
 expect "an inline override is silent"                  silent "CLARITY_REMINDER_OVERRIDE=typo $commit" "$three" "$none"
 expect "a commit later in an && chain still denies"    deny   "make check && $commit" "$three" "$none"
 expect "a directory that is not a repo stays silent"   silent "$commit" "$tmp"   "$none"
+
+TOOL=PowerShell \
+    expect "a PowerShell commit is held like a Bash one"   deny   "$commit" "$three" "$none"
+TOOL=PowerShell \
+    expect "a PowerShell override is silent"               silent "\$env:CLARITY_REMINDER_OVERRIDE = 'typo'; $commit" "$three" "$none"
+TOOL=Read \
+    expect "a tool that is not a shell is silent"          silent "$commit" "$three" "$none"
+
+# Printed raw rather than through json(), which would escape it to ASCII.
+accent="$(repo café a.go b.go c.go)"
+got="$(printf '{"tool_name":"Bash","tool_input":{"command":"%s"},"cwd":"%s","transcript_path":"%s"}' \
+    "$commit" "$accent" "$none" | python3 "$hook")"
+denied "a non-ASCII project path still denies" "$got"
 
 # Staged nothing, but `-a` sweeps a tracked modification into the commit.
 dasha="$(repo dasha a.go b.go c.go)"
@@ -162,6 +195,28 @@ else
     printf 'FAIL the met rule was not dropped: %s\n' "$one_reason" >&2
     fail=1
 fi
+
+# The cases above call the script directly, so they pass whatever hooks.json
+# says. These two read the matcher and run the command it ships.
+hooks="$here/../hooks/hooks.json"
+wired="$(python3 -c '
+import json,re,sys
+h = json.load(open(sys.argv[1]))["hooks"]["PreToolUse"][0]
+print(" ".join(t for t in ("Bash", "PowerShell", "Read") if re.fullmatch(h["matcher"], t)))' "$hooks" | tr -d '\r')"
+if [ "$wired" = "Bash PowerShell" ]; then
+    printf 'ok   hooks.json matches both shells and nothing else\n'
+else
+    printf 'FAIL hooks.json matches: %s\n' "$wired" >&2
+    fail=1
+fi
+
+shipped="$(python3 -c '
+import json,sys
+print(json.load(open(sys.argv[1]))["hooks"]["PreToolUse"][0]["hooks"][0]["command"])' "$hooks" | tr -d '\r')"
+got="$(printf '{"tool_name":"Bash","tool_input":{"command":%s},"cwd":%s,"transcript_path":%s}' \
+    "$(json "$commit")" "$(json "$three")" "$(json "$none")" \
+    | CLAUDE_PLUGIN_ROOT="$here/.." bash -c "$shipped" || true)"
+denied "the command hooks.json ships reaches the hook" "$got"
 
 if [ "$fail" -eq 0 ]; then
     echo "test-clarity-reminder: all checks passed"
