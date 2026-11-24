@@ -1,0 +1,11 @@
+# One sentence per line in every Markdown file. A one-sentence edit is then a
+# one-line diff, and a reworded paragraph no longer rewraps the lines after it.
+#
+# max-width stays 0. A width breaks long sentences at clause boundaries, so a
+# word added early in one moves every break after it.
+mode: sentence
+max-width: 0
+
+exclude:
+  # Linter fixtures: their line breaks are part of the input under test.
+  - "skills/*/scripts/testdata/"
