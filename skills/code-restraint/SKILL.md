@@ -24,7 +24,8 @@ Three numbers, all from the file being edited. Take them before writing a line.
 ```bash
 awk '
   /^[[:space:]]*$/ { next }
-  { if ($0 ~ /^[[:space:]]*(\/\/|\/\*|\*)/) c++; else t++ }
+  /^[[:space:]]*(\/\/|\/\*|\*)/ { c++; next }
+  { t++ }
   END { printf "%d comment / %d code = %.2f\n", c, t, c/t }' path/to/file.go
 ```
 
@@ -33,9 +34,7 @@ For `#`-comment languages (Python, Ruby, shell) swap the pattern for `/^[[:space
 **2. Median size of the construct you are adding.** Compare like with like: top-level functions against top-level functions, test cases against test cases, table entries against table entries. Span between successive declarations is a good enough proxy.
 
 ```bash
-rg -n '^func ' path/to/file.go | cut -d: -f1 \
-  | awk 'NR>1{print $1-p} {p=$1}' | sort -n \
-  | awk '{a[NR]=$1} END{printf "median %d lines over %d\n", a[int((NR+1)/2)], NR}'
+~/.claude/skills/code-restraint/scripts/construct-median.sh '^func ' path/to/file.go
 ```
 
 Change the anchor for the construct in question: `'ginkgo\.It\('`, `'t\.Run\('`, `'^[[:space:]]*(it|test)\('`, `'^[[:space:]]*def '`.
@@ -107,7 +106,8 @@ Run the same density number over the added lines and compare it to the file:
 ```bash
 git diff -U0 -- path/to/file.go | awk '
   /^\+\+\+/ || /^\+[[:space:]]*$/ { next }
-  /^\+/ { if ($0 ~ /^\+[[:space:]]*(\/\/|\/\*|\*)/) c++; else t++ }
+  /^\+[[:space:]]*(\/\/|\/\*|\*)/ { c++; next }
+  /^\+/ { t++ }
   END { printf "added %d comment / %d code = %.2f\n", c, t, c/t }'
 ```
 
