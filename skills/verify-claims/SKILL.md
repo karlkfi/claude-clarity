@@ -73,12 +73,12 @@ Before an absence decides anything, run the same probe against a value you know 
 A misspelled config key, a build target matching no rule, an alternation mangled by quoting — each returns the empty result that means "not there", and each agreed with the defect being investigated and went on agreeing after it was fixed.
 
 Before a count, a total, or a population goes into a sentence or justifies a change, read [`references/counts.md`](references/counts.md).
-You leave it holding which population and scan width the figure is true of, which side of your own diff it was taken on, and whether it sampled your own work or a failure list that recovery had already filtered.
+You leave it holding which population and scan width the figure is true of, which side of your own diff it was taken on, whether it sampled your own work or a failure list that recovery had already filtered, the two populations and two emission rates a ratio asserts, and what a comparison attributes when the change was delivered by a disruptive act.
 
 ## 2. Trusting a check
 
 Before a gate, a CI run, a sweep, or a probe is trusted to say something is clean, covered, or gated, read [`references/trusting-a-check.md`](references/trusting-a-check.md).
-You leave it holding the question the instrument actually answers, how to confirm your gate's job ran and over which tree, what a clean sweep cannot see, and what a completeness claim inherits from its inventory.
+You leave it holding the question the instrument actually answers, why a liveness signal cannot speak for the service it fronts, how to confirm your gate's job ran and over which tree, what a clean sweep cannot see, and what a completeness claim inherits from its inventory.
 The rule the file builds on binds before you open it:
 
 **The probe is not the gate.** A hand-rolled stand-in answers a slightly different question and its answer looks exactly like the real one: a raw `grep -c` where the gate excludes code spans, a bare linter where the gate passes a flag that follows sourced files, a cached test result where the change touched a file the cache cannot see, an anchored search for a check name that misses `integration-test` because it matched on `^integration`.

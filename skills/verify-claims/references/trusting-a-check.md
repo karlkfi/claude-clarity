@@ -85,6 +85,14 @@ Both halves of the sentence are written in the same words, so ask what this inst
 That is a different argument from *a negative needs a positive control*: there the answer is suspect, here it is right and the method still gets checked, because it is reached for again where the luck does not hold.
 Each adjacency instance behind this rule was caught by another seat and none by its author: the remedy is a second reader, not more care.
 
+**A liveness signal reports that the thing is up, never that it does its job.** *A sound instrument still answers only its own question* splits into narrower and adjacent; this is the narrower one that gets reached for most, because liveness is the cheapest thing to read and the least informative.
+Up, not crash-looping, zero restarts, responding on a health endpoint — each is a claim about the process, and the claim being made is about the service.
+The two come apart hardest after a partial fix, which is exactly when someone is asking.
+A change that converts a failure *mode* — crash into degraded, hard error into slow path, loud into silent — clears the liveness signal completely while the user-visible symptom continues, so the dashboard goes green on the same day the complaints do not stop.
+A resolver whose restart count fell to zero was reported as mitigated; the restarts had only proved a crash loop had stopped, and several per cent of queries were still failing, which is what callers had been reporting all along.
+Read the counter that measures the outcome instead: errors served over requests served, work completed, the specific status the callers see.
+Prefer a cumulative counter over a point-in-time sample, since a cumulative one covers the whole window including the part you were not watching, and sample more than one instance before generalising from it.
+
 **A tool you run has two copies, and a grep finds whichever one you pointed at.** An installed plugin, hook, or CLI sits under a versioned cache directory; the project it came from has a `main` that is usually ahead of it.
 A claim about how the tool behaves is checkable against either, they disagree exactly when a release is pending, and reading the wrong one returns a confident negative — nothing found, on a real file, in a real checkout, with no hint that the answer came from a different artifact than the claim.
 An issue asserted that pr-sentinel denies a `gh pr create` overlapping an open PR, and named `PR_SENTINEL_OVERLAP_ENABLED` as the knob that disables it.
