@@ -83,9 +83,13 @@ The shapes that recur here: a local read standing in for a remote one, a partial
 make check
 ```
 
-`lint-sh`, `lint-py`, `validate`, `test`.
+`lint-sh`, `lint-py`, `md-reflow-check`, `validate`, `test`.
 CI calls the same targets, so adding a gate is one edit to the Makefile.
 A command inlined into `.github/workflows/` instead is a second copy `make check` will not run.
+
+Markdown is one sentence per line, and `md-reflow-check` fails on anything else.
+Run `make md-reflow` after editing prose rather than placing breaks by hand.
+A sentence that ends inside bold, a link or code stays on the same line as the next one, and the check rejects a hand-made split there.
 
 `validate` also lints the backlog store under `docs/queue/`.
 `scripts/queue.py` and `scripts/alloc-queue-id.sh` are vendored copies: they are maintained in another repository and updated here by copying the file again, so a fix written here is silently reverted by the next copy.

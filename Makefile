@@ -31,7 +31,7 @@ help: ## List the available targets
 
 # Everything CI gates on, in the order a failure is cheapest to read.
 .PHONY: check
-check: lint-sh lint-py validate test ## Run every gate CI runs
+check: lint-sh lint-py md-reflow-check validate test ## Run every gate CI runs
 
 .PHONY: lint-sh
 lint-sh: ## Run shellcheck over every committable shell script

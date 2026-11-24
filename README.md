@@ -226,7 +226,7 @@ Dates in a skill body are load-bearing where they mark a measurement and decorat
 make check
 ```
 
-That is `lint-sh` (shellcheck), `lint-py` (ruff, rules pinned to match CI), `validate` (skill frontmatter, description length, script modes, and the backlog store) and `test` (every `test-*.sh`).
+That is `lint-sh` (shellcheck), `lint-py` (ruff, rules pinned to match CI), `md-reflow-check` (Markdown is one sentence per line; `make md-reflow` fixes it), `validate` (skill frontmatter, description length, script modes, and the backlog store) and `test` (every `test-*.sh`).
 Each runs on its own too.
 `make help` lists them.
 
@@ -236,10 +236,10 @@ Read it before undoing something that looks arbitrary.
 Open work is in [`docs/queue/`](docs/queue/README.md), one file per item with priority in each item's `rank` key rather than in a table.
 `scripts/queue.py` and `scripts/alloc-queue-id.sh` are vendored copies maintained upstream — change them there, or the next copy reverts your edit.
 
-Needs `bash`, `python3`, `shellcheck`, and `pipx`.
-No network.
+Needs `bash`, `python3`, `shellcheck`, `pipx`, and `go`.
+A first run uses the network, where `pipx` fetches ruff and `go` fetches mdreflow.
 
-Every file list comes from `git ls-files --cached --others --exclude-standard`, so a script you have just written is gated before you `git add` it.
+The shell, Python and test file lists come from `git ls-files --cached --others --exclude-standard`, so a script you have just written is gated before you `git add` it.
 A tracked file deleted with a bare `rm` stays in the lists and the linter then fails on a path it cannot open.
 Stage the deletion.
 

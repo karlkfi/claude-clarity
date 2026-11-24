@@ -543,3 +543,24 @@ Nothing in the probe detects this, so a reading of a file that changed under its
 
 **What would reverse it:** enough readers per file to run both controls side by side and find that they disagree, which would mean topic onset is what the in-session control measures.
 Or Claude Code recording a reference file's load as something other than a Read, which moves the boundary.
+
+## Markdown is one sentence per line, and a formatter places the breaks
+
+A hard-wrapped paragraph moves every line after the word that changed, so a one-word edit reads as a rewritten paragraph and two branches touching different sentences of it conflict.
+With one sentence per line, the diff is the sentences that changed.
+
+mdreflow places the breaks, and `md-reflow-check` runs in `make check` and in CI.
+`tools/go.mod` pins the version, so a release cannot turn the gate red over prose nobody edited.
+
+**The check fails rather than warns** because `make md-reflow` is the whole repair and leaves nothing to decide.
+
+**A `tool` directive rather than a vendored copy.** Vendoring would put another project's Markdown and licence in a repo whose content people install, and `go.sum` already refuses a module that does not match its checksum.
+
+**The adopting commit is format-only and was checked by rendering.** Measured 2026-11-23 on mdreflow v0.3.0: 34 of 36 files changed and none declined a paragraph; the other two are linter fixtures, excluded because their line breaks are input.
+All 36 rendered to the same HTML through `markdown-it-py` before and after, with whitespace outside `<pre>` collapsed.
+
+**It costs a skill body a few bytes.** A break inside a list item adds that item's indent, which came to 402 bytes across the ten bodies, or 0.3%.
+One was already frozen at its merge-base size and grew 69, so a sentence came out of it first.
+
+**What would reverse it:** mdreflow changing what a file renders to, or a sentence it cannot break becoming common enough that the diffs stop being per-sentence.
+Today that second case is a sentence ending inside bold, a link or code, which the formatter joins to the next one; [jbeda/mdreflow#2](https://github.com/jbeda/mdreflow/issues/2) reports the link case.
