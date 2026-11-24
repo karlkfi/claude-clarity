@@ -157,9 +157,9 @@ Never repair in file order. A sentence fix can be undone by a section fix, and t
 
 ## When to run it
 
-Last, after the content is settled and after the deslop and readability passes. Auditing prose that's still being restructured wastes both passes.
+Last, after the content is settled and after the deslop and readability passes.
 
-Re-auditing rewrites is built into the Phase 2 walk, so it needs no separate pass. What does deserve a fresh run is a draft that changed substantially after remediation — new sections, a new thesis. That's new prose, not repaired prose.
+Re-auditing rewrites is built into the Phase 2 walk, so it needs no separate pass. Run it fresh on a draft that changed substantially after remediation — new sections, a new thesis. That's new prose, not repaired prose.
 
 ## Sources
 
