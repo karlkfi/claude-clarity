@@ -182,7 +182,7 @@ Naming it moved that from 1.3% to 5.4%.
 A `CLAUDE.md` reaches a session at startup rather than at the moment its subject comes up, which is the ceiling.
 
 `clarity-reminder` fires on the occasion instead.
-At `git commit` it reads the index for what the commit carries and the transcript for which skills have run, then denies once when a rule's paths are staged and its pass never ran.
+At `git commit`, from the Bash or the PowerShell tool, it reads the index for what the commit carries and the transcript for which skills have run, then denies once when a rule's paths are staged and its pass never ran.
 
 The reason carries the fix, so the model applies it and nobody stops work.
 An approved prompt would reach you instead, and teach the session nothing.
@@ -206,7 +206,7 @@ Per repo, `.claude/clarity-reminder.json` replaces the built-in rule:
 ```
 
 `"rules": []` turns it off without uninstalling.
-`CLARITY_REMINDER_OVERRIDE=<reason>` on the command skips one commit, and `CLARITY_REMINDER_POSTURE=supervise` turns the deny into a prompt for anyone who wants to watch it work.
+`CLARITY_REMINDER_OVERRIDE=<reason>` on the command skips one commit (`$env:CLARITY_REMINDER_OVERRIDE='<reason>';` in PowerShell), and `CLARITY_REMINDER_POSTURE=supervise` turns the deny into a prompt for anyone who wants to watch it work.
 
 ## Where the content came from, and what it is true of
 

@@ -53,6 +53,10 @@ import sys
 # runtime, so composing it costs a permanent warning for no gain.
 PREFIX = 'clarity-reminder: '
 CONFIG = '.claude/clarity-reminder.json'
+TOOLS = ('Bash', 'PowerShell')
+
+# PowerShell sets it as `$env:NAME = 'reason'`, where spaces are idiomatic.
+OVERRIDE = re.compile(r'CLARITY_REMINDER_OVERRIDE\s*=')
 
 # Source only; a repo wanting a prose rule adds one.
 SOURCE = ['*.go', '*.py', '*.sh', '*.ts', '*.tsx', '*.js', '*.rs', '*.java',
@@ -219,20 +223,21 @@ def decide(rules, edited, skills):
             f'Fix: invoke {named} over this diff, then re-run the commit. '
             f'This hook speaks once per session, so the next commit is not '
             f'stopped either way. '
-            f'Override: CLARITY_REMINDER_OVERRIDE=<reason>.')
+            f'Override: CLARITY_REMINDER_OVERRIDE=<reason>, or '
+            f"$env:CLARITY_REMINDER_OVERRIDE='<reason>'; in PowerShell.")
 
 
 def main():
     try:
-        data = json.load(sys.stdin)
+        data = json.load(sys.stdin.buffer)  # text mode is not UTF-8 on Windows
     except ValueError:
         return
-    if (data.get('tool_name') or 'Bash') != 'Bash':
+    if (data.get('tool_name') or 'Bash') not in TOOLS:
         return
     cmd = (data.get('tool_input') or {}).get('command') or ''
     if not is_commit(cmd):
         return
-    if 'CLARITY_REMINDER_OVERRIDE=' in cmd or os.environ.get('CLARITY_REMINDER_OVERRIDE'):
+    if OVERRIDE.search(cmd) or os.environ.get('CLARITY_REMINDER_OVERRIDE'):
         return
     cwd = data.get('cwd') or ''
     rules = load_rules(cwd)

@@ -286,6 +286,10 @@ The `supervise` posture turns denies into prompts for anyone who wants to watch,
 **The plugin manifest sits beside `install.sh` rather than replacing it.** A hook cannot reach a machine any other way without hand-editing a settings file, and the entry below on the installer writing no settings survives intact because nothing about that path changes.
 A directory serves as a marketplace — measured 2026-09-14 by adding one with no remote, installing a plugin whose source was a relative path, and removing both — so neither the hook nor the skills wait on a publishing decision (Q1001, Q1008).
 
+**It launches through `run-python-hook.cmd`, not `python3`.** Windows puts a Microsoft Store stub named `python3` on `PATH`, and a hook that fails to start does not block the call, so a bare `python3` holds no commit there.
+The launcher runs each candidate interpreter before choosing one and says on stderr when none works.
+It is a copy of the one every Python guard in `claude-bouncer` carries, taken 2026-11-23 from commit `939e433`; fix it there and copy it again.
+
 **What would reverse it:** a repo where the hook fires on occasions that did not want the pass, often enough that the deny reads as a tax rather than a reminder.
 The per-repo rule file is the first response to that and a retirement is the second.
 
