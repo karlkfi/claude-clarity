@@ -144,3 +144,16 @@ Read it per *component* — a blanket "the platform is down" over-attributes exa
 Over-attribution runs the other way too: in that same session a `git fetch` failed with git's stock `Please make sure you have the correct access rights and the repository exists`, the incident took the blame, and the cause was local.
 Treat a reading from a degraded component as unverified and a failure on a healthy one as your own — a status page that disagrees with your theory is a finding, not noise.
 Both incidents in full, the pages and their per-component JSON, and how to find one for a provider not listed: [`references/status-pages.md`](status-pages.md).
+
+**An absence read off the tree in front of you is a fact about that tree.** *An empty result from a filtered query is a fact about the filter's subject* covers the filter; this is the venue underneath it, and a working copy is a filter nobody typed.
+A checkout answers for the commit it was branched from, so a file added upstream since, a file on an unmerged sibling branch, and a file on a stale clone left by earlier work all read as a file that does not exist.
+Told by a reviewer to register a suite "the same way the existing one is registered", a session ran `ls` on its own branch, did not see it, and replied that the repo had no such thing — it was on an open pull request at that moment, merged an hour later.
+A reviewer reads the repository through its pull requests; your tree does not.
+Ask the remote rather than the tree — a contents API call needs no clone at all — and where a clone must be used, fetch and read `origin/main:<path>` rather than switching its branch.
+Phrase what you did check: *not on this branch's base* is true and *not in this repo* is a different claim you have not tested.
+
+**A flat reading at the component you suspected clears the component, not the hypothesis.** Finding no change in a subject's own load is evidence that the subject is a victim rather than a driver, and it is silent about where the driver is — including whether it is inside your own scope.
+A control plane crash-looping on storage contention showed flat control-plane write load, which was read as "the contention is not ours" and said so publicly.
+The load was flat because that component was losing: two tenant volumes in the same filesystem were driving 91.9% of the array's reads, and the tenants were ours.
+When a reading exonerates the thing you measured, the next question is which other participants share the resource, not whether the problem is external.
+Measure the component's own latency histograms rather than the layer below it, too — the layer below can recover fully while the layer you care about is still starved, so a healthy host-level `iostat` is not a healthy service.
