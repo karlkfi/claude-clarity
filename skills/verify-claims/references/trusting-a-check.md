@@ -164,3 +164,10 @@ A committed capture, an archived results table, or a constant some earlier live 
 The corollary is why it stays unfound: a capture with no test asserting against it is decoration, and it ages into a file everyone assumes someone else is checking.
 
 Also in `SKILL.md` §2, in [`further-rules.md`](further-rules.md): *Agreement with the enforcer is not evidence when one detail could fool both*; *A measurement that reproduces a call is not a test of the code that makes it*; *The checker is a fourth subject, and that check cannot count it*; *Two causes that predict the same count are not distinguished by that count*.
+
+**A service answers from every source it is configured to consult, so clearing the one you know about is not removal.** *A sweep that comes back clean has told you about its own representation* is this failure inside a repository; this is the same shape against a running system, where the representations are the service's own configured lookup paths and the sweep is a removal you are about to report as complete.
+Read the effective configuration rather than the path you happen to know: `sshd` consults an `AuthorizedKeysCommand` **and** an `AuthorizedKeysFile`, a resolver consults `nsswitch.conf` in order, a web server consults several `include` roots.
+A key rotation across fifteen hosts was verified complete against the directory — the new key present everywhere, all three old ones gone — and read as a clean revocation.
+The user's `~/.ssh/authorized_keys` still held the exact key their last login had used, on shared network storage that no host rebuild touches, so the access that was reported removed was intact on all fifteen.
+State a removal as a claim about an *effective* path and enumerate what the service actually consults, with the effective-config command (`sshd -T`, `nginx -T`, `getent`) as the instrument rather than the file you edited.
+Two neighbouring checks answer different questions and neither substitutes: an established session survives a credential removal, and a rebuild clears local disk and not shared storage.

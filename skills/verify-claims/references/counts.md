@@ -69,3 +69,18 @@ The finding survives a re-read, because it is true and merely smaller — three 
 And it is invisible to review: the diff carries a clean finding rather than a missing half.
 Neither a wider scan nor a second run of the same query reaches it, since both re-read the same filtered view.
 What reaches it is re-deriving the population from a different starting point — the instrument's own unfiltered output, or a second instrument that sees the whole set — before the number decides anything.
+
+**A sample's order is not its time order, and a window shorter than the thing's own period holds one observation.** Everything above is about which members a count includes.
+These two are about *when* it drew them, and both produce a complete, reproducible figure from the wrong stretch of time.
+
+- **Name order is not time order.** A listing sorted by key looks chronological when the keys are ULIDs or hashes and is not, so "the first page" is frequently the oldest records rather than the newest.
+  A lifetime heuristic built from the alphabetically first page of an object store sampled jobs months stale, and the percentiles it produced were defensible numbers about a population nobody cared about.
+  Read the dates out of the sample and say what range it covers, rather than trusting the order you got it in.
+- **An observation window has to span several periods of whatever is being measured.** Five minutes of a phenomenon whose cycle is about ten is a single sample, and a single sample is consistent with every hypothesis including the one you hold.
+  A sysctl was rolled out fleet-wide on "it held healthy 5/5 over five minutes" against a behaviour with a ~607-second period.
+  Before acting on *seems stable* or *seems fixed*, write down the period of the thing and check the window against it.
+
+**A ragged aggregate is usually a second dimension showing through the one you grouped by.** When a group-by returns values that disagree with each other for no stated reason, the disagreement is evidence that the axis you chose is not the axis that drives the variance.
+A retention floor was published as a 90-day figure from `min(_time)` grouped by **cluster**, where the dimension that actually varied was **log type**: only kernel logs reached the floor, and four other types began six weeks later.
+The per-cluster dates had been disagreeing with each other on the way to that number, which was the tell, and a reviewer caught what the aggregate hid.
+Re-cut along the candidate dimension before explaining raggedness away — and where a heuristic will be acted on, segment by the dimension that drives the variance rather than lumping heterogeneous populations into one distribution.

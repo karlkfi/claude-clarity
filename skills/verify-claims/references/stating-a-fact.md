@@ -61,3 +61,10 @@ So state the property, or **pick an exhibit whose value the claim fixes rather t
 A worked case over three review rounds: [`references/shell-traps.md`](shell-traps.md).
 
 Also in `SKILL.md` §6, in [`further-rules.md`](further-rules.md): *Provenance is a claim, and one of the cheapest to settle*; *A figure you derived is not a figure you read*.
+
+**A search-result summary is not the source, and the field it drops is the one that decides.** A summary is assembled to answer the query you typed, so it keeps what matched and discards the state that governs whether the match still means anything.
+An upstream issue was cited as "the live, triage/accepted one, file there" on the strength of a search snippet showing that label still attached.
+The label was attached; the issue had been closed-completed for four years, and a label persists on a closed issue.
+The wrong claim reached a report, a pull request and a durable note before anyone opened the issue itself.
+Before citing an issue, a PR, a release note or a docs page as a venue or as a fact someone will act on, open it — `gh issue view`, fetch the page — and read the state, not the snippet.
+The same holds for a version: a behaviour documented upstream is a claim about *some* version, and the one you run is the only one that can falsify it.
