@@ -1,6 +1,6 @@
 ---
 name: code-restraint
-description: Keep authored source from reading as machine-written by matching the host file's comment density, altitude, defensiveness, and code shape. Use when the user asks for "code restraint" or "code-restraint" on a diff, and when a review says "this reads as AI generated", "the comments are too long", "the dense narrative style", "too many comments", "too defensive", "why all the try/catch", "match the existing style", "why didn't you use the existing helper", "remove the dead code", or flags duplicated blocks, over-long functions, or leftover scaffolding. Also use before committing a code diff, and when comments in a PR look like they belong in docs instead. Covers comments in source (density, altitude, mechanism over argument, anchoring, no change-narration, one explanation in one place) and code shape (reuse existing helpers, match median function length and naming register, extract near-identical blocks, no speculative structure, no dead weight in the diff). Not for prose — deslop owns slop in text.
+description: Keep authored source from reading as machine-written, with comments cut to what a later reader of the file needs and code shaped like the host file. Use when the user asks for "code restraint" or "code-restraint" on a diff, and when a review says "this reads as AI generated", "the comments are too long", "the dense narrative style", "too many comments", "need to be in the code comment or better for the PR?", "too defensive", "why all the try/catch", "match the existing style", "why didn't you use the existing helper", "remove the dead code", or flags duplicated blocks, over-long functions, or leftover scaffolding. Also use before committing a code diff, and when comments in a PR look like they belong in docs instead. Covers comments (the later-reader test, where history, rationale and ticket numbers go instead, length) and code shape (reuse existing helpers, match median function length and naming register, extract near-identical blocks, no speculative structure). Not for prose — deslop owns slop in text.
 ---
 
 # Code restraint: source that reads like the file it landed in
@@ -9,6 +9,10 @@ The tell that code was machine-written is rarely one bad sentence.
 It is proportion.
 A block with 10x the comment density of its neighbours reads as generated before anyone parses a word of it, and three near-identical 50-line functions read as generated even with no comments at all.
 Both come from the same root cause: writing self-contained blocks instead of going to look at the local idiom first.
+
+The two halves use the host file differently.
+Code shape is matched to it.
+Comments are held to a test the host file may itself fail, so its comment density is a ceiling on the diff and never a target.
 
 This skill is two halves.
 The code-shape half matters more — no amount of comment discipline saves a 60-line spec that should have been 8.
@@ -61,12 +65,14 @@ rg -n 'func .*(Handler|Probe|Spec|Client)' path/to/
 Do this even when the thing to build is small.
 Rebuilding a helper that sits 200 lines up the same file is the most visible version of this failure.
 
-**Check the baseline is worth matching.** Matching assumes the file's style is human idiom.
-On a codebase largely written by earlier AI sessions, the measurement can come back already sloppy, and matching it locks the slop in.
-Signs the baseline is machine-written: implementation-file density far above idiomatic for the language (a Go or Python implementation file near or above 1.0 comment/code), uniform wrapped paragraphs above ordinary statements, comments narrating past diffs or ticket numbers.
-Any of those — or the user saying the existing style is too verbose — means do not match the file.
-Calibrate to idiomatic terse style for the language instead, and treat the file's distance from that as part of what the change or review should fix.
-Narrative rationale still has a venue — docs and PR descriptions — and doc-comment conventions on exported symbols (godoc, CRD field descriptions, API docs) stay exempt as in Scope.
+**The density number is a ceiling, not a target.** A diff denser than its file is the tell, so the file's number caps what the diff may add.
+It licenses nothing: a comment that fails the test in step 3 goes even when the file would absorb it unnoticed.
+
+**A file whose own comments fail that test is not a baseline at any density.** Read a handful before trusting the number.
+Paragraphs above ordinary statements, narration of past diffs, ticket numbers for finished work, and arguments for the design are what earlier sessions leave behind, and a file can carry all of them at half the density of one that looks obviously bloated.
+Matching it reproduces them.
+The same holds when the user says the existing style is too verbose.
+Write to step 3 regardless of the neighbours and let the diff run leaner than its surroundings.
 
 ### Step 2 — Code shape
 
@@ -89,38 +95,68 @@ Narrative rationale still has a venue — docs and PR descriptions — and doc-c
 
 ### Step 3 — Comments
 
-1. **Match the density you measured.** Being an order of magnitude denser than the surrounding file is the tell, independent of what any single comment says.
-   If the file runs 0.04 and the new block runs 0.46, cut until they are close.
-   If step 1 flagged the baseline as machine-written, the file's own number is the defect — match idiomatic density for the language instead and let the diff run leaner than its surroundings.
+**The test.** The reader is someone changing this file later with the code open and nothing else: no PR, no tracker, no memory of this session.
+Keep a sentence only if that reader needs it to read the code correctly or to change it safely.
+Apply it to each sentence, not to the comment as a whole, because one useful clause is what carries three useless ones past review.
 
-2. **Describe the mechanism, not the argument.** A comment explains what the code does and why it must be this way for a future reader.
-   If a sentence would fit in the PR description, put it in the PR description.
+A sentence passes when it gives:
 
-3. **Sit above or below the code's altitude, never at it.** A comment below the code's altitude adds precision the code cannot carry: units, whether a bound is inclusive, what nil means here.
-   A comment above it adds intent: what the block is for.
-   A comment at the same altitude paraphrases the line under it and is the first thing to rot when that line changes — delete it.
+- a reason the code cannot state: the constraint it satisfies, the failure it avoids
+- precision the code cannot carry: units, whether a bound is inclusive, what nil or empty means here, which lock is held
+- a trap: code that looks wrong or simplifiable and is not, with what breaks
+- the contract, in a doc comment: what a caller may rely on and must supply
 
-4. **Describe the code, not the change.** `// now uses the shared client`, `// no longer retries` — comments addressed to the diff reviewer turn into nonsense the moment the diff merges.
-   Code reads as if it had always been this way; what changed and why goes in the commit message.
+A sentence that paraphrases the line under it sits at the code's own altitude and is the first thing to rot when that line changes.
+Delete it, or rename the thing so the name carries it.
 
-5. **A comment arguing with a hypothetical reviewer belongs in the review thread.** This is the sharpest test of the set.
-   `// Returning the error rather than logging it is deliberate: ...` was written to stop someone from reverting the change, not to help anyone read the code.
-   Name the comment's audience out loud.
-   If the audience is "whoever might question this change", the venue is the PR thread, not the file.
+**Move what fails; do not just delete it.** Most failing sentences are true and wanted by a different reader, who looks somewhere else.
+Put each one there in the same change, so trimming the comment loses nothing.
 
-6. **Anchor the comment to the line it explains.** A comment about an assertion goes above the assertion, not above the script variable six lines up that happens to start the block.
+| In the draft comment | Its reader looks in |
+|---|---|
+| what the code used to do: "now", "no longer", "previously" | the commit message |
+| why this approach beat another; "deliberately" | the PR description, or a design doc if it outlives the PR |
+| the incident, flake or review that prompted the code | the commit message and PR description |
+| measurements, dates, run counts | the PR description, or a doc when a later decision rests on them |
+| which ticket or PR delivered the code | the commit message, where `git blame` leads |
+| an argument against whoever might revert it | the review thread |
+| how the subsystem fits together | a design doc, with a one-line pointer left in the comment |
+| what a user or operator sees, sets or does | the user-facing docs |
 
-7. **One explanation, one place.** The same reasoning appearing at three call sites means a named constant or helper is missing.
-   Name the thing, explain it once at the declaration, and let the name carry the meaning at the uses.
-   Cross-reference rather than restate.
+Code reads as if it had always been this way.
+To find the venue for a sentence, name its audience out loud: "whoever questions this change" is a reviewer, and a reviewer reads the PR.
 
-8. **No metaphors.** "Plumbing", "under the hood", "wiring", "glue", "magic", "behind the scenes".
-   Name the mechanism instead: not "handles the plumbing" but "propagates the request context into the watch goroutine".
-   Metaphor is essay craft; in source it costs a reviewer a round trip asking what you meant.
+**A ticket or PR number stays only when the later reader needs it to change the code safely.** Two cases do: `TODO(ID):` for open work, and a workaround tied to a bug that is still open, where the reference says when the code can go.
+A number that only records which item delivered the code fails the test whether or not the tracker keeps finished items.
+Blame already reaches it, and where a tracker deletes or renumbers them it points at nothing.
+A repo that documents a different convention, such as an issue link on every bug fix, follows its own.
 
-9. **Vary or omit.** Uniform three-sentence paragraphs wrapped to identical width are a tell by themselves.
-   Real comments in real files are terse and uneven — a trailing `// unused; kept for the interface` next to a five-line block next to a hundred lines with nothing.
-   When varying feels forced, delete instead: a comment that merely restates its line already failed the altitude test.
+**Length.** These are the defaults where the repo sets none.
+
+- An implementation comment is a line or two.
+  A third line is the cue to re-run the test on each sentence.
+  Content that still needs a paragraph is a doc: write it there and leave one line pointing at it.
+- A doc comment is as long as the contract.
+  How the function works inside is not contract.
+- A file or script header says what the file is for and how to invoke it.
+  Design history and the story of each flag fail the test like any other sentence.
+
+**Placement and register.**
+
+- **Anchor the comment to the line it explains.** A comment about an assertion goes above the assertion, not above the variable six lines up that happens to start the block.
+- **One explanation, one place.** The same reasoning at three call sites means a named constant or helper is missing.
+  Explain it once at the declaration and let the name carry it at the uses.
+- **No metaphors.** "Plumbing", "under the hood", "wiring", "glue", "magic".
+  Name the mechanism: not "handles the plumbing" but "propagates the request context into the watch goroutine".
+- **Uneven is normal.** Real files hold a trailing `// unused; kept for the interface` next to a hundred lines with nothing.
+  Uniform paragraphs wrapped to one width are a tell by themselves; when varying feels forced, delete.
+
+**In a file that fails the test,** new and rewritten comments follow this step anyway.
+When changing code, trim the comment that describes it in the same commit and move what fails.
+Leave comments on untouched code alone: a sweep is its own change, like any restructuring.
+
+**A repo's own comment rules win** on venues, length limits and ticket format, whether they sit in a doc or a repo-local skill.
+This step is the default where there are none.
 
 **Worked example.** The comment that drew "this comment reads as AI generated", sitting above a shell script variable:
 
@@ -131,7 +167,7 @@ Narrative rationale still has a venue — docs and PR descriptions — and doc-c
 // "the container is gone", see waitForTerminatingPodNotReady.
 ```
 
-Four rules at once: too dense for its file, arguing the design rather than describing it, unanchored, and paragraph-shaped.
+It fails the test on most of its length: it argues the design to a reviewer, and it is unanchored and paragraph-shaped besides.
 Moved to the line it is about and cut to the mechanism:
 
 ```go
@@ -143,7 +179,7 @@ The design rationale that got cut is not lost — it goes in the PR description,
 
 ### Step 4 — Re-measure before handing it over
 
-Run the same density number over the added lines and compare it to the file:
+Run the same density number over the added lines and compare it to the file's ceiling:
 
 ```bash
 git diff -U0 -- path/to/file.go | awk '
@@ -155,14 +191,16 @@ git diff -U0 -- path/to/file.go | awk '
 
 Then check, in order:
 
-- Added density within roughly 2x the file's — or of the idiomatic target, when step 1 flagged the file as machine-written.
-  Over that, cut comments until it is not.
+- Added density no higher than roughly 2x the file's.
+  Over that, cut comments until it is not; under it proves nothing, so read on.
+- Every sentence in an added comment passes the later-reader test, and everything cut is in the commit message, the PR description or a doc.
+- No ticket or PR number, date, or change-narration word in an added comment, outside a `TODO(ID)` or an open-bug workaround.
+- No added implementation comment over two lines without a sentence-by-sentence reason.
 - Every new function within roughly 2x the median for its construct.
   Over that, extract.
 - No two added blocks that differ only in literals.
 - Every helper you wrote checked against the grep from step 1.
-- Every added comment anchored to the line below it and addressed to a reader, not a reviewer.
-- No added comment at the same altitude as its line, and none narrating the change.
+- Every added comment anchored to the line below it.
 - No added defensive check its sibling call sites lack; failure paths stay loud.
 - No unused imports or parameters, commented-out code, or suppression casts left from an earlier draft.
 
@@ -172,9 +210,11 @@ Applies to source files: implementation, tests, build scripts, anything a review
 
 Three things this does not mean:
 
-- **Doc comments on exported symbols are convention, not density.** Godoc, docstrings, Javadoc, JSDoc on public API are required by the file's convention and already counted in its baseline.
-  Match the convention — one per exported symbol, in the house format — and let the density number cover the rest.
-- **Generated files, vendored code, and config formats with comment-as-documentation conventions are out of scope.** Do not apply density matching to a Dockerfile or a heavily annotated CI config.
+- **Doc comments on exported symbols are convention, not density.** Godoc, docstrings, Javadoc, JSDoc on public API are required by the file's convention.
+  Write one per exported symbol, in the house format, as long as the contract.
+- **Comments that are published documentation keep their length.** API field descriptions that generate reference docs, and annotated config a user reads as its manual, are docs that live in source.
+  The test still applies to them; the length defaults do not.
+- **Generated files and vendored code are out of scope.**
 - **Correctness is a different review.** Wrong logic, missed edge cases, and APIs that don't exist are bugs, not style — this skill will not catch them, and passing it does not mean the change works.
   The reverse holds too: passing tests say nothing about whether the diff reads like the file.
 
@@ -184,7 +224,7 @@ Related skills:
   Reach for it when a comment gets cut from a diff and needs a venue.
 - A voice or essay guide's advice on metaphor stops at the file boundary.
   Committing to an extended metaphor is essay craft, and "handles the plumbing" is what that register produces once it reaches a comment.
-  In code, rule 8 wins.
+  In code, step 3's rule against metaphor wins.
 - `tech-docs-layers` covers repo-resident user-facing docs, not in-code comments.
 - `deslop` is this skill's prose counterpart and shares its trigger phrases ("deslop this", "remove the AI slop").
   Source files are this skill; docs, READMEs, and PR descriptions are that one.

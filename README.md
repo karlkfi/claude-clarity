@@ -67,7 +67,7 @@ It is also the only one that routes to the others: the remaining nine cite their
 | Skill | Owns | Fires on |
 |---|---|---|
 | [`tech-docs-layers`](skills/tech-docs-layers/SKILL.md) | What a doc contains and where it lives, across six layers of a repo's documentation. | A docs page that "is a giant wall of text", "keeps getting stale", or "doesn't link to docs pages enough" |
-| [`code-restraint`](skills/code-restraint/SKILL.md) | Comment density, altitude and code shape, matched to the host file rather than to a house style. | "this reads as AI generated", "too many comments", "why all the try/catch", "match the existing style" |
+| [`code-restraint`](skills/code-restraint/SKILL.md) | Comments cut to what a later reader of the file needs, with the rest moved to the commit, PR or docs; code shape matched to the host file. | "this reads as AI generated", "too many comments", "why all the try/catch", "match the existing style" |
 | [`rendered-page-review`](skills/rendered-page-review/SKILL.md) | How a page reads rendered, at real viewport widths, skimmed rather than read. | "review the landing page", "how does this render", "it breaks on mobile", "the page feels dense" |
 
 `deslop` and `readability` each ship a linter for the machine-checkable part of their rules.
