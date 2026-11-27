@@ -568,3 +568,38 @@ One was already frozen at its merge-base size and grew 69, so a sentence came ou
 
 **What would reverse it:** mdreflow changing what a file renders to, or a sentence it cannot break becoming common enough that the diffs stop being per-sentence.
 Today that second case is a sentence ending inside bold, a link or code, which the formatter joins to the next one; [jbeda/mdreflow#2](https://github.com/jbeda/mdreflow/issues/2) reports the link case.
+
+## `code-restraint` tests comments against a later reader, and a host file's density only caps the diff
+
+Until 2026-11-27 the comment half told a session to match the density it measured, with an escape when the file looked machine-written.
+The escape named a number, a Go or Python implementation file "near or above 1.0" comment lines per code line.
+A per-repo comment rule set written that day for another of Karl's repos measured its own Go implementation files at 0.50, with comment blocks of ten lines or more in the hundreds and ticket numbers throughout.
+That figure is inherited from that rule set's own doc and was not re-measured here.
+Such a file clears the number while being what its maintainer wants cut, and a session reading "match the density" as rule 1 has to notice a second sign before the escape applies.
+
+So the number is now a ceiling and the rule is a test: a sentence stays only if someone changing the file later, with no PR or tracker open, needs it to read the code correctly or change it safely.
+The old rules against arguing the design, narrating the change and addressing a reviewer were three cases of that test, and they became rows of a table that says where each kind of sentence goes instead.
+Altitude, anchoring, one-place, metaphor and unevenness survive as they were.
+
+**Comments stayed in `code-restraint` and did not become a skill of their own.** `skill-authoring` says a subject inside a procedure skill belongs in its own skill when it fires on its own trigger.
+This one does not: a comment is written at the moment source is written, which is the moment the global naming line and the `clarity-reminder` commit hook already put `code-restraint` in front of a session.
+A second skill would need its own naming line and its own hook rule to reach the same occasions, and would deny one commit twice.
+The body had room, at 12,976 bytes against a 24 KiB ceiling before the change.
+
+**Ticket numbers get a rule that does not depend on the tracker.** The per-repo rule set bans them outside `TODO(ID)` because its backlog deletes finished rows, so nearly all of its citations dangle.
+That reason does not travel to a tracker that keeps closed items.
+The later-reader test does: a number recording which item delivered the code is reachable through blame and is not needed to change the code, and a number on open work or on a workaround for a still-open bug is.
+That is also where the per-repo doc reports narrowing Ellen Spertus's advice to cite the tracker on a bug fix; her article was not re-read for this change.
+A repo with a documented convention of its own keeps it.
+
+**The length defaults are a judgement, not a finding.** A line or two for an implementation comment, the contract for a doc comment, and purpose plus invocation for a header.
+The per-repo doc reports that none of the style guides it surveyed sets a number.
+No count of comment lengths in files Karl considers well-commented stands behind them.
+
+**The description gained one phrase on thin evidence.** "need to be in the code comment or better for the PR?" appears in one human turn across 3,022 local transcript files, searched 2026-11-27 with a filter that drops turns over 3,000 characters.
+Two other comment phrasings were found once each and left out for lack of room.
+The same search found neither "the comments are too long" nor "too many comments", which the description already carried, in any human turn, so that half of the description is unverified rather than confirmed.
+
+**What would reverse it:** sessions that pass the test and still draw "too long", which would mean the length defaults are too loose or the test admits too much.
+For the structure, a count showing comment-only requests arriving in sessions where `code-restraint` did not fire and a narrower description would have.
+For ticket numbers, a repo whose readers reach history through the tracker and not through blame.

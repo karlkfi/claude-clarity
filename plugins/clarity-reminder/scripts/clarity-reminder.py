@@ -66,8 +66,8 @@ DEFAULT_RULES = [{
     'skill': 'code-restraint',
     'paths': SOURCE,
     'min_files': 3,
-    'reason': 'It matches comment density, altitude and code shape to the host '
-              'file, which is the check a diff cannot pass by being correct.',
+    'reason': 'It holds comments to what a later reader needs and code shape '
+              'to the host file, which a diff cannot pass by being correct.',
 }]
 
 def emit(decision, reason):
